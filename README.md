@@ -25,7 +25,8 @@ O projeto é dividido em três camadas principais:
 
 ## Como Executar
 ### Requisitos
-- Ter o **Groovy** instalado no sistema.
+- **Java 17**
+- **Groovy 4.0.14**
 
 ### Passos
 1. Clone este repositório:
