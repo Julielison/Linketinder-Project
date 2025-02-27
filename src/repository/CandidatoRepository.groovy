@@ -14,11 +14,11 @@ class CandidatoRepository {
         ]
     }
 
-    static void adicionarCandidato(Candidato candidato) {
+    static void addCandidato(Candidato candidato) {
         candidatos.add(candidato)
     }
 
-    static List<Candidato> listarCandidatos(){
+    static List<Candidato> getCandidatos(){
         return candidatos
     }
 }

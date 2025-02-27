@@ -14,11 +14,11 @@ class EmpresaRepository {
         ]
     }
 
-    static void adicionarEmpresa(Empresa empresa) {
+    static void addEmpresa(Empresa empresa) {
         empresas.add(empresa)
     }
 
-    static List<Empresa> listarEmpresas(){
+    static List<Empresa> getEmpresas(){
         return empresas
     }
 }
