@@ -1,6 +1,6 @@
-package repository
+package main.repository
 
-import model.Candidato
+import main.model.Candidato
 
 class CandidatoRepository {
     static private List<Candidato> candidatos = []

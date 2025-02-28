@@ -1,10 +1,10 @@
-package service
+package main.service
 
-import model.Candidato
-import model.Empresa
-import model.Pessoa
-import repository.CandidatoRepository
-import repository.EmpresaRepository
+import main.model.Candidato
+import main.model.Empresa
+import main.model.Pessoa
+import main.repository.CandidatoRepository
+import main.repository.EmpresaRepository
 
 class CadastroService {
 

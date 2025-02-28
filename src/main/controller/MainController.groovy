@@ -1,9 +1,9 @@
-package controller
+package main.controller
 
-import repository.CandidatoRepository
-import repository.EmpresaRepository
-import service.CadastroService
-import view.MenuView
+import main.repository.CandidatoRepository
+import main.repository.EmpresaRepository
+import main.service.CadastroService
+import main.view.MenuView
 
 
 class MainController {

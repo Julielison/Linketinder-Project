@@ -1,4 +1,4 @@
-package model
+package main.model
 
 class Candidato extends Pessoa {
     String cpf

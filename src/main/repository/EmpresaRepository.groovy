@@ -1,6 +1,6 @@
-package repository
+package main.repository
 
-import model.Empresa
+import main.model.Empresa
 
 class EmpresaRepository {
     static private List<Empresa> empresas = []

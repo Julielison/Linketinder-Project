@@ -1,4 +1,4 @@
-package view
+package main.view
 
 class MenuView {
     static void showMenu() {
