@@ -23,7 +23,7 @@ class MenuView {
     static int getUserInput() {
         try {
             return System.in.newReader().readLine() as int
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return -1
         }
     }
