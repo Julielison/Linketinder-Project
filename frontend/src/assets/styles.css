@@ -1,0 +1,36 @@
+:root {
+    --primary-color: #6F1C9C;
+    --secondary-color: #a630ed;
+    --background-color: #E4E4E4;
+    --text-color: #333;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+
+  }
+  
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    position: fixed;
+    width: 100vw;
+}
+  
+  header h1 {
+    margin: 0;
+  }
+  
+
+/* Main */
+main {
+    justify-items: center;
+    padding-top: 60px;
+
+}
+
