@@ -12,12 +12,39 @@
     margin-bottom: 30px;
 }
 
+#containerForm {
+    width: 100%;
+    max-width: 600px; /* Igual ao #container */
+    justify-items: center;
+}
+
+
 /* Forms */
 
 .inline-group {
     display: flex;
     flex-direction: row;
 }
+
+.inline-group input {
+    width: 100%;
+}
+
+.inline-group-company{
+    display: flex;
+    flex-direction: row;
+}
+
+.inline-group-company label {
+    flex: 1; /* Faz com que os labels ocupem o mesmo espaço */
+    display: flex;
+    flex-direction: column; /* Mantém o texto do label acima do input */
+}
+
+.inline-group-company input {
+    width: 100%; /* Faz os inputs ocuparem toda a largura do label */
+}
+
 
 .date label {
     flex: 1 1 100%; /* Cada label vai ocupar 100% da largura */
@@ -75,6 +102,10 @@ form {
     margin-top: 7px;
     margin-bottom: 0;
 }
+
+.company input {
+    max-width: 485px; /* Ou qualquer valor desejado */
+}
   
 /* Faz os inputs ocuparem 100% da largura disponível */
 input, textarea {
@@ -100,7 +131,7 @@ textarea {
     width: 100%;
 }
 
-/* Para garantir que os labels fiquem alinhados corretamente */
+/* Para garantir quename os labels fiquem alinhados corretamente */
 label {
     display: flex;
     flex-direction: column;
