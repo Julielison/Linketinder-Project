@@ -1,3 +1,5 @@
+import like from '@/assets/img/like.svg';
+
 interface Job {
     title: string;
     location: string;
@@ -38,18 +40,22 @@ export default function createJobElement(job: Job): HTMLElement {
     jobElement.className = "job";
 
     jobElement.innerHTML = /*html*/`
-        <div class="job-header">
-            <h3>${job.title}</h3>
-        </div>
-        <div class='location-company'>
-            <div class="job-location">${job.location}</div>
-            <div class="job-company">${job.company}</div>
-        </div>
-        <div class="job-tags">
-            ${job.tags.map(tag => `<span class="job-tag">#${tag}</span>`).join(" ")}
+        <div class='group-left'>
+            <div class="job-header">
+                <h3>${job.title}</h3>
+            </div>
+            <div class='location-company'>
+                <div class="job-location">${job.location}</div>
+                <div class="job-company">${job.company}</div>
+            </div>
+            <div class="job-tags">
+                ${job.tags.map(tag => `<span class="job-tag">#${tag}</span>`).join(" ")}
+            </div>
         </div>
         <div class="job-actions">
-            <button class="like-button">👍</button>
+            <button class="like-button">
+                <img src="${like}" alt="Like Logo" class="like-logo" />
+            </button>
         </div>
     `;
 
