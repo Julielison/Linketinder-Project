@@ -1,31 +1,19 @@
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import { createModal } from "@/utils/modalUtils";
 Chart.register(...registerables);
 
 export default function renderModalStatistics(): HTMLElement {
-    const modal = document.createElement("div");
-    modal.className = "modal";
-
-    modal.innerHTML = /*html*/`
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Estatísticas</h2>
-            <canvas id="statisticsChart"></canvas>
-        </div>
-    `;
-
-    // Adiciona o evento de fechar o modal
-    const closeButton = modal.querySelector(".close");
-    closeButton?.addEventListener("click", () => {
-        modal.remove();
-    });
-
-    // Adiciona o evento de fechar o modal ao clicar fora dele
-    window.addEventListener("click", (event) => {
-        if (event.target === modal) {
-            modal.remove();
-        }
-    });
-
+    // Criar o elemento canvas para o gráfico
+    const canvasContainer = document.createElement('div');
+    
+    // Adicionar o canvas ao container
+    const canvas = document.createElement('canvas');
+    canvas.id = 'statisticsChart';
+    canvasContainer.appendChild(canvas);
+    
+    // Criar o modal com o canvas como conteúdo
+    const modal = createModal("Estatísticas", canvasContainer);
+    
     // Dados mockados para o gráfico
     const data = {
         labels: ['Python', 'Java', 'JavaScript', 'C#', 'Ruby'],
