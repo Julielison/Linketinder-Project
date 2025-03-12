@@ -1,4 +1,4 @@
-import renderNewPage from "@/pages/pageCandidate";
+import renderNewPage from "@/pages/candidatePage";
 import renderCompanyProfile from "./profileCompany";
 
 export default function renderFormsCompany(nameButtonSubmit: string): HTMLFormElement {

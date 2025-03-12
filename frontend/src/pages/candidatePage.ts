@@ -1,4 +1,5 @@
 import renderCandidateProfile from "@/components/profileCandidate";
+import renderJobsPage from "./jobsPage";
 
 export default function renderPageProfileCandidate(): void {
     const mainContent: HTMLElement = renderCandidateProfile();
@@ -24,7 +25,7 @@ export default function renderPageProfileCandidate(): void {
         vagasButton.textContent = "Vagas";
         vagasButton.className = "tab-button";
         vagasButton.addEventListener("click", () => {
-            alert("Você clicou em Vagas!");
+            renderJobsPage();
         });
 
         tabJobs.appendChild(vagasButton);

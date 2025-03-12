@@ -1,0 +1,50 @@
+.job-list {
+    display: flex;
+    flex-direction: column;
+    /* gap: 10px; */
+    min-width: 500px;
+}
+
+.job {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.job-tags {
+    margin-top: 10px;
+}
+
+.job-tag {
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    padding: 2px 5px;
+    margin-right: 5px;
+}
+
+.job-actions {
+    margin-top: 10px;
+    text-align: right;
+}
+
+.like-button {
+    background-color: #6200ea;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.location-company{
+    display: flex;
+    flex-direction: row;
+    gap: 15px
+}
