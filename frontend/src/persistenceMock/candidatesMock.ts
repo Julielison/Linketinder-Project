@@ -3,33 +3,33 @@ import { Candidate } from "../interfaces/Candidate";
 export const mockCandidates: Candidate[] = [
   {
     id: 1,
-    name: "João Silva",
-    email: "joao.silva@email.com",
+    name: "Fulano de Lima",
+    email: "fulano@gmail.com",
     cpf: "123.456.789-00",
-    age: 28,
-    skills: ["JavaScript", "React", "Node.js"],
+    age: 23,
+    skills: ["Java", "Spring", "Docker"],
     formation: {
-      educationalInstitution: "Universidade de São Paulo - Ciência da Computação",
-      startDate: new Date("2015-03-01"),
+      educationalInstitution: "Ciência da Computação - UFSP",
+      startDate: new Date("2015-02-01"),
       endDate: new Date("2019-12-15")
     },
-    description: "Desenvolvedor Full Stack com experiência em aplicações web modernas e APIs RESTful.",
-    isMatched: false
+    description: "Profissional experiente em desenvolvimento backend...",
+    likedByCompanysId: [101, 102] // IDs de empresas que curtiram este candidato
   },
   {
     id: 2,
-    name: "Maria Oliveira",
-    email: "maria.oliveira@email.com",
+    name: "Maria Silva",
+    email: "maria@gmail.com",
     cpf: "987.654.321-00",
-    age: 25,
-    skills: ["Java", "Spring", "PostgreSQL", "AWS"],
+    age: 27,
+    skills: ["React", "TypeScript", "UI/UX"],
     formation: {
-      educationalInstitution: "PUC-Rio - Engenharia de Software",
-      startDate: new Date("2016-02-15"),
-      endDate: new Date("2020-11-30")
+      educationalInstitution: "Design Digital - UFRJ",
+      startDate: new Date("2014-03-01"),
+      endDate: new Date("2018-12-20")
     },
-    description: "Engenheira de software apaixonada por arquitetura e desenvolvimento backend.",
-    isMatched: false
+    description: "Desenvolvedora frontend com foco em experiência do usuário...",
+    likedByCompanysId: [] // Nenhuma empresa curtiu ainda
   },
   {
     id: 3,
@@ -44,7 +44,7 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2016-12-20")
     },
     description: "Frontend developer com foco em experiência do usuário e interfaces responsivas.",
-    isMatched: true
+    likedByCompanysId: []
   },
   {
     id: 4,
@@ -59,7 +59,7 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2018-07-10")
     },
     description: "Cientista de dados com experiência em análise e visualização de dados.",
-    isMatched: false
+    likedByCompanysId: []
   },
   {
     id: 5,
@@ -74,7 +74,7 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2015-06-15")
     },
     description: "Especialista em infraestrutura cloud e CI/CD com foco em automação.",
-    isMatched: false
+    likedByCompanysId: []
   },
   {
     id: 6,
@@ -89,7 +89,7 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2020-12-05")
     },
     description: "Designer de UX/UI com foco em pesquisa de usuários e prototipação.",
-    isMatched: true
+    likedByCompanysId: []
   },
   {
     id: 7,
@@ -104,7 +104,7 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2015-12-20")
     },
     description: "Desenvolvedor .NET com experiência em aplicações corporativas e cloud.",
-    isMatched: false
+    likedByCompanysId: []
   },
   {
     id: 8,
@@ -119,7 +119,7 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2018-12-15")
     },
     description: "Arquiteta de software especializada em sistemas distribuídos e alta disponibilidade.",
-    isMatched: true
+    likedByCompanysId: []
   },
   {
     id: 9,
@@ -134,7 +134,7 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2019-12-10")
     },
     description: "Desenvolvedor mobile multiplataforma com experiência em apps nativos e híbridos.",
-    isMatched: false
+    likedByCompanysId: []
   },
   {
     id: 10,
@@ -149,6 +149,6 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2019-07-20")
     },
     description: "Engenheira de qualidade especializada em automação de testes e garantia de qualidade.",
-    isMatched: true
+    likedByCompanysId: []
   }
 ];

@@ -11,6 +11,5 @@ export interface Candidate {
         endDate: Date
     };
     description: string;
-    isMatched: boolean;
+    likedByCompanysId: number[];
 }
-  
