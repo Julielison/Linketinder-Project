@@ -1,5 +1,6 @@
 import renderCandidateProfile from "@/components/profileCandidate";
 import renderJobsPage from "./jobsPage";
+import renderModalFormsCandidate from "@/components/modalFormsCandidate";
 
 export default function renderPageProfileCandidate(): void {
     // Remove o active de vagas
@@ -9,6 +10,15 @@ export default function renderPageProfileCandidate(): void {
     }
 
     const mainContent: HTMLElement = renderCandidateProfile();
+    const editBtn = mainContent.querySelector(".edit-btn");
+
+    if (editBtn) {
+        editBtn.addEventListener("click", () => {
+            const modalEditProfile = renderModalFormsCandidate("Salvar");
+            document.body.appendChild(modalEditProfile);
+        });
+    }
+    
     const main = document.getElementById("app");
 
     if (main) {

@@ -81,16 +81,17 @@
 
 /* Modal */
 .modal {
-    position: fixed; /* ou absolute */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100%; 
     background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Certifique-se de que o z-index seja alto */
+    z-index: 1000; 
+    overflow: hidden;
 }
 
 .modal-content {
@@ -99,12 +100,24 @@
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .close {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    right: 20px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 40px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.modal-header h2 {
+    margin: 7px;
 }

@@ -1,3 +1,7 @@
+import editPen from "@/assets/img/edit-pen.svg";
+import renderModalFormsCandidate from "./modalFormsCandidate";
+
+
 export default function renderCandidateProfile(): HTMLElement {
     const profileContainer = document.createElement("div");
     profileContainer.className = "profile-container";
@@ -20,7 +24,9 @@ export default function renderCandidateProfile(): HTMLElement {
     profileContainer.innerHTML = /*html*/`
         <div class="profile-header">
             <h2>${candidateData.name}</h2>
-            <button class="edit-btn">✏️</button>
+            <button class="edit-btn">
+                <img src="${editPen}" alt="Editar" id="edit-profile" class="edit-icon" />
+            </button>
         </div>
 
         <div class="profile-section">
