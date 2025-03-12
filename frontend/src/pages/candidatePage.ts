@@ -2,6 +2,12 @@ import renderCandidateProfile from "@/components/profileCandidate";
 import renderJobsPage from "./jobsPage";
 
 export default function renderPageProfileCandidate(): void {
+    // Remove o active de vagas
+    const tabButtonJobs = document.querySelector(".tab-button-jobs");
+    if (tabButtonJobs) {
+        tabButtonJobs.classList.remove("active");
+    }
+
     const mainContent: HTMLElement = renderCandidateProfile();
     const main = document.getElementById("app");
 
@@ -23,7 +29,7 @@ export default function renderPageProfileCandidate(): void {
 
         const vagasButton = document.createElement("button");
         vagasButton.textContent = "Vagas";
-        vagasButton.className = "tab-button";
+        vagasButton.className = "tab-button-jobs tab-button";
         vagasButton.addEventListener("click", () => {
             renderJobsPage();
         });

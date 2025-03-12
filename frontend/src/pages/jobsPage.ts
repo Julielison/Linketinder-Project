@@ -1,6 +1,12 @@
 import createJobElement, { mockJobs } from "@/components/jobComponent";
 
+
 export default function renderJobsPage(): void {
+    const tabButtonJobs = document.querySelector(".tab-button-jobs");
+    if (tabButtonJobs) {
+        tabButtonJobs.classList.add("active");
+    }
+
     const jobListContainer = document.createElement("div");
     jobListContainer.className = "job-list";
 

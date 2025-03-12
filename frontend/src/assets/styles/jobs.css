@@ -74,3 +74,12 @@
     padding: 2px 10px;/* Aumenta o espaço interno, fazendo o fundo se expandir */
 
 }
+
+/* Tab de vagas */
+
+.tab-button-jobs.active {
+    font-weight: bold;
+    color: white !important;
+    border-bottom: 3px solid;
+    border-radius: 0;
+}
