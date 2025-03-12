@@ -1,3 +1,5 @@
+import editPen from "@/assets/img/edit-pen.svg";
+
 export default function renderCompanyProfile(): HTMLElement {
     const profileContainer = document.createElement("div");
     profileContainer.className = "profile-container";
@@ -21,9 +23,12 @@ export default function renderCompanyProfile(): HTMLElement {
     profileContainer.innerHTML = /*html*/`
         <div class="profile-header">
             <h1>${empresaData.name}</h1>
-            <button class="edit-btn">
-                <span class="publish-btn"><strong>Publicar Vaga</strong></span> ✚
-            </button>
+            <div class="profile-buttons">
+                <button class="publish-btn">Publicar Vaga</button>
+                <button class="edit-btn">
+                    <img src="${editPen}" alt="Editar" id="edit-profile" class="edit-icon" />
+                </button>
+            </div>
         </div>
         <div class="profile-section">
             <h3>Contato</h3>

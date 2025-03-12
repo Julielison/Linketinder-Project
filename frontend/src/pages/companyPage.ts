@@ -1,3 +1,4 @@
+import renderModalFormsCompany from "@/components/modalFormsCompany";
 import renderCompanyProfile from "@/components/profileCompany";
 import renderCandidatesPage from "./candidatesPage";
 
@@ -9,6 +10,15 @@ export default function renderCompanyPage(): void {
     }
 
     const mainContent: HTMLElement = renderCompanyProfile();
+    const editBtn = mainContent.querySelector(".edit-btn");
+
+    if (editBtn) {
+        editBtn.addEventListener("click", () => {
+            const modalEditProfile = renderModalFormsCompany("Salvar");
+            document.body.appendChild(modalEditProfile);
+        });
+    }
+
     const main = document.getElementById("app");
 
     if (main) {

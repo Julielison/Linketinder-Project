@@ -20,7 +20,9 @@
     cursor: pointer;
     background-color: #CC82FE;
     border-radius: 10px;
-    padding-top: 5px;
+    padding: 7px 8px;
+    display: flex;
+    align-items: center;
 }
 
 .profile-section {
@@ -43,8 +45,11 @@
     padding: 4px 8px;
     border: 2px solid var(--primary-color);
     border-radius: 7px;
-    font-size: 16px;
+    font-size: 18px;
     margin-right: 6px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
 }
 
 header {
@@ -99,4 +104,13 @@ header {
     cursor: pointer;
     width: 20px;
     height: auto;
+    margin: 0;
+}
+
+.profile-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
 }
