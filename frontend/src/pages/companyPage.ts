@@ -1,4 +1,5 @@
 import renderCompanyProfile from "@/components/profileCompany";
+import renderCandidatesPage from "./candidatesPage";
 
 export default function renderCompanyPage(): void {
     // Remove o active de candidatos
