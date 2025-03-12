@@ -52,7 +52,6 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
                 <label>Data de Fim: 
                     <input type="date" name="end_date" value="${mockUser.end_date}" />
                 </label>
-            </div>
         </fieldset>
         <label>CPF: 
             <input type="text" name="cpf" value="${mockUser.cpf}" placeholder="000.000.000-00" required />

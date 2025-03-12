@@ -4,5 +4,5 @@ export interface Vacancy {
     companyName: string;
     location: string;
     skills: string[];
+    likesCandidates: number[] | null
   }
-  

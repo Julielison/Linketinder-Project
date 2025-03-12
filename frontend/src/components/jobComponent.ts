@@ -11,25 +11,25 @@ export const mockJobs: Job[] = [
     {
         title: "FullStack Developer",
         location: "Local",
-        company: "Anônima",
+        company: "Empresa X",
         tags: ["java", "groovy", "dart"]
     },
     {
         title: "FullStack Developer",
         location: "Local",
-        company: "Anônima",
+        company: "Empresa Y",
         tags: ["java", "groovy", "dart"]
     },
     {
         title: "FullStack Developer",
         location: "Local",
-        company: "Anônima",
+        company: "Empresa Z",
         tags: ["java", "groovy", "dart"]
     },
     {
         title: "FullStack Developer",
         location: "Local",
-        company: "ZG soluções",
+        company: "Empresa W",
         tags: ["java", "groovy", "dart"]
     }
 ];
