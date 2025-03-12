@@ -12,5 +12,5 @@ export interface Candidate {
     };
     description: string;
     isMatched: boolean;
-  }
+}
   
