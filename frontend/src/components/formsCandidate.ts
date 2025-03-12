@@ -85,7 +85,7 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
 
         // Converter para o formato da interface Candidate
         const candidate: Candidate = {
-            id: Math.floor(Math.random() * 10000), // ID aleatório para demo
+            id: 1, // ID fixo para demo
             name: formValues.name,
             email: formValues.email,
             cpf: formValues.cpf,
@@ -97,19 +97,14 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
                 endDate: new Date(formValues.end_date)
             },
             description: formValues.description,
-            isMatched: false
-        };
-
-        // Salvar os dados formatados no localStorage
-        localStorage.setItem("candidateData", JSON.stringify(candidate));
-
-        // Salvar dados extras que não estão na interface Candidate mas que você quer manter
-        const extraData = {
+            likedByCompaniesId: [1], // Empresa com id 1 curtiu o candidato
             cep: formValues.cep,
             country: formValues.country,
             state: formValues.state
         };
-        localStorage.setItem("candidateExtraData", JSON.stringify(extraData));
+
+        // Salvar os dados formatados no localStorage
+        localStorage.setItem("candidateData", JSON.stringify(candidate));
 
         // Atualizar a URL sem recarregar a página
         history.pushState({}, "", "perfilCandidato");

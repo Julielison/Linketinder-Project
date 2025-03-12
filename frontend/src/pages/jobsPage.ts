@@ -1,4 +1,5 @@
-import createJobElement, { mockJobs } from "@/components/jobComponent";
+import createJobElement from "@/components/jobComponent";
+import { mockJobs } from "@/persistenceMock/VacancysMock";
 
 
 export default function renderJobsPage(): void {

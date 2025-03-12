@@ -7,10 +7,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "Tech Solutions",
     location: "Remoto",
     skills: ["JavaScript", "React", "Node.js", "MongoDB"],
-    match: {
-      candidateId: null,
-      companyId: 1
-    }
+    likedByCandidatesId: [1], // O candidato de id 1 curtiu essa vaga
+    idCompany: 1
   },
   {
     id: 2,
@@ -18,10 +16,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "Inovação Digital",
     location: "São Paulo",
     skills: ["Java", "Spring Boot", "PostgreSQL", "Docker"],
-    match: {
-      candidateId: null,
-      companyId: 2
-    }
+    likedByCandidatesId: [],
+    idCompany: 2
   },
   {
     id: 3,
@@ -29,10 +25,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "WebDev Masters",
     location: "Remoto",
     skills: ["HTML", "CSS", "JavaScript", "Vue.js"],
-    match: {
-      candidateId: 3,
-      companyId: 3
-    }
+    likedByCandidatesId: [],
+    idCompany: 3
   },
   {
     id: 4,
@@ -40,10 +34,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "Cloud Systems",
     location: "Rio de Janeiro",
     skills: ["AWS", "Kubernetes", "Docker", "CI/CD", "Terraform"],
-    match: {
-      candidateId: null,
-      companyId: 4
-    }
+    likedByCandidatesId: [],
+    idCompany: 4
   },
   {
     id: 5,
@@ -51,10 +43,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "Data Insights",
     location: "Belo Horizonte",
     skills: ["Python", "SQL", "Power BI", "Excel"],
-    match: {
-      candidateId: null,
-      companyId: 5
-    }
+    likedByCandidatesId: [],
+    idCompany: 5
   },
   {
     id: 6,
@@ -62,10 +52,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "Creative Solutions",
     location: "Remoto",
     skills: ["Figma", "Adobe XD", "Sketch", "Pesquisa de usuário"],
-    match: {
-      candidateId: 6,
-      companyId: 6
-    }
+    likedByCandidatesId: [],
+    idCompany: 6
   },
   {
     id: 7,
@@ -73,10 +61,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "SecureTech",
     location: "Brasília",
     skills: ["Pentest", "OWASP", "Gestão de riscos", "SOC"],
-    match: {
-      candidateId: null,
-      companyId: 7
-    }
+    likedByCandidatesId: [],
+    idCompany: 7
   },
   {
     id: 8,
@@ -84,10 +70,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "Sistemas Corporativos",
     location: "São Paulo",
     skills: ["Microserviços", "Cloud Architecture", "Java", "AWS"],
-    match: {
-      candidateId: 8,
-      companyId: 8
-    }
+    likedByCandidatesId: [],
+    idCompany: 8
   },
   {
     id: 9,
@@ -95,10 +79,8 @@ export const mockJobs: Vacancy[] = [
     companyName: "AppFactory",
     location: "Florianópolis",
     skills: ["React Native", "Kotlin", "Swift", "Firebase"],
-    match: {
-      candidateId: null,
-      companyId: 9
-    }
+    likedByCandidatesId: [],
+    idCompany: 9
   },
   {
     id: 10,
@@ -106,9 +88,7 @@ export const mockJobs: Vacancy[] = [
     companyName: "Quality Systems",
     location: "Porto Alegre",
     skills: ["Testes automatizados", "Selenium", "Cypress", "JIRA"],
-    match: {
-      candidateId: 10,
-      companyId: 10
-    }
+    likedByCandidatesId: [],
+    idCompany: 10
   }
 ];

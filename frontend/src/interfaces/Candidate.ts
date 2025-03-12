@@ -11,5 +11,9 @@ export interface Candidate {
         endDate: Date
     };
     description: string;
-    likedByCompanysId: number[];
+    likedByCompaniesId: number[];
+    cep: string;
+    country: string;
+    state: string;
 }
+
