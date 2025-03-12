@@ -34,3 +34,13 @@ main {
 
 }
 
+.logo {
+  text-decoration: none;  /* Remove o sublinhado do link */
+  color: inherit;         /* Mantém a cor do texto do <h1> */
+  cursor: pointer;        /* Mostra a mãozinha ao passar o mouse */
+}
+
+.logo:hover {
+  color: var(--secondary-color); /* Muda a cor ao passar o mouse (opcional) */
+}
+
