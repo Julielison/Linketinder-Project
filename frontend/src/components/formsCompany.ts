@@ -1,5 +1,4 @@
-import renderNewPage from "@/pages/candidatePage";
-import renderCompanyProfile from "./profileCompany";
+import renderCompanyPage from "@/pages/companyPage";
 
 export default function renderFormsCompany(nameButtonSubmit: string): HTMLFormElement {
     const form = document.createElement("form");
@@ -93,9 +92,7 @@ export default function renderFormsCompany(nameButtonSubmit: string): HTMLFormEl
         // Atualizar a URL sem recarregar a página
         history.pushState({}, "", "perfilEmpresa");
 
-        const mainContent: HTMLElement = renderCompanyProfile();
-
-        renderNewPage(mainContent);
+        renderCompanyPage();
     });
   
     return form;

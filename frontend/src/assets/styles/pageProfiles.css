@@ -52,7 +52,7 @@ header {
     padding: 10px 20px;
 }
 
-.tab-jobs {
+.tab-jobs, .tab-candidates {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -60,18 +60,18 @@ header {
     justify-self: center;
 }
 
-.tab-jobs button {
+.tab-jobs button, .tab-candidates button {
     color: #E0B3FF;
 }
 
-.tab-jobs h2 {
+.tab-jobs h2, .tab-candidates h2 {
     margin: 0;
     text-align: center;
     padding: 5px;
     font-weight: lighter;
 }
 
-.tab-profile {
+.tab-profile, .tab-company-profile{
     display: flex;
     justify-content: flex-end; /* Garante alinhamento à direita */
     align-items: center;
