@@ -1,5 +1,6 @@
 import renderPageProfileCandidate from "@/pages/candidatePage";
 import { Candidate } from "@/interfaces/Candidate";
+import { mockCandidates } from "@/persistenceMock/candidatesMock";
 
 export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElement {
     const form = document.createElement('form');
@@ -85,7 +86,7 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
 
         // Converter para o formato da interface Candidate
         const candidate: Candidate = {
-            id: 1, // ID fixo para demo
+            id: 23, // ID fixo para demo
             name: formValues.name,
             email: formValues.email,
             cpf: formValues.cpf,
@@ -102,12 +103,9 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
             country: formValues.country,
             state: formValues.state
         };
-
-        // Salvar os dados formatados no localStorage
-        localStorage.setItem("candidateData", JSON.stringify(candidate));
-
-        // Atualizar a URL sem recarregar a página
-        history.pushState({}, "", "perfilCandidato");
+        
+        // Salvar os dados no mock
+        mockCandidates.push(candidate);
 
         renderPageProfileCandidate();
     });

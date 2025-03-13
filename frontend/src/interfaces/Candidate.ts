@@ -16,4 +16,3 @@ export interface Candidate {
     country: string;
     state: string;
 }
-

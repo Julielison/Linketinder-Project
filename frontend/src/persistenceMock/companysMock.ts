@@ -2,7 +2,7 @@ import { Company } from "../interfaces/Company";
 
 export const mockCompanies: Company[] = [
   {
-    id: 1,
+    id: 101,
     name: "Tech Solutions",
     email: "contato@techsolutions.com.br",
     cnpj: "12.345.678/0001-90",

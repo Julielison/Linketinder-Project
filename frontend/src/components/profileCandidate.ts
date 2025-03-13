@@ -1,25 +1,13 @@
 import editPen from "@/assets/img/edit-pen.svg";
-import renderModalFormsCandidate from "./modalFormsCandidate";
-
+import { Candidate } from "@/interfaces/Candidate";
+import { mockCandidates } from "@/persistenceMock/candidatesMock";
 
 export default function renderCandidateProfile(): HTMLElement {
     const profileContainer = document.createElement("div");
     profileContainer.className = "profile-container";
 
-    // Dados mockados
-    const candidateData = {
-        name: "Fulano de Lima",
-        email: "fulano@gmail.com",
-        age: 23,
-        academic: "Sistemas para Internet - IFPB - 12/12/2012 - 12/12/2012",
-        skills: ["Java", "Spring", "Docker"],
-        about: "sknskdsn sonsksncksncks knckncksdkcsdbcjksdc skncksdksdbjcdbsjcdbsjdcbsjd sjsdjcbsjdcbsjdcbsjd jsdcjbjsdcjsdcbjsdcjbjsd",
-        address: {
-            cep: "49880-229",
-            state: "Paraíba",
-            country: "Brasil"
-        }
-    };
+    // Recuperar o candidato atual do localStorage
+    const candidateData: Candidate = mockCandidates[mockCandidates.length - 1];
 
     profileContainer.innerHTML = /*html*/`
         <div class="profile-header">
@@ -37,7 +25,7 @@ export default function renderCandidateProfile(): HTMLElement {
 
         <div class="profile-section">
             <h3>Formação acadêmica</h3>
-            <p>${candidateData.academic}</p>
+            <p>${candidateData.formation.educationalInstitution} - ${candidateData.formation.startDate.toLocaleDateString()} - ${candidateData.formation.endDate.toLocaleDateString()}</p>
         </div>
 
         <div class="profile-section">
@@ -47,15 +35,15 @@ export default function renderCandidateProfile(): HTMLElement {
 
         <div class="profile-section">
             <h3>Sobre</h3>
-            <p>${candidateData.about}</p>
+            <p>${candidateData.description}</p>
         </div>
 
         <div class="profile-section">
             <h3>Endereço</h3>
             <div class="address">
-                <p><strong>CEP:</strong> ${candidateData.address.cep}</p>
-                <p><strong>Estado:</strong> ${candidateData.address.state}</p>
-                <p><strong>País:</strong> ${candidateData.address.country}</p>
+                <p><strong>CEP:</strong> ${candidateData.cep}</p>
+                <p><strong>Estado:</strong> ${candidateData.state}</p>
+                <p><strong>País:</strong> ${candidateData.country}</p>
             </div>
         </div>
     `;

@@ -118,8 +118,3 @@ export default function createCandidateElement(candidate: Candidate): HTMLElemen
 
     return candidateElement;
 }
-
-// Função para criar todos os elementos de candidato de uma vez
-export function createCandidateList(): HTMLElement[] {
-    return mockCandidates.map(candidate => createCandidateElement(candidate));
-}

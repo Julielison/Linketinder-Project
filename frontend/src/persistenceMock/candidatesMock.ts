@@ -14,7 +14,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2019-12-15")
     },
     description: "Profissional experiente em desenvolvimento backend...",
-    likedByCompanysId: [101, 102] // IDs de empresas que curtiram este candidato
+    likedByCompaniesId: [101, 102], // IDs de empresas que curtiram este candidato
+    cep: "49880-229",
+    country: "Brasil",
+    state: "Paraíba"
   },
   {
     id: 2,
@@ -29,7 +32,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2018-12-20")
     },
     description: "Desenvolvedora frontend com foco em experiência do usuário...",
-    likedByCompanysId: [] // Nenhuma empresa curtiu ainda
+    likedByCompaniesId: [], // Nenhuma empresa curtiu ainda
+    cep: "22041-001",
+    country: "Brasil",
+    state: "Rio de Janeiro"
   },
   {
     id: 3,
@@ -44,7 +50,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2016-12-20")
     },
     description: "Frontend developer com foco em experiência do usuário e interfaces responsivas.",
-    likedByCompanysId: []
+    likedByCompaniesId: [],
+    cep: "30140-110",
+    country: "Brasil",
+    state: "Minas Gerais"
   },
   {
     id: 4,
@@ -59,7 +68,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2018-07-10")
     },
     description: "Cientista de dados com experiência em análise e visualização de dados.",
-    likedByCompanysId: []
+    likedByCompaniesId: [],
+    cep: "20040-020",
+    country: "Brasil",
+    state: "Rio de Janeiro"
   },
   {
     id: 5,
@@ -74,7 +86,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2015-06-15")
     },
     description: "Especialista em infraestrutura cloud e CI/CD com foco em automação.",
-    likedByCompanysId: []
+    likedByCompaniesId: [],
+    cep: "13083-970",
+    country: "Brasil",
+    state: "São Paulo"
   },
   {
     id: 6,
@@ -89,7 +104,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2020-12-05")
     },
     description: "Designer de UX/UI com foco em pesquisa de usuários e prototipação.",
-    likedByCompanysId: []
+    likedByCompaniesId: [],
+    cep: "01302-907",
+    country: "Brasil",
+    state: "São Paulo"
   },
   {
     id: 7,
@@ -104,7 +122,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2015-12-20")
     },
     description: "Desenvolvedor .NET com experiência em aplicações corporativas e cloud.",
-    likedByCompanysId: []
+    likedByCompaniesId: [],
+    cep: "50740-540",
+    country: "Brasil",
+    state: "Pernambuco"
   },
   {
     id: 8,
@@ -119,7 +140,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2018-12-15")
     },
     description: "Arquiteta de software especializada em sistemas distribuídos e alta disponibilidade.",
-    likedByCompanysId: []
+    likedByCompaniesId: [],
+    cep: "05508-090",
+    country: "Brasil",
+    state: "São Paulo"
   },
   {
     id: 9,
@@ -134,7 +158,10 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2019-12-10")
     },
     description: "Desenvolvedor mobile multiplataforma com experiência em apps nativos e híbridos.",
-    likedByCompanysId: []
+    likedByCompaniesId: [],
+    cep: "88040-900",
+    country: "Brasil",
+    state: "Santa Catarina"
   },
   {
     id: 10,
@@ -149,6 +176,9 @@ export const mockCandidates: Candidate[] = [
       endDate: new Date("2019-07-20")
     },
     description: "Engenheira de qualidade especializada em automação de testes e garantia de qualidade.",
-    likedByCompanysId: []
+    likedByCompaniesId: [],
+    cep: "90040-060",
+    country: "Brasil",
+    state: "Rio Grande do Sul"
   }
 ];

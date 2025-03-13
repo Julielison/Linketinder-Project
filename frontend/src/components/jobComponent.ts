@@ -11,8 +11,8 @@ export default function createJobElement(job: Vacancy): HTMLElement {
     const currentCandidate = savedCandidateData ? JSON.parse(savedCandidateData) : null;
     
     // Verificar se o candidato atual curtiu esta vaga
-    const candidateId = currentCandidate?.id;
-    const isLikedByCandidate = job.likedByCandidatesId?.includes(candidateId);
+    const candidateId = currentCandidate.id;
+    const isLikedByCandidate = job.likedByCandidatesId.includes(candidateId);
 
     // Verificar se a empresa curtiu o candidato
     const candidateIsLikedByCompany = currentCandidate?.likedByCompanysId?.includes(job.idCompany);
