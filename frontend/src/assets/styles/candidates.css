@@ -79,6 +79,14 @@
     height: auto;
 }
 
+#statisticsChart {
+    display: block;
+    justify-self: center;
+    width: 80vw;
+
+}
+
+
 /* Modal */
 .modal {
     position: fixed;
