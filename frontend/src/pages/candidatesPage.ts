@@ -1,6 +1,6 @@
 import renderButtonStatistics from "@/components/buttonStatistics";
 import createCandidateElement from "@/components/candidateComponent";
-import { mockCandidates } from "@/persistenceMock/candidatesMock";
+import { mockCandidates } from "@/dataMocked/candidatesMock";
 
 export default function renderCandidatesPage(): void {
     const tabButtonCandidates = document.querySelector(".tab-button-candidates");

@@ -1,5 +1,5 @@
 import createJobElement from "@/components/jobComponent";
-import { mockJobs } from "@/persistenceMock/VacancysMock";
+import { mockJobs } from "@/dataMocked/VacancysMock";
 
 
 export default function renderJobsPage(): void {

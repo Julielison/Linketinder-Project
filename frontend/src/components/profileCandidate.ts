@@ -1,6 +1,6 @@
 import editPen from "@/assets/img/edit-pen.svg";
 import { Candidate } from "@/interfaces/ICandidate";
-import { mockCandidates } from "@/persistenceMock/candidatesMock";
+import { mockCandidates } from "@/dataMocked/candidatesMock";
 
 export default function renderCandidateProfile(): HTMLElement {
     const profileContainer = document.createElement("div");
