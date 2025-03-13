@@ -1,5 +1,5 @@
 import like from '@/assets/img/like.svg';
-import { Candidate } from '@/interfaces/Candidate';
+import { Candidate } from '@/interfaces/ICandidate';
 import { mockCandidates } from '@/persistenceMock/candidatesMock';
 
 export default function createCandidateElement(candidate: Candidate): HTMLElement {

@@ -1,4 +1,4 @@
-import { Company } from "../interfaces/Company";
+import { Company } from "../interfaces/ICompany";
 
 export const mockCompanies: Company[] = [
   {

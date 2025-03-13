@@ -1,12 +1,15 @@
+import { Vacancy } from "./IVacancy";
+
 export interface Company {
     id: number;
     name: string;
     email: string;
     cnpj: string;
     cep: string;
-    address: string;
     expectedSkills: string[];
+    state: string;
+    country: string;
     description: string;
-    isMatched: boolean;
+    vacancies: Vacancy[];
   }
   

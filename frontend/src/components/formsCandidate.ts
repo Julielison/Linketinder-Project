@@ -1,5 +1,5 @@
 import renderPageProfileCandidate from "@/pages/candidatePage";
-import { Candidate } from "@/interfaces/Candidate";
+import { Candidate } from "@/interfaces/ICandidate";
 import { mockCandidates } from "@/persistenceMock/candidatesMock";
 
 export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElement {

@@ -1,24 +1,12 @@
 import editPen from "@/assets/img/edit-pen.svg";
+import { mockCompanies } from "@/persistenceMock/companysMock";
 
 export default function renderCompanyProfile(): HTMLElement {
     const profileContainer = document.createElement("div");
     profileContainer.className = "profile-container";
     
-    // Dados mockados baseados na imagem
-    const empresaData = {
-        name: "Empresa X",
-        contato: {
-            email: "fulano@gmail.com"
-        },
-        competencias: ["java", "spring", "docker"],
-        sobre: "sknskdsn sonsksncksncks knckncksdkcsdbcjksdc skncksdksdbjcdbsjcdbsjdcbsjd sjsdjcbsjdcbsjdcbsjd jsdcjbjsdcjsdcbjsdcjbjsd",
-        cnpj: "13.638.767/0001-92",
-        endereco: {
-            cep: "49880-229",
-            estado: "Paraíba",
-            pais: "Brasil"
-        }
-    };
+    // Recuperando os dados
+    const empresaData = mockCompanies[mockCompanies.length - 1];
     
     profileContainer.innerHTML = /*html*/`
         <div class="profile-header">
@@ -32,15 +20,15 @@ export default function renderCompanyProfile(): HTMLElement {
         </div>
         <div class="profile-section">
             <h3>Contato</h3>
-            <p><strong>Email:</strong> ${empresaData.contato.email}</p>
+            <p><strong>Email:</strong> ${empresaData.email}</p>
         </div>
         <div class="profile-section">
             <h3>Competências esperadas</h3>
-            <p>${empresaData.competencias.join(", ")}</p>
+            <p>${empresaData.expectedSkills.join(", ")}</p>
         </div>
         <div class="profile-section">
             <h3>Sobre</h3>
-            <p>${empresaData.sobre}</p>
+            <p>${empresaData.description}</p>
         </div>
         <div class="profile-section">
             <h3>CNPJ:</h3>
@@ -49,9 +37,9 @@ export default function renderCompanyProfile(): HTMLElement {
         <div class="profile-section">
             <h3>Endereço</h3>
             <div class="address">
-                <p><strong>CEP:</strong> ${empresaData.endereco.cep}</p>
-                <p><strong>Estado:</strong> ${empresaData.endereco.estado}</p>
-                <p><strong>País:</strong> ${empresaData.endereco.pais}</p>
+                <p><strong>CEP:</strong> ${empresaData.cep}</p>
+                <p><strong>Estado:</strong> ${empresaData.state}</p>
+                <p><strong>País:</strong> ${empresaData.country}</p>
             </div>
         </div>
     `;

@@ -1,4 +1,4 @@
-import { Candidate } from "../interfaces/Candidate";
+import { Candidate } from "../interfaces/ICandidate";
 
 export const mockCandidates: Candidate[] = [
   {

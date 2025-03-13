@@ -1,5 +1,5 @@
 import like from '@/assets/img/like.svg';
-import { Vacancy } from '@/interfaces/Vacancy';
+import { Vacancy } from '@/interfaces/IVacancy';
 import { mockJobs } from '@/persistenceMock/VacancysMock';
 
 export default function createJobElement(job: Vacancy): HTMLElement {

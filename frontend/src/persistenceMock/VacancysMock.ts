@@ -1,4 +1,4 @@
-import { Vacancy } from "../interfaces/Vacancy";
+import { Vacancy } from "../interfaces/IVacancy";
 
 export const mockJobs: Vacancy[] = [
   {
