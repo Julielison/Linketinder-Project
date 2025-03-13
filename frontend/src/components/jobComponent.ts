@@ -1,21 +1,19 @@
 import like from '@/assets/img/like.svg';
 import { Vacancy } from '@/interfaces/IVacancy';
 import { mockJobs } from '@/dataMocked/vacanciesMock';
+import { mockCandidates } from '@/dataMocked/candidatesMock';
 
 export default function createJobElement(job: Vacancy): HTMLElement {
     const jobElement = document.createElement("div");
     jobElement.className = "job";
-
-    // Recuperar o candidato atual do localStorage
-    const savedCandidateData = localStorage.getItem("candidateData");
-    const currentCandidate = savedCandidateData ? JSON.parse(savedCandidateData) : null;
     
     // Verificar se o candidato atual curtiu esta vaga
-    const candidateId = currentCandidate.id;
-    const isLikedByCandidate = job.likedByCandidatesId.includes(candidateId);
+    const currentCandidate = mockCandidates[mockCandidates.length - 1]; // Simulando o candidato atual
+    const candidateId = currentCandidate ? currentCandidate.id : 0;
+    const isLikedByCandidate = job.likedByCandidatesId?.includes(candidateId);
 
     // Verificar se a empresa curtiu o candidato
-    const candidateIsLikedByCompany = currentCandidate?.likedByCompanysId?.includes(job.idCompany);
+    const candidateIsLikedByCompany = currentCandidate?.likedByCompaniesId?.includes(job.idCompany);
     
     // Determinar o nome da empresa a ser exibido
     // Só mostra o nome real da empresa se ambos deram match
@@ -70,7 +68,7 @@ export default function createJobElement(job: Vacancy): HTMLElement {
                     likeButton.querySelector('.like-logo')?.classList.add('liked');
                     
                     // Verificar se agora existe um match
-                    const hasMatch = currentCandidate.likedByCompanysId?.includes(jobToUpdate.idCompany);
+                    const hasMatch = currentCandidate.likedByCompaniesId?.includes(jobToUpdate.idCompany);
                     
                     // Atualizar a exibição do nome da empresa - só mostra se houver match
                     const companyElement = jobElement.querySelector('.job-company');
@@ -88,34 +86,9 @@ export default function createJobElement(job: Vacancy): HTMLElement {
                         companyElement.textContent = "Empresa Anônima";
                     }
                 }
-                
-                // Salvar o estado atualizado
-                if (currentCandidate && !currentCandidate.likedJobs) {
-                    currentCandidate.likedJobs = [];
-                }
-                
-                // Atualizar os likes do candidato
-                if (index === -1) {
-                    // Adicionar à lista de vagas que o candidato curtiu
-                    currentCandidate.likedJobs.push(jobId);
-                } else {
-                    // Remover da lista de vagas que o candidato curtiu
-                    const likedJobIndex = currentCandidate.likedJobs.indexOf(jobId);
-                    if (likedJobIndex !== -1) {
-                        currentCandidate.likedJobs.splice(likedJobIndex, 1);
-                    }
-                }
-                
-                // Atualizar localStorage
-                localStorage.setItem("candidateData", JSON.stringify(currentCandidate));
             }
         });
     }
 
     return jobElement;
-}
-
-// Função para criar todos os elementos de vaga de uma vez
-export function createJobList(): HTMLElement[] {
-    return mockJobs.map(job => createJobElement(job));
 }
