@@ -1,5 +1,5 @@
 import editPen from "@/assets/img/edit-pen.svg";
-import { mockCompanies } from "@/dataMocked/companysMock";
+import { mockCompanies } from "@/dataMocked/companiesMock";
 
 export default function renderCompanyProfile(): HTMLElement {
     const profileContainer = document.createElement("div");

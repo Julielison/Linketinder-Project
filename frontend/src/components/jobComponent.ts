@@ -1,6 +1,6 @@
 import like from '@/assets/img/like.svg';
 import { Vacancy } from '@/interfaces/IVacancy';
-import { mockJobs } from '@/dataMocked/VacancysMock';
+import { mockJobs } from '@/dataMocked/vacanciesMock';
 
 export default function createJobElement(job: Vacancy): HTMLElement {
     const jobElement = document.createElement("div");

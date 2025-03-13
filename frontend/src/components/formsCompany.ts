@@ -1,6 +1,6 @@
 import { Company } from "@/interfaces/ICompany";
 import renderCompanyPage from "@/pages/companyPage";
-import { mockCompanies } from "@/dataMocked/companysMock";
+import { mockCompanies } from "@/dataMocked/companiesMock";
 
 export default function renderFormsCompany(nameButtonSubmit: string): HTMLFormElement {
     const form = document.createElement("form");
