@@ -6,7 +6,7 @@ export default function renderCandidateProfile(): HTMLElement {
     const profileContainer = document.createElement("div");
     profileContainer.className = "profile-container";
 
-    // Recuperar o candidato atual do localStorage
+    // Recuperar o candidato atual
     const candidateData: Candidate = mockCandidates[mockCandidates.length - 1];
 
     profileContainer.innerHTML = /*html*/`

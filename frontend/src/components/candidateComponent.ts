@@ -21,7 +21,6 @@ export default function createCandidateElement(candidate: Candidate): HTMLElemen
     // Só mostra o nome real do candidato se ambos deram match
     const displayCandidateName = isLikedByCompany && companyIsLikedByCandidate ? candidate.name : "Candidato Anônimo";
 
-    // Verificar se a empresa curtiu o candidato para a classe CSS
     const isLiked = isLikedByCompany;
 
     // Recuperando dados estruturados
