@@ -1,5 +1,7 @@
 # LinkeTinder - Frontend
 
+### [Protótipo no figma](https://www.figma.com/design/X9paom54ZgBwymGI3bhvgX/LinkeTinder?node-id=9-130&t=uCXURW8IvyzEMvvw-0)
+
 ## Descrição
 Este projeto é a parte frontend do sistema LinkeTinder, desenvolvido em TypeScript utilizando o Vite como bundler. Ele fornece uma interface web interativa para candidatos e empresas se registrarem, visualizarem perfis, vagas e candidatos.
 
