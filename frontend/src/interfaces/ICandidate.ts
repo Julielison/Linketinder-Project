@@ -15,4 +15,5 @@ export interface Candidate {
     cep: string;
     country: string;
     state: string;
+    phone: string
 }
