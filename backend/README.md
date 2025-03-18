@@ -32,11 +32,11 @@ O projeto é dividido em três camadas principais:
 1. Clone este repositório:
    ```sh
    git clone https://github.com/Julielison/Linketinder-Project.git
-   cd Linketinder-Project
+   cd Linketinder-Project/backend/src
    ```
 2. Execute o sistema com o seguinte comando:
    ```sh
-   groovy MainController.groovy
+   groovy Main.groovy
    ```
 
 ## Funcionalidades
