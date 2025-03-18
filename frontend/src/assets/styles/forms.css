@@ -181,3 +181,18 @@ fieldset label {
     cursor: pointer;
 
 }
+
+input.invalid, textarea.invalid {
+    border-color: red;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+input.invalid + .error-message, textarea.invalid + .error-message {
+    display: block;
+}
