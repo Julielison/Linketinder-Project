@@ -2,7 +2,7 @@ import { Company } from "@/interfaces/ICompany";
 import renderCompanyPage from "@/pages/companyPage";
 import { mockCompanies } from "@/dataMocked/companiesMock";
 import { validateCEP, validateCNPJ, validateCompanyName, validateCountry, validateDescription, validateEmail, validateSkills, validateState } from "@/utils/validations";
-import { removeFeedbackError, showFeedbackError } from "@/utils/errorFeedback";
+import { setupInputValidation, validateAllFields } from "@/utils/validateSubmit";
 
 export default function renderFormsCompany(nameButtonSubmit: string): HTMLFormElement {
     const form = document.createElement("form");
@@ -50,62 +50,26 @@ export default function renderFormsCompany(nameButtonSubmit: string): HTMLFormEl
           </div>
     `;
 
-    let formValid: boolean = false;
-    const setupInputValidation = (form: HTMLFormElement) => {
-        const setupValidation = (
-            nameInput: string, 
-            validationFn: (value: any) => boolean, 
-            errorMessage: string,
-            tag: string = 'input'
-        ) => {
-            const input = form.querySelector(`${tag}[name="${nameInput}"]`) as HTMLInputElement | HTMLTextAreaElement;
-            input?.addEventListener('input', () => {
-                const value = input.value;
-                
-                if (!validationFn(value)) {
-                    showFeedbackError(input, errorMessage);
-                    formValid = false;
-                } else {
-                    removeFeedbackError(input);
-                    formValid = true;
-                }
-            });
-        };
-
-        setupValidation('company_name', validateCompanyName, "O nome da empresa deve ter pelo menos 2 caracteres!");
-        setupValidation('email', validateEmail, "Email inválido");
-        setupValidation('skills', validateSkills, "As competências devem ser separadas por vírgula!");
-        setupValidation('company_description', validateDescription, "A descrição deve conter entre 10 e 500 caracteres!", "textarea");
-        setupValidation('cnpj', validateCNPJ, "O CNPJ deve seguir o formato 00.000.000/0000-00");
-        setupValidation('cep', validateCEP, "O CEP deve conter exatamente 8 dígitos!");
-        setupValidation('country', validateCountry, "O país deve ter entre 2 e 50 caracteres!");
-        setupValidation('state', validateState, "O estado deve ter entre 2 e 50 caracteres!");
-
-        const requiredInputs = form.querySelectorAll('input[required], textarea[required]');
-        requiredInputs.forEach(input => {
-            input.addEventListener('invalid', (event) => {
-                const element = event.target as HTMLInputElement;
-                if (element.validity.valueMissing) {
-                    element.setCustomValidity(`Este campo é obrigatório.`);
-                }
-            });
-            
-            input.addEventListener('input', (event) => {
-                const element = event.target as HTMLInputElement;
-                element.setCustomValidity('');
-            });
-        });
-    };
+    const validationRules = [
+        { name: 'company_name', validator: validateCompanyName, errorMsg: "O nome da empresa deve ter pelo menos 2 caracteres!", tag: 'input' },
+        { name: 'email', validator: validateEmail, errorMsg: "Email inválido", tag: 'input' },
+        { name: 'skills', validator: validateSkills, errorMsg: "As competências devem ser separadas por vírgula!", tag: 'input' },
+        { name: 'company_description', validator: validateDescription, errorMsg: "A descrição deve conter entre 10 e 500 caracteres!", tag: 'textarea' },
+        { name: 'cnpj', validator: validateCNPJ, errorMsg: "O CNPJ deve seguir o formato 00.000.000/0000-00", tag: 'input' },
+        { name: 'cep', validator: validateCEP, errorMsg: "O CEP deve conter exatamente 8 dígitos!", tag: 'input' },
+        { name: 'country', validator: validateCountry, errorMsg: "O país deve ter entre 2 e 50 caracteres!", tag: 'input' },
+        { name: 'state', validator: validateState, errorMsg: "O estado deve ter entre 2 e 50 caracteres!", tag: 'input' }
+    ];
     
-    setupInputValidation(form);
+    setupInputValidation(form, validationRules);
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
-        if (!formValid) {
+        
+        if (!validateAllFields(form, validationRules)) {
             return;
         }
 
-        // Capturar os dados do formulário
         const formData = new FormData(form);
         const companyData: Record<string, string> = {};
 

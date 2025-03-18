@@ -7,7 +7,6 @@ export function showFeedbackError(input: HTMLInputElement | HTMLTextAreaElement 
 }
 
 export function removeFeedbackError(input: HTMLInputElement | HTMLTextAreaElement): void {
-
     input.classList.remove('invalid');
     if (input.nextElementSibling) {
         input.nextElementSibling.textContent = '';

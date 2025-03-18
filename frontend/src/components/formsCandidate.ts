@@ -1,8 +1,8 @@
 import { mockCandidates } from "@/dataMocked/candidatesMock";
 import { Candidate } from "@/interfaces/ICandidate";
 import renderPageProfileCandidate from "@/pages/candidatePage";
-import { removeFeedbackError, showFeedbackError } from "@/utils/errorFeedback";
 import { validateAge, validateCEP, validateCPF, validateCountry, validateDescription, validateEmail, validateLinkedIn, validateNameCandidate, validateNumber, validateSkills, validateState } from "@/utils/validations";
+import { setupInputValidation, validateAllFields } from "@/utils/validateSubmit";
 
 export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElement {
     const form = document.createElement('form');
@@ -76,58 +76,28 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
         </div>
     `;
 
-    const setupInputValidation = (form: HTMLElement) => {
-        const setupValidation = (
-            nameInput: string, 
-            validationFn: (value: any) => boolean, 
-            errorMessage: string,
-            tag: string = 'input'
-        ) => {
-            const input = form.querySelector(`${tag}[name="${nameInput}"]`) as HTMLInputElement | HTMLTextAreaElement;
-            input?.addEventListener('input', () => {
-                const value = input.value
-                
-                if (!validationFn(value)) {
-                    showFeedbackError(input, errorMessage);
-                } else {
-                    removeFeedbackError(input);
-                }
-            });
-        };
-
-        setupValidation('name', validateNameCandidate, "Digite um nome e sobrenome válido!");
-        setupValidation('email', validateEmail, "Email inválido");
-        setupValidation('phone', validateNumber, "Número deve conter exatamente 11 dígitos!");
-        setupValidation('cpf', validateCPF, "O CPF deve conter exatamente 11 dígitos!");
-        setupValidation('cep', validateCEP, "O CEP deve conter exatamente 8 dígitos!");
-        setupValidation('age', validateAge, "A idade deve ser maior que 15");
-        setupValidation('skills', validateSkills, "As competências devem ser separadas por vírgula!");
-        setupValidation('linkedin', validateLinkedIn, "Siga essa formatação: https://linkedin.com.br/in/seu_usuário");
-        setupValidation('description', validateDescription, "A descrição deve conter entre 10 e 500 caracteres!", "textarea");
-        setupValidation('country', validateCountry, "O país deve ter entre 2 e 50 caracteres!");
-        setupValidation('state', validateState, "O estado deve ter entre 2 e 50 caracteres!");
-
-        
-        const requiredInputs = form.querySelectorAll('input[required], textarea[required]');
-        requiredInputs.forEach(input => {
-            input.addEventListener('invalid', (event) => {
-                const element = event.target as HTMLInputElement;
-                if (element.validity.valueMissing) {
-                    element.setCustomValidity(`Este campo é obrigatório.`);
-                }
-            });
-            
-            input.addEventListener('input', (event) => {
-                const element = event.target as HTMLInputElement;
-                element.setCustomValidity('');
-            });
-        });
-    };
+    const validationRules = [
+        { name: 'name', validator: validateNameCandidate, errorMsg: "Digite um nome e sobrenome válido!", tag: 'input' },
+        { name: 'email', validator: validateEmail, errorMsg: "Email inválido", tag: 'input' },
+        { name: 'phone', validator: validateNumber, errorMsg: "Número deve conter exatamente 11 dígitos!", tag: 'input' },
+        { name: 'cpf', validator: validateCPF, errorMsg: "O CPF deve conter exatamente 11 dígitos!", tag: 'input' },
+        { name: 'cep', validator: validateCEP, errorMsg: "O CEP deve conter exatamente 8 dígitos!", tag: 'input' },
+        { name: 'age', validator: validateAge, errorMsg: "Idade mínima > 15", tag: 'input' },
+        { name: 'skills', validator: validateSkills, errorMsg: "As competências devem ser separadas por vírgula!", tag: 'input' },
+        { name: 'linkedin', validator: validateLinkedIn, errorMsg: "Siga essa formatação: https://linkedin.com.br/in/seu_usuário", tag: 'input' },
+        { name: 'description', validator: validateDescription, errorMsg: "A descrição deve conter entre 10 e 500 caracteres!", tag: 'textarea' },
+        { name: 'country', validator: validateCountry, errorMsg: "O país deve ter entre 2 e 50 caracteres!", tag: 'input' },
+        { name: 'state', validator: validateState, errorMsg: "O estado deve ter entre 2 e 50 caracteres!", tag: 'input' }
+    ];
     
-    setupInputValidation(form);
+    setupInputValidation(form, validationRules);
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
+        
+        if (!validateAllFields(form, validationRules)) {
+            return;
+        }
 
         const formData = new FormData(form);
         const formValues: Record<string, string> = {};
@@ -135,7 +105,6 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
         formData.forEach((value, key) => {
             formValues[key] = value.toString();
         });
-
 
         const candidate: Candidate = {
             id: 23, // ID fixo para demo
