@@ -14,12 +14,12 @@ export function validateCNPJ(cnpj: string): boolean {
 }
 
 export function validateCEP(cep: string): boolean {
-    const cepRegex = /^d{8}$/;
+    const cepRegex = /^\d{8}$/;
     return cepRegex.test(cep);
 }
 
-export function validateAge(age: number): boolean {
-    return age >= 16 ? true : false;
+export function validateAge(age: string): boolean {
+    return parseInt(age) >= 16 ? true : false;
 }
 
 export function validateNameCandidate(name: string): boolean {
@@ -28,11 +28,32 @@ export function validateNameCandidate(name: string): boolean {
 }
 
 export function validateSkills(skills: string): boolean {
-    const skillsArray = skills.split(',').map(skill => skill.trim());
-    return skillsArray.length > 0 && skillsArray.every(skill => skill.length > 0);
+    const skillsRegex = /^\w+(, \w+)*$/;
+    return skillsRegex.test(skills);
 }
 
 export function validateLinkedIn(linkedin: string): boolean {
     const linkedinRegex = /^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$/;
     return linkedinRegex.test(linkedin);
+}
+
+export function validateNumber(number: string): boolean {
+    const numberRegex = /^(\d{11})$/;
+    return numberRegex.test(number.toString());
+}
+
+export function validateDescription(description: string): boolean {
+    return description.length >= 10 && description.length <= 500;
+}
+
+export function validateCountry(country: string): boolean {
+    return country.length >= 2 && country.length <= 50;
+}
+
+export function validateState(state: string): boolean {
+    return state.length >= 2 && state.length <= 50;
+}
+
+export function validateCompanyName(value: string): boolean {
+    return value.length >= 2;
 }

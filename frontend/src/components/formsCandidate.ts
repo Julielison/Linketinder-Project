@@ -1,8 +1,8 @@
-import renderPageProfileCandidate from "@/pages/candidatePage";
-import { Candidate } from "@/interfaces/ICandidate";
 import { mockCandidates } from "@/dataMocked/candidatesMock";
-import { validateEmail, validateCPF, validateCEP, validateAge, validateNameCandidate, validateSkills, validateLinkedIn } from "@/utils/validations";
-import { showMessageError } from "@/utils/errorFeedback";
+import { Candidate } from "@/interfaces/ICandidate";
+import renderPageProfileCandidate from "@/pages/candidatePage";
+import { removeFeedbackError, showFeedbackError } from "@/utils/errorFeedback";
+import { validateAge, validateCEP, validateCPF, validateCountry, validateDescription, validateEmail, validateLinkedIn, validateNameCandidate, validateNumber, validateSkills, validateState } from "@/utils/validations";
 
 export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElement {
     const form = document.createElement('form');
@@ -24,7 +24,7 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
             <span class="error-message">Email inválido.</span>
         </label>
         <label>Número de Telefone*
-            <input type="text" name="phone" placeholder="(00) 00000-0000" required />
+            <input type="text" name="phone" placeholder="Digite apenas números (incluindo ddd)" required />
             <span class="error-message">Número de telefone inválido.</span>
         </label>
         <label>Linkedin*
@@ -76,6 +76,55 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
         </div>
     `;
 
+    const setupInputValidation = (form: HTMLElement) => {
+        const setupValidation = (
+            nameInput: string, 
+            validationFn: (value: any) => boolean, 
+            errorMessage: string,
+            tag: string = 'input'
+        ) => {
+            const input = form.querySelector(`${tag}[name="${nameInput}"]`) as HTMLInputElement | HTMLTextAreaElement;
+            input?.addEventListener('input', () => {
+                const value = input.value
+                
+                if (!validationFn(value)) {
+                    showFeedbackError(input, errorMessage);
+                } else {
+                    removeFeedbackError(input);
+                }
+            });
+        };
+
+        setupValidation('name', validateNameCandidate, "Digite um nome e sobrenome válido!");
+        setupValidation('email', validateEmail, "Email inválido");
+        setupValidation('phone', validateNumber, "Número deve conter exatamente 11 dígitos!");
+        setupValidation('cpf', validateCPF, "O CPF deve conter exatamente 11 dígitos!");
+        setupValidation('cep', validateCEP, "O CEP deve conter exatamente 8 dígitos!");
+        setupValidation('age', validateAge, "A idade deve ser maior que 15");
+        setupValidation('skills', validateSkills, "As competências devem ser separadas por vírgula!");
+        setupValidation('linkedin', validateLinkedIn, "Siga essa formatação: https://linkedin.com.br/in/seu_usuário");
+        setupValidation('description', validateDescription, "A descrição deve conter entre 10 e 500 caracteres!", "textarea");
+        setupValidation('country', validateCountry, "O país deve ter entre 2 e 50 caracteres!");
+        setupValidation('state', validateState, "O estado deve ter entre 2 e 50 caracteres!");
+
+        
+        const requiredInputs = form.querySelectorAll('input[required], textarea[required]');
+        requiredInputs.forEach(input => {
+            input.addEventListener('invalid', (event) => {
+                const element = event.target as HTMLInputElement;
+                if (element.validity.valueMissing) {
+                    element.setCustomValidity(`Este campo é obrigatório.`);
+                }
+            });
+            
+            input.addEventListener('input', (event) => {
+                const element = event.target as HTMLInputElement;
+                element.setCustomValidity('');
+            });
+        });
+    };
+    
+    setupInputValidation(form);
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -87,43 +136,6 @@ export default function renderFormsCandidate(nameButtonSubmit: string): HTMLElem
             formValues[key] = value.toString();
         });
 
-        let isValid = true;
-
-        if (!validateEmail(formValues.email)) {
-            showMessageError('email', "Email inválido")
-            isValid = false;
-        }
-        
-        if (!validateCPF(formValues.cpf)) {
-            showMessageError('cpf', "O CPF deve conter exatamente 11 dígitos!")
-            isValid = false;
-        }
-
-        if (!validateCEP(formValues.cep)) {
-            showMessageError('cep', "O CEP deve conter exatamente 8 dígitos!")
-            isValid = false;
-        }
-        if (!validateAge(parseInt(formValues.age))) {
-            showMessageError('age', "A idade deve  ser maior que 15")
-            isValid = false;
-        }
-        if (!validateNameCandidate(formValues.name)) {
-            showMessageError('name', "Digite ao menos nome e sobrenome")
-            isValid = false;
-        }
-
-        if (!validateSkills(formValues.skills)) {
-            showMessageError("skills", 'As competências devem ser separadas por vírgula!')
-            isValid = false;
-        }
-        if (!validateLinkedIn(formValues.linkedin)) {
-            showMessageError("linkedin", 'Siga essa formatação: https://linkedin.com.br/in/seu_usuário')
-            isValid = false;
-        }
-
-        if (!isValid) {
-            return;
-        }
 
         const candidate: Candidate = {
             id: 23, // ID fixo para demo
