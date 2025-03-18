@@ -39,6 +39,12 @@ O projeto está organizado da seguinte forma:
 - `pageProfiles.css`: Estilos para perfis.
 - `candidates.css`: Estilos para listagem de candidatos.
 
+### Utilidades
+- `modalUtils.ts`: Funções para criar e gerenciar modais reutilizáveis.
+- `errorFeedback.ts`: Utilitários para exibir e remover mensagens de erro nos formulários.
+- `validateSubmit.ts`: Sistema de validação de formulários com regras personalizáveis.
+- `validations.ts`: Conjunto de funções de validação para diferentes tipos de dados (email, CPF, CNPJ, etc).
+
 ### Mock de Dados
 - `candidatesMock.ts`: Dados fictícios de candidatos.
 - `companiesMock.ts`: Dados fictícios de empresas.
