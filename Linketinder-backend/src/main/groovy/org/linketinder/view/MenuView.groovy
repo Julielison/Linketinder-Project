@@ -1,4 +1,4 @@
-package main.view
+package org.linketinder.view
 
 class MenuView {
     static void showMenu() {

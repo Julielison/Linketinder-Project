@@ -1,4 +1,4 @@
-package main.model
+package org.linketinder.model
 
 class Candidato extends Pessoa {
     String cpf

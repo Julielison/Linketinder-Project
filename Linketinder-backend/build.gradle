@@ -1,0 +1,28 @@
+plugins {
+    id 'groovy'
+}
+
+group = 'org.linketinder'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation fileTree('/home/julielison/.sdkman/candidates/groovy/4.0.25/lib') {
+        include '*.jar'
+        include '*/*.jar'
+    }
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // Adicionando Spock
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+    testImplementation 'org.apache.groovy:groovy-json:4.0.25' // Caso precise manipular JSON
+}
+
+
+test {
+    useJUnitPlatform()
+}

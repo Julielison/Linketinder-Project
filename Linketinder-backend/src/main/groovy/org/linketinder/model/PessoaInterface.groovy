@@ -1,4 +1,4 @@
-package main.model
+package org.linketinder.model
 
 interface PessoaInterface {
         String getNome()
