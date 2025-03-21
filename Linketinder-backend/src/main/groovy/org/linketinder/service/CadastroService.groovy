@@ -1,10 +1,10 @@
-package main.service
+package org.linketinder.service
 
-import main.model.Candidato
-import main.model.Empresa
-import main.model.Pessoa
-import main.repository.CandidatoRepository
-import main.repository.EmpresaRepository
+import org.linketinder.model.Candidato
+import org.linketinder.model.Empresa
+import org.linketinder.model.Pessoa
+import org.linketinder.repository.CandidatoRepository
+import org.linketinder.repository.EmpresaRepository
 
 class CadastroService {
 

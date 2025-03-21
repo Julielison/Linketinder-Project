@@ -1,6 +1,7 @@
-package main.repository
+package org.linketinder.repository
 
-import main.model.Empresa
+import org.linketinder.model.Empresa
+
 
 class EmpresaRepository {
     static private List<Empresa> empresas = []

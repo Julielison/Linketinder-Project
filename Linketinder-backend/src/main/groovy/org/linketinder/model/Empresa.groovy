@@ -1,4 +1,4 @@
-package main.model
+package org.linketinder.model
 
 class Empresa extends Pessoa {
     String cnpj

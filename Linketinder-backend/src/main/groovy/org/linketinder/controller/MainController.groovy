@@ -1,9 +1,9 @@
-package main.controller
+package org.linketinder.controller
 
-import main.repository.CandidatoRepository
-import main.repository.EmpresaRepository
-import main.service.CadastroService
-import main.view.MenuView
+import org.linketinder.repository.CandidatoRepository
+import org.linketinder.repository.EmpresaRepository
+import org.linketinder.service.CadastroService
+import org.linketinder.view.MenuView
 
 
 class MainController {
@@ -24,7 +24,7 @@ class MainController {
                 case 3:
                     def dadosEmpresa = MenuView.getEmpresaInput()
                     CadastroService.cadastrarEmpresa(dadosEmpresa)
-                    view.showFeedbackInsercao("Empresa")
+                    view.showFeedbackInsercao("E'mpresa")
                     break
                 case 4:
                     def dadosCandidato = MenuView.getCandidatoInput()

@@ -1,4 +1,4 @@
-package main.model
+package org.linketinder.model
 
 abstract class Pessoa implements PessoaInterface {
     String nome

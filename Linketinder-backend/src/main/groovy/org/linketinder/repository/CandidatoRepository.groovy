@@ -1,6 +1,7 @@
-package main.repository
+package org.linketinder.repository
 
-import main.model.Candidato
+import org.linketinder.model.Candidato
+
 
 class CandidatoRepository {
     static private List<Candidato> candidatos = []
@@ -21,4 +22,5 @@ class CandidatoRepository {
     static List<Candidato> getCandidatos(){
         return candidatos
     }
+
 }

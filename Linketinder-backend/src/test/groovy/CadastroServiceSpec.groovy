@@ -1,10 +1,9 @@
-package test
-
-
-import main.model.Candidato
-import main.model.Empresa
 import spock.lang.Specification
-import main.repository.*
+import org.linketinder.model.Candidato
+import org.linketinder.model.Empresa
+import org.linketinder.repository.CandidatoRepository
+import org.linketinder.repository.EmpresaRepository
+
 
 class CadastroServiceSpec extends Specification {
 
