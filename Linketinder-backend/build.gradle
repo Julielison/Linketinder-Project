@@ -1,5 +1,6 @@
 plugins {
     id 'groovy'
+    id 'application'
 }
 
 group = 'org.linketinder'
@@ -24,7 +25,15 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.6.0'
 }
 
-
 test {
     useJUnitPlatform()
+}
+
+// Ponto de entrada
+application {
+    mainClass = 'org.linketinder.Main'
+}
+
+run {
+    standardInput = System.in
 }
