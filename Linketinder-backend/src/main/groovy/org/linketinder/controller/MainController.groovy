@@ -24,7 +24,7 @@ class MainController {
                 case 3:
                     def dadosEmpresa = MenuView.getEmpresaInput()
                     CadastroService.cadastrarEmpresa(dadosEmpresa)
-                    view.showFeedbackInsercao("E'mpresa")
+                    view.showFeedbackInsercao("Empresa")
                     break
                 case 4:
                     def dadosCandidato = MenuView.getCandidatoInput()

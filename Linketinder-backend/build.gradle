@@ -19,7 +19,9 @@ dependencies {
 
     // Adicionando Spock
     testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
-    testImplementation 'org.apache.groovy:groovy-json:4.0.25' // Caso precise manipular JSON
+
+    // Jdbc
+    implementation 'org.postgresql:postgresql:42.6.0'
 }
 
 
