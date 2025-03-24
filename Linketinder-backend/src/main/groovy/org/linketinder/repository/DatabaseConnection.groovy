@@ -4,7 +4,7 @@ import groovy.sql.Sql
 import java.sql.SQLException
 
 class DatabaseConnection {
-    private static final String URL = "jdbc:postgresql://localhost/Linketinder"
+    private static final String URL = "jdbc:postgresql://localhost/linketinder"
     private static final String USER = 'julielison'
     private static final String PASSWORD = 'teste'
     private static final String DRIVER = 'org.postgresql.Driver'

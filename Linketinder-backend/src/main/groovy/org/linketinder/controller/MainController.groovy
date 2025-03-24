@@ -2,6 +2,7 @@ package org.linketinder.controller
 
 import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.EmpresaRepository
+import org.linketinder.service.CadastroService
 import org.linketinder.view.MenuView
 
 
@@ -22,6 +23,7 @@ class MainController {
                     break
                 case 3:
                     def dadosEmpresa = MenuView.getEmpresaInput()
+                    CadastroService.cadastrarEmpresa(dadosEmpresa)
                     view.showFeedbackInsercao("Empresa")
                     break
                 case 4:

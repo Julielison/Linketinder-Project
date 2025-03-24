@@ -1,14 +1,17 @@
 package org.linketinder.repository
 
+import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import org.linketinder.model.Empresa
 
+import java.sql.SQLException
+
 class EmpresaRepository {
     private static List<Empresa> empresas = []
+    private static Sql sql = DatabaseConnection.getInstance()
 
     static List<Empresa> getEmpresas() {
         empresas.clear()
-        Sql sql = DatabaseConnection.getInstance()
         String query = """
             SELECT 
                 e.id AS empresa_id,
@@ -52,65 +55,68 @@ class EmpresaRepository {
     }
 
     static void addEmpresa(Empresa empresa) {
-        Sql sql = DatabaseConnection.getInstance()
-        
+        String paisOndeReside = empresa.getPaisOndeReside()
+
         try {
-            // Verificar se o país já existe ou inserir
-            def paisId = obterOuCriarPais(sql, empresa.paisOndeReside)
-            
-            // Inserir o endereço
-            def enderecoId = inserirEndereco(sql, empresa.cep, paisId)
-            
-            // Inserir a empresa
-            def keys = sql.executeInsert("""
-                INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, [
-                empresa.nome,
-                empresa.cnpj,
-                empresa.email,
-                empresa.descricao,
-                empresa.senhaLogin, 
-                enderecoId
-            ])
-            
-            // Obter o ID da empresa recém-inserida
-            def empresaId = keys[0][0]
-            
-            // Se a empresa tiver vagas, adicioná-las
-            if (empresa.vagas) {
-                empresa.vagas.each { vaga ->
-                    // Assumindo uma implementação de VagaRepository com um método addVaga
-                    vaga.idEmpresa = empresaId
-                    VagaRepository.addVaga(vaga)
-                }
+            def paisId = obterIdPais(paisOndeReside)
+            if (!paisId) {
+                paisId = inserirPais(paisOndeReside)
             }
-            
-            println("Empresa ${empresa.nome} adicionada com sucesso!")
-            
+
+            def enderecoId = inserirEndereco(empresa.getCep(), paisId)
+
+            def result = sql.executeInsert("""
+            INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, [
+                    empresa.nome,
+                    empresa.cnpj,
+                    empresa.email,
+                    empresa.descricao,
+                    empresa.senhaLogin,
+                    enderecoId
+            ])
+
+            def empresaId = result[0][0]
+            empresa.setId(empresaId)
+            empresas.add(empresa)
+
         } catch (Exception e) {
             println("Erro ao adicionar empresa: ${e.message}")
             e.printStackTrace()
         }
     }
     
-    private static Integer obterOuCriarPais(Sql sql, String nomePais) {
-        def paisRow = sql.firstRow("SELECT id FROM PAIS_DE_RESIDENCIA WHERE nome = ?", [nomePais])
-        if (paisRow) {
-            return paisRow.id
-        } else {
-            def keys = sql.executeInsert("INSERT INTO PAIS_DE_RESIDENCIA (nome) VALUES (?)", [nomePais])
-            return keys[0][0] as Integer
+    private static Integer obterIdPais(String nomePais) {
+        try {
+            GroovyRowResult paisRow = sql.firstRow("SELECT id FROM PAIS_DE_RESIDENCIA WHERE nome = ?", [nomePais])
+            if (paisRow) {
+            return paisRow.id as Integer
+            }
+        } catch (SQLException e) {
+            println(e.getMessage())
+            e.printStackTrace()
         }
+        return null
     }
     
-    private static Integer inserirEndereco(Sql sql, String cep, Integer paisId) {
+    private static Integer inserirEndereco(String cep, Integer paisId) {
         def enderecoRow = sql.firstRow("SELECT id FROM ENDERECO WHERE cep = ?", [cep])
         if (enderecoRow) {
             return enderecoRow.id
         } else {
             def keys = sql.executeInsert("INSERT INTO ENDERECO (cep, pais_id) VALUES (?, ?)", [cep, paisId])
             return keys[0][0] as Integer
+        }
+    }
+
+    private static Integer inserirPais(String nome) {
+        try {
+            def row = sql.executeInsert("INSERT INTO PAIS_DE_RESIDENCIA(nome) VALUES(?)", [nome])
+            return row[0][0]
+        } catch (SQLException e) {
+            e.printStackTrace()
+            return null
         }
     }
 }

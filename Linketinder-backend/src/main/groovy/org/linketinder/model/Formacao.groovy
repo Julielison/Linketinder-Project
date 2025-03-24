@@ -13,7 +13,8 @@ class Formacao {
              String instituicao,
              String nomeCurso,
              Date dataInicio,
-             Date dataFim) {
+             Date dataFim)
+    {
         this.id = id
         this.instituicao = instituicao
         this.nomeCurso = nomeCurso
