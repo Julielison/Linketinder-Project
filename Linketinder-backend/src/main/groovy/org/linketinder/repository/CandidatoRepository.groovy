@@ -42,7 +42,8 @@ class CandidatoRepository {
                         row.candidato_descricao_pessoal as String,
                         row.candidato_senha_de_login as String,
                         row.pais_nome as String,
-                        CompetenciaRepository.getCompetencias(idCandidato)
+                        CompetenciaRepository.getCompetencias(idCandidato),
+                        FormacaoRepository.getFormacoesByIdCandidato(idCandidato)
                 )
                 candidatos.add(candidato)
             }
@@ -54,4 +55,5 @@ class CandidatoRepository {
         }
     }
 
+    // ... outros métodos existentes
 }

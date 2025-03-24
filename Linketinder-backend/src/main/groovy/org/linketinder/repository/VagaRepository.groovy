@@ -86,7 +86,6 @@ class VagaRepository {
                 vaga.idEmpresa
             ])
             
-            // Atualizar o ID da vaga com o valor gerado pelo banco
             vaga.id = keys[0][0] as Integer
             
             println("Vaga '${vaga.nome}' adicionada com sucesso!")
@@ -125,11 +124,9 @@ class VagaRepository {
         Sql sql = DatabaseConnection.getInstance()
         
         try {
-            // Primeiro remover possíveis referências em tabelas relacionadas
             sql.executeUpdate("DELETE FROM VAGA_COMPETENCIA WHERE id_vaga = ?", [vagaId])
             sql.executeUpdate("DELETE FROM CANDIDATO_CURTE_VAGA WHERE id_vaga = ?", [vagaId])
             
-            // Depois remover a vaga
             sql.executeUpdate("DELETE FROM VAGA WHERE id = ?", [vagaId])
             
             println("Vaga ID ${vagaId} removida com sucesso!")

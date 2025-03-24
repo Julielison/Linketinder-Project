@@ -4,6 +4,7 @@ class Candidato extends Pessoa {
     String cpf
     Date dataNascimento
     List<Competencia> competencias
+    List<Formacao> formacoes
 
     Candidato(Integer id,
               String nome,
@@ -14,12 +15,14 @@ class Candidato extends Pessoa {
               String descricao,
               String senhaLogin,
               String paisOndeReside,
-              List<Competencia> competencias)
+              List<Competencia> competencias,
+              List<Formacao> formacoes)
     {
         super(id, nome, email, cep, descricao, senhaLogin, paisOndeReside)
         this.cpf = cpf
         this.dataNascimento = dataNascimento
         this.competencias = competencias
+        this.formacoes = formacoes
     }
 
 
@@ -28,6 +31,7 @@ class Candidato extends Pessoa {
         return super.toString() + """
         CPF: ${cpf}
         Data de Nascimento: ${dataNascimento}
-        Competências: ${competencias.join(', ')}"""
+        Competências: ${competencias.join(', ')}
+        Formações: ${formacoes.join('\n\t')}"""
     }
 }
