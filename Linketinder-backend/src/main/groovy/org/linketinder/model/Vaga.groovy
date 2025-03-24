@@ -23,10 +23,10 @@ class Vaga {
     @Override
     String toString() {
         return """
-        Nome da Vaga: ${nome}
-        Descrição: ${descricao}
-        Local: ${local}
-        """
+            Nome da Vaga: ${nome}
+            Descrição: ${descricao}
+            Local: ${local}
+            """
     }
 
 }

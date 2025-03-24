@@ -13,20 +13,17 @@ class Empresa extends Pessoa {
             String descricao,
             String senhaLogin,
             String paisOndeReside,
-            String estado,
             List<Vaga> vagas)
     {
         super(id, nome, email, cep, descricao, senhaLogin, paisOndeReside)
         this.cnpj = cnpj
-        this.estado = estado
         this.vagas = vagas
     }
 
     @Override
     String toString() {
-        return """
+        return super.toString() + """
         CNPJ: ${cnpj}
-        Estado: ${estado}
         Vagas: ${vagas}
         """
     }

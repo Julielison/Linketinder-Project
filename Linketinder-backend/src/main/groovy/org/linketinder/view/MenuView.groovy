@@ -1,29 +1,48 @@
 package org.linketinder.view
 
+import org.linketinder.model.Pessoa
+
 class MenuView {
     static void showMenu() {
         println "\n=== Menu ==="
-        println "1. Listar Candidatos"
-        println "2. Listar Empresas"
+        println "1. Listar dados dos candidatos"
+        println "2. Listar dados das Empresas"
         println "3. Adicionar Empresa"
-        println "4. Adicionar Candidato"
+        println "4. Obter dados de uma empresa"
+        println "5. Atualizar dados de uma empresa"
+        println "6. Remover Empresa"
+        println "7. Adicionar Candidato"
+        println "8. Remover dados de um candidato"
+        println "9. Atualizar candidato"
+        println "10. Remover candidato"
+        println "11. Listar vagas"
+        println "12. Listar todas as competências"
         println "0. Sair"
         print "Escolha uma opção: "
     }
 
-    static void showPessoas(List pessoas, String tipoPessoa) {
+    static void showPessoas(List<Pessoa> pessoas, String tipoPessoa) {
         println "\n--- Lista de ${tipoPessoa} ---"
         if (pessoas.isEmpty()) {
             println "Nenhum ${tipoPessoa} cadastrado."
         } else {
-            pessoas.each { println it }
+            pessoas.each {Pessoa it -> println it }
         }
     }
 
     static int getUserInput() {
         try {
-            return System.in.newReader().readLine() as int
-        } catch (Exception ignored) {
+            String input = System.in.newReader().readLine()
+            if (input == null || input.trim().isEmpty()) {
+                println "Entrada vazia. Por favor, digite um número."
+                return -1
+            }
+            return input.trim().toInteger()
+        } catch (NumberFormatException e) {
+            println "Por favor, digite apenas números."
+            return -1
+        } catch (Exception e) {
+            println "Erro ao ler a opção: ${e.message}"
             return -1
         }
     }
