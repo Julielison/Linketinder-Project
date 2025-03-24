@@ -6,30 +6,37 @@ plugins {
 group = 'org.linketinder'
 version = '1.0-SNAPSHOT'
 
+ext {
+    groovyVersion = '4.0.25'
+    junitVersion = '5.10.0'
+    spockVersion = '2.3-groovy-4.0'
+    postgresVersion = '42.6.0'
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation fileTree('/home/julielison/.sdkman/candidates/groovy/4.0.25/lib') {
-        include '*.jar'
-        include '*/*.jar'
-    }
-    testImplementation platform('org.junit:junit-bom:5.10.0')
+    implementation "org.apache.groovy:groovy-all:${groovyVersion}"
+
+    testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
-    // Adicionando Spock
-    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+    testImplementation "org.spockframework:spock-core:${spockVersion}"
 
-    // Jdbc
-    implementation 'org.postgresql:postgresql:42.6.0'
+    implementation "org.postgresql:postgresql:${postgresVersion}"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 test {
     useJUnitPlatform()
 }
 
-// Ponto de entrada
 application {
     mainClass = 'org.linketinder.Main'
 }
