@@ -16,7 +16,7 @@ class MainController {
             int opcao = view.getUserInput()
             switch(opcao) {
                 case 1:
-                    view.showPessoas(CandidatoRepository.getCandidatos(), 'candidados')
+                    view.showPessoas(CandidatoRepository.getCandidatos(), 'candidatos')
                     break
                 case 2:
                     view.showPessoas(EmpresaRepository.getEmpresas(), 'empresas')

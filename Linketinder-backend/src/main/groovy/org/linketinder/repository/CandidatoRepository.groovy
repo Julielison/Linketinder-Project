@@ -1,26 +1,39 @@
 package org.linketinder.repository
 
+import groovy.sql.Sql
 import org.linketinder.model.Candidato
 
-
 class CandidatoRepository {
-    static private List<Candidato> candidatos = []
-    static {
-        candidatos = [
-                new Candidato("Carlos Silva", "carlos@gmail.com", "12345678900", 30, "SP", "01000-000", "Desenvolvedor Full Stack", ["Java", "Spring", "Angular"]),
-                new Candidato("Ana Souza", "ana@gmail.com", "09876543211", 25, "RJ", "20000-000", "Analista de Sistemas", ["Python", "Django"]),
-                new Candidato("Mariana Costa", "mari@gmail.com", "11122233344", 28, "MG", "30000-000", "Engenheira de Software", ["Java", "Groovy", "Angular"]),
-                new Candidato("João Pereira", "joao@gmail.com", "55566677788", 35, "RS", "90000-000", "Arquiteto de Soluções", ["Python", "Flask", "JavaScript"]),
-                new Candidato("Fernanda Lima", "fernanda@gmail.com", "99988877766", 32, "SC", "88000-000", "DevOps Engineer", ["Docker", "Kubernetes", "AWS"])
-        ]
-    }
+    private static List<Candidato> candidatos = []
 
-    static void addCandidato(Candidato candidato) {
-        candidatos.add(candidato)
-    }
+    static List<Candidato> getCandidatos() {
+        candidatos.clear()
+        Sql sql = DatabaseConnection.getInstance()
 
-    static List<Candidato> getCandidatos(){
-        return candidatos
+        try {
+            sql.eachRow("SELECT * FROM candidato") { row ->
+                Integer idCandidato = row.id
+
+                Candidato candidato = new Candidato(
+                        idCandidato,
+                        row.nome as String,
+                        row.email as String,
+                        row.cpf as String,
+                        row.data_nascimento as Date,
+                        "fixo",
+                        row.descricao_pessoal as String,
+                        row.senha_de_login as String,
+                        "fixo",
+                        CompetenciaRepository.getCompetencias(idCandidato)
+                )
+                candidatos.add(candidato)
+            }
+            return candidatos
+        } catch (Exception e) {
+            println("Erro ao buscar candidatos: ${e.message}")
+            e.printStackTrace()
+            return []
+        }
     }
 
 }
