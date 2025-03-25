@@ -85,13 +85,16 @@ class EmpresaRepository {
             empresa.setId(empresaId as Integer)
             empresas.add(empresa)
 
-        } catch (Exception e) {
-            println("Erro ao adicionar empresa: ${e.message}")
-            e.printStackTrace()
+        } catch (SQLException e) {
+            if (e.message.contains("duplicate key value violates unique constraint")) {
+                throw new Exception("Erro: O CNPJ '${empresa.cnpj}' já existe no banco de dados.")
+            } else {
+                throw new Exception("Erro ao inserir empresa no Banco de dados")
+            }
         }
     }
 
-    private Integer obterIdPais(String nomePais) {
+     private Integer obterIdPais(String nomePais) {
         try {
             GroovyRowResult paisRow = sql.firstRow("SELECT id FROM PAIS_DE_RESIDENCIA WHERE nome = ?", [nomePais])
             if (paisRow) {

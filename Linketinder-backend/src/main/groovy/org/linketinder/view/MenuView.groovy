@@ -3,6 +3,8 @@ package org.linketinder.view
 
 import org.linketinder.model.Pessoa
 
+import java.text.SimpleDateFormat
+
 class MenuView {
     static void showMenu() {
         println "\n=== Menu ==="
@@ -55,8 +57,8 @@ class MenuView {
     static void showInvalidOption() {
         println "\nOpção inválida. Tente novamente."
     }
-    static void showFeedbackInsercao(String tipoPessoa){
-        println "${tipoPessoa} cadastrado(a) com sucesso "
+    static void showFeedbackInsercao(String feedback){
+        println feedback
     }
 
     static Map<String, ?> getEmpresaInput() {
@@ -105,23 +107,7 @@ class MenuView {
         print "Cpf: "
         String cpf = System.in.newReader().readLine()
 
-        String idade
-        while (true) {
-            print "Idade: "
-            try {
-                idade = System.in.newReader().readLine()
-                if (idade.isInteger()) {
-                    break
-                } else {
-                    println "Por favor, insira um número válido."
-                }
-            } catch (Exception e) {
-                println "Erro ao ler a idade: ${e.message}"
-            }
-        }
-
-        print "Estado: "
-        String estado = System.in.newReader().readLine()
+        String dataNascimento = getInputData("Data de Nascimento (dd/mm/aaaa): ")
 
         print "Cep: "
         String cep = System.in.newReader().readLine()
@@ -132,6 +118,32 @@ class MenuView {
         print "Competências (separadas por vírgula): "
         List<String> competencias = System.in.newReader().readLine().split(",").collect { it.trim() }
 
+        print("Senha de login: ")
+        String senha = System.in.newReader().readLine()
+
+        print "País onde reside: "
+        String pais = System.in.newReader().readLine()
+
+        List<Map<String, String>> formacoes = new ArrayList<>()
+
+        boolean adicionar = true
+        while (adicionar){
+            println "Formações :"
+            println "1. Adicionar "
+            println "2. Pular"
+            String opcao = System.in.newReader().readLine()
+            switch (opcao){
+                case "1":
+                    formacoes.add(getFormacaoInput())
+                    break
+                case "2":
+                    adicionar = false
+                    break
+                default:
+                    showInvalidOption()
+            }
+        }
+
         return [
                 nome: nome,
                 email: email,
@@ -139,8 +151,47 @@ class MenuView {
                 cpf: cpf,
                 descricao: descricao,
                 cep: cep,
-                idade: idade,
-                estado: estado
+                dataNascimento: dataNascimento,
+                formacoes: formacoes
         ]
+    }
+
+    static Map<String, ?> getFormacaoInput(){
+        print "Nome da formação: "
+        String nome = System.in.newReader().readLine()
+
+        print "Nome da instituição: "
+        String instituicao = System.in.newReader().readLine()
+
+        Date dadtaInicio = getInputData("Data de início: ")
+        Date dataFim = getInputData("Data de fim/previsão: ")
+
+        return [
+                nome: nome,
+                instituicao: instituicao,
+                dataIncio: dadtaInicio,
+                dataFim: dataFim
+        ]
+    }
+
+    static Date getInputData(String label){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy")
+        Date data = null
+
+        while (true) {
+            print label
+            try {
+                String dataStr = System.in.newReader().readLine()
+                if (dataStr ==~ /\d{2}\/\d{2}\/\d{4}/) {
+                    data = dateFormat.parse(dataStr)
+                    break
+                } else {
+                    println "Por favor, insira uma data válida no formato dd/mm/aaaa."
+                }
+            } catch (Exception e) {
+                println "Erro ao ler a data: ${e.message}"
+            }
+        }
+        return data
     }
 }

@@ -16,7 +16,7 @@ class CadastroService {
 		this.candidatoRepository = candidatoRepository
 	}
 
-	void cadastrarCandidato(Map<String, String> dados) {
+	String cadastrarCandidato(Map<String, String> dados) {
 		Pessoa novoCandidato = new Candidato(
 				null,
 				dados.nome,
@@ -31,7 +31,8 @@ class CadastroService {
 		candidatoRepository.addCandidato(novoCandidato)
 	}
 
-	void cadastrarEmpresa(Map<String, String> dados) {
+	String cadastrarEmpresa(Map<String, String> dados) {
+		String feedback = "Cadastro feito com sucesso!"
 		Pessoa novaEmpresa = new Empresa(
 				null,
 				dados.nome,
@@ -43,7 +44,12 @@ class CadastroService {
 				dados.pais,
 				new ArrayList<>()
 		)
-		empresaRepository.addEmpresa(novaEmpresa)
+		try {
+			empresaRepository.addEmpresa(novaEmpresa)
+		} catch (Exception e){
+			feedback = e.getMessage()
+		}
+		return feedback
 	}
 
 	List<Candidato> listarCandidatos() {

@@ -32,13 +32,13 @@ class MainController {
                     break
                 case 3:
                     def dadosEmpresa = MenuView.getEmpresaInput()
-                    cadastroService.cadastrarEmpresa(dadosEmpresa)
-                    view.showFeedbackInsercao("Empresa")
+                    String feedback = cadastroService.cadastrarEmpresa(dadosEmpresa)
+                    view.showFeedbackInsercao(feedback)
                     break
                 case 4:
                     def dadosCandidato = MenuView.getCandidatoInput()
-                    cadastroService.cadastrarCandidato(dadosCandidato)
-                    view.showFeedbackInsercao("Candidato")
+                    String feedback = cadastroService.cadastrarCandidato(dadosCandidato)
+                    view.showFeedbackInsercao(feedback)
                     break
                 case 0:
                     view.showExitMessage()
