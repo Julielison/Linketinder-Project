@@ -11,6 +11,7 @@ ext {
     junitVersion = '5.10.0'
     spockVersion = '2.3-groovy-4.0'
     postgresVersion = '42.6.0'
+    byteBuddyVersion = '1.12.22'
 }
 
 repositories {
@@ -26,6 +27,11 @@ dependencies {
     testImplementation "org.spockframework:spock-core:${spockVersion}"
 
     implementation "org.postgresql:postgresql:${postgresVersion}"
+
+    // Adicionando Byte Buddy para permitir o mock de classes concretas
+    testImplementation "net.bytebuddy:byte-buddy:${byteBuddyVersion}"
+    testImplementation "net.bytebuddy:byte-buddy-agent:${byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:3.2"
 }
 
 java {
