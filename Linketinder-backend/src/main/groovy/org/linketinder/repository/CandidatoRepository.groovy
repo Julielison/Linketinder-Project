@@ -5,9 +5,13 @@ import org.linketinder.model.Candidato
 
 class CandidatoRepository {
     private static List<Candidato> candidatos = []
-    private static  Sql sql = DatabaseConnection.getInstance()
+    private final Sql sql
 
-    static List<Candidato> getCandidatos() {
+    CandidatoRepository(Sql sql) {
+        this.sql = sql
+    }
+
+    List<Candidato> getCandidatos() {
         candidatos.clear()
         String query = """
             SELECT 
@@ -54,5 +58,4 @@ class CandidatoRepository {
             return []
         }
     }
-
 }

@@ -8,9 +8,13 @@ import java.sql.SQLException
 
 class EmpresaRepository {
     private static List<Empresa> empresas = []
-    private static Sql sql = DatabaseConnection.getInstance()
+    private final Sql sql
 
-    static List<Empresa> getEmpresas() {
+    EmpresaRepository(Sql sql) {
+        this.sql = sql
+    }
+
+    List<Empresa> getEmpresas() {
         empresas.clear()
         String query = """
             SELECT 
@@ -54,7 +58,7 @@ class EmpresaRepository {
         }
     }
 
-    static void addEmpresa(Empresa empresa) {
+    void addEmpresa(Empresa empresa) {
         String paisOndeReside = empresa.getPaisOndeReside()
 
         try {
@@ -78,7 +82,7 @@ class EmpresaRepository {
             ])
 
             def empresaId = result[0][0]
-            empresa.setId(empresaId)
+            empresa.setId(empresaId as Integer)
             empresas.add(empresa)
 
         } catch (Exception e) {
@@ -86,12 +90,12 @@ class EmpresaRepository {
             e.printStackTrace()
         }
     }
-    
-    private static Integer obterIdPais(String nomePais) {
+
+    private Integer obterIdPais(String nomePais) {
         try {
             GroovyRowResult paisRow = sql.firstRow("SELECT id FROM PAIS_DE_RESIDENCIA WHERE nome = ?", [nomePais])
             if (paisRow) {
-            return paisRow.id as Integer
+                return paisRow.id as Integer
             }
         } catch (SQLException e) {
             println(e.getMessage())
@@ -99,8 +103,8 @@ class EmpresaRepository {
         }
         return null
     }
-    
-    private static Integer inserirEndereco(String cep, Integer paisId) {
+
+    private Integer inserirEndereco(String cep, Integer paisId) {
         def enderecoRow = sql.firstRow("SELECT id FROM ENDERECO WHERE cep = ?", [cep])
         if (enderecoRow) {
             return enderecoRow.id
@@ -110,7 +114,7 @@ class EmpresaRepository {
         }
     }
 
-    private static Integer inserirPais(String nome) {
+    private Integer inserirPais(String nome) {
         try {
             def row = sql.executeInsert("INSERT INTO PAIS_DE_RESIDENCIA(nome) VALUES(?)", [nome])
             return row[0][0]
