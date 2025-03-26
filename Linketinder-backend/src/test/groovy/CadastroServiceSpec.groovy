@@ -7,7 +7,7 @@ import org.linketinder.model.Candidato
 import org.linketinder.model.Empresa
 import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.EmpresaRepository
-import org.linketinder.service.CadastroService
+import org.linketinder.service.GestaoService
 
 class CadastroServiceSpec extends Specification {
 
@@ -15,7 +15,7 @@ class CadastroServiceSpec extends Specification {
         given: "Um mock do repositório e um novo candidato"
         CandidatoRepository candidatoRepository = Mock(CandidatoRepository)
         EmpresaRepository empresaRepository = Mock(EmpresaRepository)
-        CadastroService cadastroService = new CadastroService(empresaRepository, candidatoRepository)
+        GestaoService cadastroService = new GestaoService(empresaRepository, candidatoRepository)
 
         Candidato candidato = new Candidato(
                 null,
