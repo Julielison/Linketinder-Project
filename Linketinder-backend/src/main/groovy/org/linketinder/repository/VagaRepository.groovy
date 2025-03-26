@@ -44,7 +44,6 @@ class VagaRepository {
 
     List<Vaga> getVagasByEmpresaId(Integer empresaId) {
         List<Vaga> vagasEmpresa = []
-        Sql sql = DatabaseConnection.getInstance()
         String query = """
             SELECT 
                 v.id AS vaga_id,
@@ -98,9 +97,7 @@ class VagaRepository {
         }
     }
 
-    static void updateVaga(Vaga vaga) {
-        Sql sql = DatabaseConnection.getInstance()
-        
+    void updateVaga(Vaga vaga) {
         try {
             sql.executeUpdate("""
                 UPDATE VAGA 

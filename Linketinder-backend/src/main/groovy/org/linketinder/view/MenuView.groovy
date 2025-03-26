@@ -1,6 +1,6 @@
 package org.linketinder.view
 
-
+import org.linketinder.model.Competencia
 import org.linketinder.model.Pessoa
 import org.linketinder.model.Vaga
 
@@ -192,6 +192,12 @@ class MenuView {
     }
 
     static void showVagas(List<Vaga> vagas){
+        println(" --- Vagas ---")
         vagas.forEach {it -> println(it)}
+    }
+
+    static void showCompetencias(List<Competencia> competencias){
+        println(" --- Competencias ---")
+        competencias.forEach {Competencia it -> println(it)}
     }
 }

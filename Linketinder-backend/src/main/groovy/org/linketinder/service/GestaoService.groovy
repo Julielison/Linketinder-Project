@@ -95,4 +95,8 @@ class GestaoService {
 	List<Vaga> listarVagas(){
 		return empresaRepository.vagaRepository.getVagas()
 	}
+
+	List<Competencia> listarCompetencias(){
+		return candidatoRepository.competenciaRepository.getCompetencias()
+	}
 }

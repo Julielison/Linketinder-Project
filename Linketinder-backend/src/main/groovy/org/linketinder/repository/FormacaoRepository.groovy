@@ -4,11 +4,15 @@ import groovy.sql.Sql
 import org.linketinder.model.Formacao
 
 class FormacaoRepository {
+    Sql sql
+
+    FormacaoRepository(Sql sql){
+        this.sql = sql
+    }
     
-    static List<Formacao> getFormacoesByIdCandidato(Integer candidatoId) {
+    List<Formacao> getFormacoesByIdCandidato(Integer candidatoId) {
         List<Formacao> formacoes = []
-        Sql sql = DatabaseConnection.getInstance()
-        
+
         try {
             String query = """
                 SELECT 
@@ -49,9 +53,7 @@ class FormacaoRepository {
         }
     }
     
-    static void addFormacao(Formacao formacao, Integer candidatoId) {
-        Sql sql = DatabaseConnection.getInstance()
-        
+    void addFormacao(Formacao formacao, Integer candidatoId) {
         try {
             def formacaoRow = sql.firstRow("""
                 SELECT id FROM FORMACAO 
@@ -89,9 +91,7 @@ class FormacaoRepository {
         }
     }
     
-    static void updateFormacao(Formacao formacao, Integer candidatoId) {
-        Sql sql = DatabaseConnection.getInstance()
-        
+    void updateFormacao(Formacao formacao, Integer candidatoId) {
         try {
             sql.executeUpdate("""
                 UPDATE FORMACAO_CANDIDATO 
@@ -112,9 +112,7 @@ class FormacaoRepository {
         }
     }
     
-    static void deleteFormacao(Integer formacaoId, Integer candidatoId) {
-        Sql sql = DatabaseConnection.getInstance()
-        
+    void deleteFormacao(Integer formacaoId, Integer candidatoId) {
         try {
             sql.executeUpdate("""
                 DELETE FROM FORMACAO_CANDIDATO 

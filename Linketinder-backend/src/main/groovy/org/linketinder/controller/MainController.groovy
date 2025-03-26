@@ -4,6 +4,7 @@ import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.CompetenciaRepository
 import org.linketinder.repository.EmpresaRepository
 import org.linketinder.repository.EnderecoRepository
+import org.linketinder.repository.FormacaoRepository
 import org.linketinder.repository.VagaRepository
 import org.linketinder.service.GestaoService
 import org.linketinder.view.MenuView
@@ -18,9 +19,10 @@ class MainController {
         Sql sql = DatabaseConnection.getInstance()
         VagaRepository vagaRepository = new VagaRepository(sql)
         CompetenciaRepository competenciaRepository = new CompetenciaRepository(sql)
+        FormacaoRepository formacaoRepository = new FormacaoRepository(sql)
         EnderecoRepository enderecoRepository = new EnderecoRepository()
         EmpresaRepository empresaRepository = new EmpresaRepository(sql, enderecoRepository, vagaRepository)
-        CandidatoRepository candidatoRepository = new CandidatoRepository(sql, enderecoRepository, competenciaRepository)
+        CandidatoRepository candidatoRepository = new CandidatoRepository(sql, enderecoRepository, competenciaRepository, formacaoRepository)
         gestaoService = new GestaoService(empresaRepository, candidatoRepository)
     }
 
@@ -52,6 +54,9 @@ class MainController {
                     break
                 case "11":
                     view.showVagas(gestaoService.listarVagas())
+                    break
+                case "12":
+                    view.showCompetencias(gestaoService.listarCompetencias())
                     break
                 default:
                     view.showInvalidOption()
