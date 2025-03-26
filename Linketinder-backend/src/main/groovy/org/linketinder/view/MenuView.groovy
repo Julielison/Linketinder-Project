@@ -2,7 +2,9 @@ package org.linketinder.view
 
 
 import org.linketinder.model.Pessoa
+import org.linketinder.model.Vaga
 
+import javax.swing.JViewport
 import java.text.SimpleDateFormat
 
 class MenuView {
@@ -18,7 +20,7 @@ class MenuView {
         println "8. Remover dados de um candidato"
         println "9. Atualizar candidato"
         println "10. Remover candidato"
-        println "11. Listar vagas"
+        println "11. Listar todas as vagas"
         println "12. Listar todas as competências"
         println "0. Sair"
         print "Escolha uma opção: "
@@ -33,21 +35,13 @@ class MenuView {
         }
     }
 
-    static int getUserInput() {
-        try {
-            String input = System.in.newReader().readLine()
-            if (input == null || input.trim().isEmpty()) {
-                println "Entrada vazia. Por favor, digite um número."
-                return -1
-            }
-            return input.trim().toInteger()
-        } catch (NumberFormatException ignored) {
-            println "Por favor, digite apenas números."
-            return -1
-        } catch (Exception e) {
-            println "Erro ao ler a opção: ${e.message}"
-            return -1
+    static String getUserInput() {
+        String input = System.in.newReader().readLine()
+        if (input == null || input.trim().isEmpty()) {
+            println "Entrada vazia. Por favor, digite um número."
+            return null
         }
+        return input
     }
 
     static void showExitMessage() {
@@ -195,5 +189,9 @@ class MenuView {
             }
         }
         return data
+    }
+
+    static void showVagas(List<Vaga> vagas){
+        vagas.forEach {it -> println(it)}
     }
 }

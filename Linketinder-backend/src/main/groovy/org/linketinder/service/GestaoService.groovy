@@ -5,15 +5,16 @@ import org.linketinder.model.Competencia
 import org.linketinder.model.Empresa
 import org.linketinder.model.Formacao
 import org.linketinder.model.Pessoa
+import org.linketinder.model.Vaga
 import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.EmpresaRepository
+import org.linketinder.repository.VagaRepository
 
-class CadastroService {
+class GestaoService {
+	final EmpresaRepository empresaRepository
+	final CandidatoRepository candidatoRepository
 
-	private final EmpresaRepository empresaRepository
-	private final CandidatoRepository candidatoRepository
-
-	CadastroService(EmpresaRepository empresaRepository, CandidatoRepository candidatoRepository) {
+	GestaoService(EmpresaRepository empresaRepository, CandidatoRepository candidatoRepository) {
 		this.empresaRepository = empresaRepository
 		this.candidatoRepository = candidatoRepository
 	}
@@ -89,5 +90,9 @@ class CadastroService {
 
 	List<Empresa> listarEmpresas() {
 		return empresaRepository.getEmpresas()
+	}
+
+	List<Vaga> listarVagas(){
+		return empresaRepository.vagaRepository.getVagas()
 	}
 }

@@ -4,11 +4,15 @@ import groovy.sql.Sql
 import org.linketinder.model.Vaga
 
 class VagaRepository {
-    private static List<Vaga> vagas = []
+	static List<Vaga> vagas = []
+	Sql sql
 
-    static List<Vaga> getVagas() {
+	VagaRepository(Sql sql){
+		this.sql = sql
+	}
+
+    List<Vaga> getVagas() {
         vagas.clear()
-        Sql sql = DatabaseConnection.getInstance()
         String query = """
             SELECT 
                 v.id AS vaga_id,
@@ -38,7 +42,7 @@ class VagaRepository {
         }
     }
 
-    static List<Vaga> getVagasByEmpresaId(Integer empresaId) {
+    List<Vaga> getVagasByEmpresaId(Integer empresaId) {
         List<Vaga> vagasEmpresa = []
         Sql sql = DatabaseConnection.getInstance()
         String query = """
@@ -72,9 +76,7 @@ class VagaRepository {
         }
     }
 
-    static void addVaga(Vaga vaga) {
-        Sql sql = DatabaseConnection.getInstance()
-        
+    void addVaga(Vaga vaga) {
         try {
             def keys = sql.executeInsert("""
                 INSERT INTO VAGA (nome, descricao, local, id_empresa)

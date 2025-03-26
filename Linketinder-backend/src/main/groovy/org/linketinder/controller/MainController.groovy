@@ -1,48 +1,57 @@
 package org.linketinder.controller
 
 import org.linketinder.repository.CandidatoRepository
+import org.linketinder.repository.CompetenciaRepository
 import org.linketinder.repository.EmpresaRepository
-import org.linketinder.service.CadastroService
+import org.linketinder.repository.EnderecoRepository
+import org.linketinder.repository.VagaRepository
+import org.linketinder.service.GestaoService
 import org.linketinder.view.MenuView
 import groovy.sql.Sql
 import org.linketinder.repository.DatabaseConnection
 
 class MainController {
     MenuView view = new MenuView()
-    CadastroService cadastroService
+    GestaoService gestaoService
 
     MainController() {
         Sql sql = DatabaseConnection.getInstance()
-        EmpresaRepository empresaRepository = new EmpresaRepository(sql)
-        CandidatoRepository candidatoRepository = new CandidatoRepository(sql)
-        cadastroService = new CadastroService(empresaRepository, candidatoRepository)
+        VagaRepository vagaRepository = new VagaRepository(sql)
+        CompetenciaRepository competenciaRepository = new CompetenciaRepository(sql)
+        EnderecoRepository enderecoRepository = new EnderecoRepository()
+        EmpresaRepository empresaRepository = new EmpresaRepository(sql, enderecoRepository, vagaRepository)
+        CandidatoRepository candidatoRepository = new CandidatoRepository(sql, enderecoRepository, competenciaRepository)
+        gestaoService = new GestaoService(empresaRepository, candidatoRepository)
     }
 
     void executar() {
         boolean sair = false
         while (!sair) {
             view.showMenu()
-            int opcao = view.getUserInput()
+            String opcao = view.getUserInput()
             switch(opcao) {
-                case 1:
-                    view.showPessoas(cadastroService.listarCandidatos(), 'candidatos')
+                case "1":
+                    view.showPessoas(gestaoService.listarCandidatos(), 'candidatos')
                     break
-                case 2:
-                    view.showPessoas(cadastroService.listarEmpresas(), 'empresas')
+                case "2":
+                    view.showPessoas(gestaoService.listarEmpresas(), 'empresas')
                     break
-                case 3:
+                case "3":
                     def dadosEmpresa = MenuView.getEmpresaInput()
-                    String feedback = cadastroService.cadastrarEmpresa(dadosEmpresa)
+                    String feedback = gestaoService.cadastrarEmpresa(dadosEmpresa)
                     view.showFeedbackInsercao(feedback)
                     break
-                case 4:
+                case "4":
                     def dadosCandidato = MenuView.getCandidatoInput()
-                    String feedback = cadastroService.cadastrarCandidato(dadosCandidato)
+                    String feedback = gestaoService.cadastrarCandidato(dadosCandidato)
                     view.showFeedbackInsercao(feedback)
                     break
-                case 0:
+                case '0':
                     view.showExitMessage()
                     sair = true
+                    break
+                case "11":
+                    view.showVagas(gestaoService.listarVagas())
                     break
                 default:
                     view.showInvalidOption()
