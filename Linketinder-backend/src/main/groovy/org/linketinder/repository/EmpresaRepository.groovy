@@ -7,7 +7,7 @@ import org.linketinder.model.Empresa
 import java.sql.SQLException
 
 class EmpresaRepository {
-    private static List<Empresa> empresas = []
+    public static List<Empresa> empresas = []
     private final Sql sql
 
     EmpresaRepository(Sql sql) {
@@ -59,9 +59,13 @@ class EmpresaRepository {
     }
 
     void addEmpresa(Empresa empresa) {
-        String paisOndeReside = empresa.getPaisOndeReside()
-
         try {
+            def resultCnpj = sql.firstRow("SELECT cnpj FROM empresa WHERE cnpj = ${empresa.cnpj}")
+            if (resultCnpj){
+                throw new Exception("A empresa já existe no banco de dados!")
+            }
+
+            String paisOndeReside = empresa.getPaisOndeReside()
             def paisId = obterIdPais(paisOndeReside)
             if (!paisId) {
                 paisId = inserirPais(paisOndeReside)
@@ -69,32 +73,33 @@ class EmpresaRepository {
 
             def enderecoId = inserirEndereco(empresa.getCep(), paisId)
 
-            def result = sql.executeInsert("""
-            INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, [
-                    empresa.nome,
-                    empresa.cnpj,
-                    empresa.email,
-                    empresa.descricao,
-                    empresa.senhaLogin,
-                    enderecoId
-            ])
+            def empresaId = inserirEmpresa(empresa, enderecoId)
 
-            def empresaId = result[0][0]
             empresa.setId(empresaId as Integer)
             empresas.add(empresa)
 
         } catch (SQLException e) {
-            if (e.message.contains("duplicate key value violates unique constraint")) {
-                throw new Exception("Erro: O CNPJ '${empresa.cnpj}' já existe no banco de dados.")
-            } else {
-                throw new Exception("Erro ao inserir empresa no Banco de dados")
-            }
+            e.printStackTrace()
+            throw new Exception("Erro ao inserir empresa no Banco de dados")
         }
     }
 
-     private Integer obterIdPais(String nomePais) {
+    Integer inserirEmpresa(Empresa empresa, Integer enderecoId) {
+        def result = sql.executeInsert("""
+            INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, [
+                empresa.nome,
+                empresa.cnpj,
+                empresa.email,
+                empresa.descricao,
+                empresa.senhaLogin,
+                enderecoId
+        ])
+        return (result[0][0] as Integer)
+    }
+
+    Integer obterIdPais(String nomePais) {
         try {
             GroovyRowResult paisRow = sql.firstRow("SELECT id FROM PAIS_DE_RESIDENCIA WHERE nome = ?", [nomePais])
             if (paisRow) {
@@ -107,20 +112,20 @@ class EmpresaRepository {
         return null
     }
 
-    private Integer inserirEndereco(String cep, Integer paisId) {
+    Integer inserirEndereco(String cep, Integer paisId) {
         def enderecoRow = sql.firstRow("SELECT id FROM ENDERECO WHERE cep = ?", [cep])
         if (enderecoRow) {
-            return enderecoRow.id
+            return enderecoRow.id as Integer
         } else {
             def keys = sql.executeInsert("INSERT INTO ENDERECO (cep, pais_id) VALUES (?, ?)", [cep, paisId])
             return keys[0][0] as Integer
         }
     }
 
-    private Integer inserirPais(String nome) {
+    Integer inserirPais(String nome) {
         try {
             def row = sql.executeInsert("INSERT INTO PAIS_DE_RESIDENCIA(nome) VALUES(?)", [nome])
-            return row[0][0]
+            return row[0][0] as Integer
         } catch (SQLException e) {
             e.printStackTrace()
             return null

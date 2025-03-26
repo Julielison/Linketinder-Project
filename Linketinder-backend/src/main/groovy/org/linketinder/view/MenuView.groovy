@@ -104,12 +104,12 @@ class MenuView {
         print "Email: "
         String email = System.in.newReader().readLine()
 
-        print "Cpf: "
+        print "Cpf (11 dígitos): "
         String cpf = System.in.newReader().readLine()
 
         String dataNascimento = getInputData("Data de Nascimento (dd/mm/aaaa): ")
 
-        print "Cep: "
+        print "Cep (8 dígitos): "
         String cep = System.in.newReader().readLine()
 
         print "Descrição: "
@@ -124,7 +124,7 @@ class MenuView {
         print "País onde reside: "
         String pais = System.in.newReader().readLine()
 
-        List<Map<String, String>> formacoes = new ArrayList<>()
+        List<Map<String, ?>> formacoes = new ArrayList<>()
 
         boolean adicionar = true
         while (adicionar){
@@ -152,7 +152,9 @@ class MenuView {
                 descricao: descricao,
                 cep: cep,
                 dataNascimento: dataNascimento,
-                formacoes: formacoes
+                formacoes: formacoes,
+                pais: pais,
+                senha: senha
         ]
     }
 

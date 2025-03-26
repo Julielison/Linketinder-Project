@@ -1,7 +1,9 @@
 package org.linketinder.service
 
 import org.linketinder.model.Candidato
+import org.linketinder.model.Competencia
 import org.linketinder.model.Empresa
+import org.linketinder.model.Formacao
 import org.linketinder.model.Pessoa
 import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.EmpresaRepository
@@ -17,18 +19,47 @@ class CadastroService {
 	}
 
 	String cadastrarCandidato(Map<String, String> dados) {
+		List<Formacao> formacoes = new ArrayList<>()
+		for (Map<String, ?> formacaoMap : dados.get("formacoes") as List<Map<String, ?>>){
+			Formacao formacao = new Formacao(
+					null,
+					formacaoMap.get('instituicao') as String,
+					formacaoMap.get('nome') as String,
+					formacaoMap.get('dataIncio') as Date,
+					formacaoMap.get('dataFim') as Date
+			)
+			formacoes.add(formacao)
+		}
+
+		List<Competencia> competencias = new ArrayList<>()
+		for (String competenciaStr : dados.get('competencias')){
+			Competencia competencia = new Competencia(
+					null,
+					competenciaStr
+			)
+			competencias.add(competencia)
+		}
+
 		Pessoa novoCandidato = new Candidato(
 				null,
 				dados.nome,
 				dados.email,
 				dados.cpf,
-				dados.dataNascimento,
-				dados.estado,
+				dados.dataNascimento as Date,
 				dados.cep,
 				dados.descricao,
-				dados.competencias as List<String>
+				dados.senha,
+				dados.pais,
+				competencias,
+				formacoes,
 		)
-		candidatoRepository.addCandidato(novoCandidato)
+		String feedback = "Candidato cadastrado com sucesso!"
+		try {
+			candidatoRepository.addCandidato(novoCandidato)
+		} catch (Exception e){
+			feedback = e.getMessage()
+		}
+		return feedback
 	}
 
 	String cadastrarEmpresa(Map<String, String> dados) {

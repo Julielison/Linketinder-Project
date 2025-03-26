@@ -1,3 +1,7 @@
+
+
+import groovy.sql.Sql
+import org.linketinder.model.Vaga
 import spock.lang.Specification
 import org.linketinder.model.Candidato
 import org.linketinder.model.Empresa
@@ -51,43 +55,37 @@ class CadastroServiceSpec extends Specification {
     }
 
     def "Deve cadastrar uma nova empresa com sucesso"() {
-        given: "Um mock do repositório e uma nova empresa"
-        EmpresaRepository empresaRepository = Mock(EmpresaRepository)
-        CandidatoRepository candidatoRepository = Mock(CandidatoRepository)
-        CadastroService cadastroService = new CadastroService(empresaRepository, candidatoRepository)
-
+        given:
+        def sqlMock = Mock(Sql)
+        EmpresaRepository empresaRepository = Spy(EmpresaRepository, constructorArgs: [sqlMock]) {
+            obterIdPais(_) >> 1
+            inserirPais(_) >> 1
+            inserirEndereco(_, _) >> 1
+            inserirEmpresa(_, _) >> { Empresa emp, Integer enderecoId ->
+                emp.setId(1)
+                EmpresaRepository.empresas.add(emp)
+                return 1
+            }
+        }
+        List<Vaga> vagas = new ArrayList<>()
         Empresa empresa = new Empresa(
                 null,
-                "SmartTech",
-                "contato@smarttech.com",
-                "55667788000133",
-                "01111-111",
-                "Empresa de tecnologia",
+                "Empresa Teste",
+                "123456789",
+                "teste@empresa.com",
+                "Descrição da Empresa",
                 "senha123",
+                "12345-678",
                 "Brasil",
-                new ArrayList<>()
+                vagas
         )
 
-        when: "A empresa é adicionada ao repositório"
-        cadastroService.cadastrarEmpresa([
-                nome: empresa.nome,
-                email: empresa.email,
-                cnpj: empresa.cnpj,
-                cep: empresa.cep,
-                descricao: empresa.descricao,
-                senha: empresa.senhaLogin,
-                pais: empresa.paisOndeReside
-        ])
+        when:
+        empresaRepository.addEmpresa(empresa)
 
-        then: "O método addEmpresa deve ser chamado uma vez com a empresa correta"
-        1 * empresaRepository.addEmpresa(_ as Empresa) >> { Empresa emp ->
-            assert emp.nome == empresa.nome
-            assert emp.email == empresa.email
-            assert emp.cnpj == empresa.cnpj
-            assert emp.cep == empresa.cep
-            assert emp.descricao == empresa.descricao
-            assert emp.senhaLogin == empresa.senhaLogin
-            assert emp.paisOndeReside == empresa.paisOndeReside
-        }
+        then:
+        noExceptionThrown()
+        empresa.id == 1
+        EmpresaRepository.empresas.contains(empresa)
     }
 }
