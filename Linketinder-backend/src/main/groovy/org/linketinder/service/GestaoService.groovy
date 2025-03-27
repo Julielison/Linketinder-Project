@@ -1,14 +1,8 @@
 package org.linketinder.service
 
-import org.linketinder.model.Candidato
-import org.linketinder.model.Competencia
-import org.linketinder.model.Empresa
-import org.linketinder.model.Formacao
-import org.linketinder.model.Pessoa
-import org.linketinder.model.Vaga
+import org.linketinder.model.*
 import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.EmpresaRepository
-import org.linketinder.repository.VagaRepository
 
 class GestaoService {
 	final EmpresaRepository empresaRepository
@@ -53,6 +47,7 @@ class GestaoService {
 				dados.pais,
 				competencias,
 				formacoes,
+				dados.sobrenome
 		)
 		String feedback = "Candidato cadastrado com sucesso!"
 		try {

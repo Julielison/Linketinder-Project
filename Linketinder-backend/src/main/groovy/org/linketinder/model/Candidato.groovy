@@ -1,6 +1,7 @@
 package org.linketinder.model
 
 class Candidato extends Pessoa {
+    String sobrenome
     String cpf
     Date dataNascimento
     List<Competencia> competencias
@@ -16,10 +17,12 @@ class Candidato extends Pessoa {
               String senhaLogin,
               String paisOndeReside,
               List<Competencia> competencias,
-              List<Formacao> formacoes)
+              List<Formacao> formacoes,
+              String sobrenome)
     {
         super(id, nome, email, cep, descricao, senhaLogin, paisOndeReside)
         this.cpf = cpf
+        this.sobrenome = sobrenome
         this.dataNascimento = dataNascimento
         this.competencias = competencias
         this.formacoes = formacoes
@@ -29,6 +32,7 @@ class Candidato extends Pessoa {
     @Override
     String toString() {
         return super.toString() + """
+        Sobrenome: ${sobrenome}
         CPF: ${cpf}
         Data de Nascimento: ${dataNascimento}
         Competências: ${competencias.join(', ')}

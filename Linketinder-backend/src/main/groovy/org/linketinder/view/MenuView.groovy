@@ -4,7 +4,6 @@ import org.linketinder.model.Competencia
 import org.linketinder.model.Pessoa
 import org.linketinder.model.Vaga
 
-import javax.swing.JViewport
 import java.text.SimpleDateFormat
 
 class MenuView {
@@ -22,6 +21,10 @@ class MenuView {
         println "10. Remover candidato"
         println "11. Listar todas as vagas"
         println "12. Listar todas as competências"
+        println "13. Adicionar vaga"
+        println "14. Remover vaga"
+        println "15. Atualizar vaga"
+        println "16. Obter dados de uma vaga"
         println "0. Sair"
         print "Escolha uma opção: "
     }
@@ -95,13 +98,16 @@ class MenuView {
         print "Nome: "
         String nome = System.in.newReader().readLine()
 
+        print "Sobrenome: "
+        String sobrenome = System.in.newReader().readLine()
+
         print "Email: "
         String email = System.in.newReader().readLine()
 
         print "Cpf (11 dígitos): "
         String cpf = System.in.newReader().readLine()
 
-        String dataNascimento = getInputData("Data de Nascimento (dd/mm/aaaa): ")
+        Date dataNascimento = getInputData("Data de Nascimento (dd/mm/aaaa): ")
 
         print "Cep (8 dígitos): "
         String cep = System.in.newReader().readLine()
@@ -148,7 +154,8 @@ class MenuView {
                 dataNascimento: dataNascimento,
                 formacoes: formacoes,
                 pais: pais,
-                senha: senha
+                senha: senha,
+                sobrenome: sobrenome
         ]
     }
 
@@ -172,7 +179,7 @@ class MenuView {
 
     static Date getInputData(String label){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy")
-        Date data = null
+        Date data
 
         while (true) {
             print label
