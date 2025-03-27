@@ -1,10 +1,17 @@
 package org.linketinder.repository
 
 import groovy.sql.GroovyRowResult
+import groovy.sql.Sql
 
 import java.sql.SQLException
 
 class EnderecoRepository {
+	Sql sql
+
+	EnderecoRepository(Sql sql){
+		this.sql = sql
+	}
+
 	Integer obterIdPais(String nomePais) {
 		try {
 			GroovyRowResult paisRow = sql.firstRow("SELECT id FROM PAIS_DE_RESIDENCIA WHERE nome = ?", [nomePais])

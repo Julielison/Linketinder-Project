@@ -9,7 +9,7 @@ import java.sql.SQLException
 
 class EmpresaRepository {
     public static List<Empresa> empresas = []
-    final Sql sql
+	Sql sql
     EnderecoRepository endereco
     VagaRepository vagaRepository
 

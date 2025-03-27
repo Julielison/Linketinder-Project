@@ -11,13 +11,23 @@ class DatabaseConnection {
 
     private static Sql sqlInstance
 
+    private DatabaseConnection() {}
+
     static Sql getInstance() {
         if (sqlInstance == null) {
             try {
                 sqlInstance = Sql.newInstance(URL, USER, PASSWORD, DRIVER)
+                if (sqlInstance == null) {
+                    throw new SQLException("Falha ao criar instância SQL")
+                }
             } catch (SQLException e) {
                 println("Erro ao conectar ao banco de dados: ${e.message}")
                 e.printStackTrace()
+                throw new RuntimeException("Não foi possível conectar ao banco de dados: ${e.message}", e)
+            } catch (Exception e) {
+                println("Erro inesperado: ${e.message}")
+                e.printStackTrace()
+                throw new RuntimeException("Erro inesperado ao conectar ao banco: ${e.message}", e)
             }
         }
         return sqlInstance

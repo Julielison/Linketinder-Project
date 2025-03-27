@@ -25,7 +25,8 @@ class Vaga {
         return """
             Nome da Vaga: ${nome}
             Descrição: ${descricao}
-            Local: ${local}"""
+            Local: ${local}
+            Id empresa: ${idEmpresa}"""
     }
 
 }

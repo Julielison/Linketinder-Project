@@ -119,9 +119,7 @@ class VagaRepository {
         }
     }
 
-    static void deleteVaga(Integer vagaId) {
-        Sql sql = DatabaseConnection.getInstance()
-        
+    void deleteVaga(Integer vagaId) {
         try {
             sql.executeUpdate("DELETE FROM VAGA_COMPETENCIA WHERE id_vaga = ?", [vagaId])
             sql.executeUpdate("DELETE FROM CANDIDATO_CURTE_VAGA WHERE id_vaga = ?", [vagaId])
