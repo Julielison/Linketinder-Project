@@ -75,8 +75,8 @@ class MainController {
                     view.showFeedback(feedback)
                     break
                 case "18":
-                    Integer idVagaInput = view.getIdVagaInput()
-                    feedback = gestaoService.removerEntidade(idVagaInput, "competencia")
+                    Integer idCompetenciaInput = view.getIdCompetenciaInput()
+                    feedback = gestaoService.removerCompetencia(idCompetenciaInput)
                     view.showFeedback(feedback)
                     break
                 case '0':

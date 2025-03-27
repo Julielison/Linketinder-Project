@@ -213,11 +213,11 @@ class MenuView {
 		print "Informe o id da empresa: "
 		return getIdValido()
 	}
-	static getIdCandidatoInput(){
+	static Integer getIdCandidatoInput(){
 		print "Informe o id do candidato: "
 		return getIdValido()
 	}
-	static getIdVagaInput(){
+	static Integer getIdVagaInput(){
 		print "Informe o id da vaga: "
 		return getIdValido()
 	}
@@ -235,5 +235,9 @@ class MenuView {
 			}
 		}
 		return id
+	}
+	static Integer getIdCompetenciaInput(){
+		print "Informe o id da competência: "
+		return getIdValido()
 	}
 }

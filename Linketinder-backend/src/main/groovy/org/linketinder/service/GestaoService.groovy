@@ -106,12 +106,15 @@ class GestaoService {
 		}
 	}
 	String removerCandidato(Integer id){
-		removerEntidade(id, 'candidato')
+		return removerEntidade(id, 'candidato')
 	}
 	String removerEmpresa(Integer id){
-		removerEntidade(id, 'empresa')
+		return removerEntidade(id, 'empresa')
 	}
 	String removerVaga(Integer id){
-		removerEntidade(id, 'vaga')
+		return removerEntidade(id, 'vaga')
+	}
+	String removerCompetencia(Integer id){
+		return removerEntidade(id, 'competencia')
 	}
 }
