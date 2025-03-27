@@ -16,7 +16,7 @@ class MenuView {
 		println "5. Atualizar dados de uma empresa"
 		println "6. Remover Empresa"
 		println "7. Adicionar Candidato"
-		println "8. Remover dados de um candidato"
+		println "8. Obter dados de um candidato"
 		println "9. Atualizar candidato"
 		println "10. Remover candidato"
 		println "11. Listar todas as vagas"
@@ -25,6 +25,8 @@ class MenuView {
 		println "14. Remover vaga"
 		println "15. Atualizar vaga"
 		println "16. Obter dados de uma vaga"
+		println "17. Adicionar competencia"
+		println "18. Remover competencia"
 		println "0. Sair"
 		print "Escolha uma opção: "
 	}
@@ -215,7 +217,10 @@ class MenuView {
 		print "Informe o id do candidato: "
 		return getIdValido()
 	}
-
+	static getIdVagaInput(){
+		print "Informe o id da vaga: "
+		return getIdValido()
+	}
 	static Integer getIdValido(){
 		Integer id
 		while (true){
