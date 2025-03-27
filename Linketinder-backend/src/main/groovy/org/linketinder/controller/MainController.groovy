@@ -69,6 +69,12 @@ class MainController {
                 case "12":
                     view.showCompetencias(gestaoService.listarCompetencias())
                     break
+                case "13":
+                    Integer idEmpresaInput = view.getIdEmpresaInput()
+                    Map<String, ?> dadosVaga = view.getDadosVagaInput()
+                    feedback = gestaoService.cadastrarVaga(idEmpresaInput, dadosVaga)
+                    view.showFeedback(feedback)
+                    break
                 case "14":
                     Integer idVagaInput = view.getIdVagaInput()
                     feedback = gestaoService.removerVaga(idVagaInput)

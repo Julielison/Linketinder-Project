@@ -4,6 +4,8 @@ import groovy.sql.Sql
 import org.linketinder.model.Competencia
 import org.linketinder.model.Vaga
 
+import java.sql.SQLException
+
 class VagaRepository {
 	static List<Vaga> vagas = []
 	Sql sql
@@ -12,6 +14,7 @@ class VagaRepository {
 	VagaRepository(Sql sql, CompetenciaRepository competenciaRepository){
 		this.sql = sql
         this.competenciaRepository = competenciaRepository
+
 	}
 
     List<Vaga> getVagas() {
@@ -82,28 +85,6 @@ class VagaRepository {
         }
     }
 
-    void addVaga(Vaga vaga) {
-        try {
-            def keys = sql.executeInsert("""
-                INSERT INTO VAGA (nome, descricao, local, id_empresa)
-                VALUES (?, ?, ?, ?)
-            """, [
-                vaga.nome,
-                vaga.descricao,
-                vaga.local,
-                vaga.idEmpresa
-            ])
-            
-            vaga.id = keys[0][0] as Integer
-            
-            println("Vaga '${vaga.nome}' adicionada com sucesso!")
-            
-        } catch (Exception e) {
-            println("Erro ao adicionar vaga: ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
     void updateVaga(Vaga vaga) {
         try {
             sql.executeUpdate("""
@@ -137,6 +118,34 @@ class VagaRepository {
             
         } catch (Exception e) {
             println("Erro ao remover vaga: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    Integer inserirVaga(Vaga vaga){
+        try {
+            def keys = sql.executeInsert("""
+                    INSERT INTO VAGA (nome, descricao, local, id_empresa)
+                    VALUES (?, ?, ?, ?)
+                """, [
+                    vaga.nome,
+                    vaga.descricao,
+                    vaga.local,
+                    vaga.idEmpresa
+            ])
+            vaga.id = keys[0][0] as Integer
+        } catch (SQLException e){
+            e.printStackTrace()
+        }
+        return vaga.id
+    }
+
+    void inserirIdVagaCompetencia(List<Competencia> competencias, Integer idVaga) {
+       try {
+           competencias.each {Competencia competencia -> {
+                sql.executeInsert("INSERT INTO vaga_competencia(id_vaga, id_competencia) VALUES (?, ?)", [idVaga, competencia.id])
+           }}
+        } catch (SQLException e) {
             e.printStackTrace()
         }
     }

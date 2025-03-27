@@ -236,8 +236,52 @@ class MenuView {
 		}
 		return id
 	}
-	static Integer getIdCompetenciaInput(){
+	static Integer getIdCompetenciaInput() {
 		print "Informe o id da competência: "
 		return getIdValido()
 	}
+	static Map<String, ?> getDadosVagaInput(){
+		print "Nome da vaga: "
+		String nome = getUserInput()
+
+		print "Descrição: "
+		String descricao = getUserInput()
+
+		print "Local da vaga: "
+		String local = getUserInput()
+
+		List<String> competencias = getCompetenciasInput()
+
+		return [
+		        nome: nome,
+				descricao: descricao,
+				local: local,
+				competencias: competencias
+		]
+
+	}
+	static List<String> getCompetenciasInput(){
+		List<String> competencias = new ArrayList<>()
+		boolean adicionar = true
+		while (adicionar){
+			println " -- Competências --"
+			println "1. Adicionar"
+			println "2. Próximo"
+			String opcao = getUserInput()
+			switch (opcao){
+				case "1":
+					print "Nome (ex: Java): "
+					competencias.add(getUserInput())
+					break
+				case "2":
+					adicionar = false
+					break
+				default:
+					showInvalidOption()
+			}
+		}
+		return competencias
+	}
+
+
 }

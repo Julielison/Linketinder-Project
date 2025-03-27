@@ -70,8 +70,41 @@ class CompetenciaRepository {
 		}
 		return competencias
 	}
-	Boolean verificarSeCompetenciaExiste(String nomeCompetencia){
-		GroovyRowResult result = sql.firstRow("SELECT nome FROM competencia WHERE nome = ${nomeCompetencia}")
-		return result.nome ? true : false
+	Map<String, List<Competencia>> setIdsCompetenciasExistentes(List<Competencia> competencias) {
+		List<Competencia> competenciasComId = new ArrayList<>()
+		List<Competencia> competenciasSemId = new ArrayList<>()
+		try {
+			competencias.forEach {Competencia it ->
+				GroovyRowResult result = sql.firstRow("SELECT id FROM competencia WHERE nome = ?", [it.nome])
+				if (result != null) {
+					it.setId(result.id as Integer)
+					competenciasComId.add(it)
+				} else {
+					competenciasSemId.add(it)
+				}
+			}
+		} catch (SQLException e){
+			e.printStackTrace()
+		}
+
+		return [
+		        comId: competenciasComId,
+				semId: competenciasSemId
+		]
+	}
+
+	List<Competencia> addCompetencias(List<Competencia> competencias) {
+		try {
+			competencias.each { Competencia competencia ->
+				def result = sql.executeInsert("INSERT INTO competencia (nome) VALUES (?)", [competencia.nome])
+				if (result) {
+					competencia.id = result[0][0] as Integer
+				}
+			}
+		} catch (SQLException e){
+			e.printStackTrace()
+		}
+
+		return competencias
 	}
 }

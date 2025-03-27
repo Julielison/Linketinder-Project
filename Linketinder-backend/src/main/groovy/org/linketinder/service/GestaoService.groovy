@@ -29,14 +29,7 @@ class GestaoService {
 			formacoes.add(formacao)
 		}
 
-		List<Competencia> competencias = new ArrayList<>()
-		for (String competenciaStr : dados.get('competencias')){
-			Competencia competencia = new Competencia(
-					null,
-					competenciaStr
-			)
-			competencias.add(competencia)
-		}
+		List<Competencia> competencias = extrairCompetencias(dados)
 
 		Pessoa novoCandidato = new Candidato(
 				null,
@@ -116,5 +109,36 @@ class GestaoService {
 	}
 	String removerCompetencia(Integer id){
 		return removerEntidade(id, 'competencia')
+	}
+
+	String cadastrarVaga(Integer idEmpresa, Map<String, ?> dados){
+		List<Competencia> competencias = extrairCompetencias(dados)
+		Vaga vaga = new Vaga (
+				null,
+				dados.descricao as String,
+				dados.nome as String,
+				dados.local as String,
+				idEmpresa,
+				competencias
+		)
+		String feedback = "Cadastro feito com sucesso!"
+		try {
+			empresaRepository.addVaga(vaga)
+		} catch (Exception e){
+			feedback = e.getMessage()
+		}
+		return feedback
+	}
+
+	private static List<Competencia> extrairCompetencias(Map<String, ?> dados){
+		List<Competencia> competencias = new ArrayList<>()
+		for (String competenciaStr : dados.get('competencias')){
+			Competencia competencia = new Competencia(
+					null,
+					competenciaStr
+			)
+			competencias.add(competencia)
+		}
+		return competencias
 	}
 }
