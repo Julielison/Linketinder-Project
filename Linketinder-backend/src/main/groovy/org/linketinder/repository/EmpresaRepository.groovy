@@ -3,7 +3,6 @@ package org.linketinder.repository
 
 import groovy.sql.Sql
 import org.linketinder.model.Empresa
-import org.linketinder.model.Vaga
 
 import java.sql.SQLException
 
@@ -102,5 +101,15 @@ class EmpresaRepository {
                 enderecoId
         ])
         return (result[0][0] as Integer)
+    }
+
+    boolean removerEmpresaPorId(Integer id) {
+        try {
+            int rowsAffected = sql.executeUpdate("DELETE FROM empresa WHERE id = ?", [id])
+            return rowsAffected > 0
+        } catch (SQLException e) {
+            e.printStackTrace()
+            throw new Exception("Erro ao remover empresa: ${e.message}")
+        }
     }
 }

@@ -94,4 +94,12 @@ class GestaoService {
 	List<Competencia> listarCompetencias(){
 		return candidatoRepository.competenciaRepository.getCompetencias()
 	}
+
+	String removerEmpresa(Integer idEmpresa){
+		try {
+			return empresaRepository.removerEmpresaPorId(idEmpresa) ? "Empresa removida com sucesso!" : "Id da empresa não existe!"
+		} catch (Exception e){
+			return e.getMessage()
+		}
+	}
 }

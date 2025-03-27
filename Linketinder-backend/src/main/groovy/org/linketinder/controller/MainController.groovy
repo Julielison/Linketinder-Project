@@ -30,6 +30,7 @@ class MainController {
 
     void executar() {
         boolean sair = false
+        String feedback
         while (!sair) {
             view.showMenu()
             String opcao = view.getUserInput()
@@ -41,13 +42,18 @@ class MainController {
                     view.showPessoas(gestaoService.listarEmpresas(), 'empresas')
                     break
                 case "3":
-                    def dadosEmpresa = view.getEmpresaInput()
-                    String feedback = gestaoService.cadastrarEmpresa(dadosEmpresa)
+                    Map<String, ?> dadosEmpresa = view.getEmpresaInput()
+                    feedback = gestaoService.cadastrarEmpresa(dadosEmpresa)
+                    view.showFeedbackInsercao(feedback)
+                    break
+                case "6":
+                    Integer idEmprsa = view.getIdEmpresaInput()
+                    feedback = gestaoService.removerEmpresa(idEmprsa)
                     view.showFeedbackInsercao(feedback)
                     break
                 case "7":
-                    def dadosCandidato = view.getCandidatoInput()
-                    String feedback = gestaoService.cadastrarCandidato(dadosCandidato)
+                    Map<String, ?> dadosCandidato = view.getCandidatoInput()
+                    feedback = gestaoService.cadastrarCandidato(dadosCandidato)
                     view.showFeedbackInsercao(feedback)
                     break
                 case "11":
