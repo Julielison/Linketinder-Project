@@ -1,6 +1,6 @@
 package org.linketinder.repository
 
-import groovy.sql.GroovyRowResult
+
 import groovy.sql.Sql
 import org.linketinder.model.Candidato
 
@@ -102,7 +102,6 @@ class CandidatoRepository {
     }
 
     Integer inserirCandidato(Candidato candidato, Integer idEndereco) {
-        // Converter a data para string no formato yyyy-MM-dd
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd")
         String dataNascimentoFormatada = dateFormat.format(candidato.dataNascimento)
 
@@ -112,7 +111,7 @@ class CandidatoRepository {
 """, [
                 candidato.nome,
                 candidato.sobrenome,
-                dataNascimentoFormatada, // Convertendo a data para string no formato yyyy-MM-dd
+                dataNascimentoFormatada,
                 candidato.email,
                 candidato.cpf,
                 candidato.descricao,
@@ -120,5 +119,14 @@ class CandidatoRepository {
                 idEndereco
         ])
         return result[0][0] as Integer
+    }
+    boolean removerCandidatoPorId(Integer id) {
+        try {
+            int rowsAffected = sql.executeUpdate("DELETE FROM candidato WHERE id = ?", [id])
+            return rowsAffected > 0
+        } catch (SQLException e) {
+            e.printStackTrace()
+            throw new Exception("Erro ao remover candidato: ${e.message}")
+        }
     }
 }

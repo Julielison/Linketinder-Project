@@ -54,7 +54,7 @@ class MenuView {
 	static void showInvalidOption() {
 		println "\nOpção inválida. Tente novamente."
 	}
-	static void showFeedbackInsercao(String feedback){
+	static void showFeedback(String feedback){
 		println feedback
 	}
 
@@ -209,6 +209,10 @@ class MenuView {
 	}
 	static Integer getIdEmpresaInput(){
 		print "Informe o id da empresa: "
+		return getIdValido()
+	}
+	static getIdCandidatoInput(){
+		print "Informe o id do candidato: "
 		return getIdValido()
 	}
 

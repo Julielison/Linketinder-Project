@@ -102,4 +102,11 @@ class GestaoService {
 			return e.getMessage()
 		}
 	}
+	String removerCandidato(Integer idCandidato){
+		try {
+			return candidatoRepository.removerCandidatoPorId(idCandidato) ? "Candidato removido com sucesso!" : "Id do candidato não existe!"
+		} catch (Exception e){
+			return e.getMessage()
+		}
+	}
 }

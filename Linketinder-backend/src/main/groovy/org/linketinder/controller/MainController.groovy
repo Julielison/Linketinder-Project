@@ -44,17 +44,22 @@ class MainController {
                 case "3":
                     Map<String, ?> dadosEmpresa = view.getEmpresaInput()
                     feedback = gestaoService.cadastrarEmpresa(dadosEmpresa)
-                    view.showFeedbackInsercao(feedback)
+                    view.showFeedback(feedback)
                     break
                 case "6":
                     Integer idEmprsa = view.getIdEmpresaInput()
                     feedback = gestaoService.removerEmpresa(idEmprsa)
-                    view.showFeedbackInsercao(feedback)
+                    view.showFeedback(feedback)
                     break
                 case "7":
                     Map<String, ?> dadosCandidato = view.getCandidatoInput()
                     feedback = gestaoService.cadastrarCandidato(dadosCandidato)
-                    view.showFeedbackInsercao(feedback)
+                    view.showFeedback(feedback)
+                    break
+                case "10":
+                    Integer idCandidatoInput = view.getIdCandidatoInput()
+                    feedback = gestaoService.removerCandidato(idCandidatoInput)
+                    view.showFeedback(feedback)
                     break
                 case "11":
                     view.showVagas(gestaoService.listarVagas())

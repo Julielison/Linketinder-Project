@@ -29,6 +29,7 @@ abstract class Pessoa implements PessoaInterface {
     @Override
     String toString() {
         return """
+        Id: ${id}
         Nome: ${nome}
         Email: ${email}
         CEP: ${cep}
