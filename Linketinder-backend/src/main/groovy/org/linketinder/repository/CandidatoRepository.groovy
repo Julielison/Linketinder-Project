@@ -120,13 +120,4 @@ class CandidatoRepository {
         ])
         return result[0][0] as Integer
     }
-    boolean removerCandidatoPorId(Integer id) {
-        try {
-            int rowsAffected = sql.executeUpdate("DELETE FROM candidato WHERE id = ?", [id])
-            return rowsAffected > 0
-        } catch (SQLException e) {
-            e.printStackTrace()
-            throw new Exception("Erro ao remover candidato: ${e.message}")
-        }
-    }
 }

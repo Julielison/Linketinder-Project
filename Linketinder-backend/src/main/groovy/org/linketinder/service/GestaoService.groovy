@@ -3,14 +3,17 @@ package org.linketinder.service
 import org.linketinder.model.*
 import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.EmpresaRepository
+import org.linketinder.repository.Repository
 
 class GestaoService {
 	final EmpresaRepository empresaRepository
 	final CandidatoRepository candidatoRepository
+	final Repository repository
 
-	GestaoService(EmpresaRepository empresaRepository, CandidatoRepository candidatoRepository) {
+	GestaoService(EmpresaRepository empresaRepository, CandidatoRepository candidatoRepository, Repository repository) {
 		this.empresaRepository = empresaRepository
 		this.candidatoRepository = candidatoRepository
+		this.repository = repository
 	}
 
 	String cadastrarCandidato(Map<String, String> dados) {
@@ -95,18 +98,20 @@ class GestaoService {
 		return candidatoRepository.competenciaRepository.getCompetencias()
 	}
 
-	String removerEmpresa(Integer idEmpresa){
+	private String removerEntidade(Integer id, String tabela) {
 		try {
-			return empresaRepository.removerEmpresaPorId(idEmpresa) ? "Empresa removida com sucesso!" : "Id da empresa não existe!"
-		} catch (Exception e){
+			return repository.removerPorId(tabela, id) ? "Remoção bem sucedida!" : "O id informado não existe!"
+		} catch (Exception e) {
 			return e.getMessage()
 		}
 	}
-	String removerCandidato(Integer idCandidato){
-		try {
-			return candidatoRepository.removerCandidatoPorId(idCandidato) ? "Candidato removido com sucesso!" : "Id do candidato não existe!"
-		} catch (Exception e){
-			return e.getMessage()
-		}
+	String removerCandidato(Integer id){
+		removerEntidade(id, 'candidato')
+	}
+	String removerEmpresa(Integer id){
+		removerEntidade(id, 'empresa')
+	}
+	String removerVaga(Integer id){
+		removerEntidade(id, 'vaga')
 	}
 }

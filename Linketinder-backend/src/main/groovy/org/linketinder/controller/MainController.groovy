@@ -6,6 +6,7 @@ import org.linketinder.repository.EmailRepository
 import org.linketinder.repository.EmpresaRepository
 import org.linketinder.repository.EnderecoRepository
 import org.linketinder.repository.FormacaoRepository
+import org.linketinder.repository.Repository
 import org.linketinder.repository.VagaRepository
 import org.linketinder.service.GestaoService
 import org.linketinder.view.MenuView
@@ -23,9 +24,10 @@ class MainController {
         CompetenciaRepository competenciaRepository = new CompetenciaRepository(sql)
         FormacaoRepository formacaoRepository = new FormacaoRepository(sql)
         EnderecoRepository enderecoRepository = new EnderecoRepository(sql)
+        Repository repository = new Repository(sql)
         EmpresaRepository empresaRepository = new EmpresaRepository(sql, enderecoRepository, vagaRepository)
         CandidatoRepository candidatoRepository = new CandidatoRepository(sql, enderecoRepository, competenciaRepository, formacaoRepository, emailRepository)
-        this.gestaoService = new GestaoService(empresaRepository, candidatoRepository)
+        this.gestaoService = new GestaoService(empresaRepository, candidatoRepository, repository)
     }
 
     void executar() {
@@ -66,6 +68,16 @@ class MainController {
                     break
                 case "12":
                     view.showCompetencias(gestaoService.listarCompetencias())
+                    break
+                case "14":
+                    Integer idVagaInput = view.getIdVagaInput()
+                    feedback = gestaoService.removerVaga(idVagaInput)
+                    view.showFeedback(feedback)
+                    break
+                case "18":
+                    Integer idVagaInput = view.getIdVagaInput()
+                    feedback = gestaoService.removerEntidade(idVagaInput, "competencia")
+                    view.showFeedback(feedback)
                     break
                 case '0':
                     view.showExitMessage()
