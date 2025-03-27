@@ -1,5 +1,6 @@
 package org.linketinder.repository
 
+import groovy.sql.GroovyResultSet
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import org.linketinder.model.Competencia
@@ -51,6 +52,24 @@ class CompetenciaRepository {
 		return competencias
 	}
 
+	List<Competencia> getCompetenciasPorIdDaVaga(Integer id){
+		List<Competencia> competencias = new ArrayList<>()
+		try {
+			sql.eachRow("""
+				SELECT c.nome as nome_competencia
+				FROM vaga_competencia vc
+				JOIN competencia c
+				ON c.id = vc.id_competencia
+				WHERE vc.id_vaga = ?
+		""", [id]){ GroovyResultSet it ->
+				competencias.add(it.nome_competencia)
+			}
+		} catch (SQLException e){
+			e.printStackTrace()
+			throw new SQLException(e.getMessage())
+		}
+		return competencias
+	}
 	Boolean verificarSeCompetenciaExiste(String nomeCompetencia){
 		GroovyRowResult result = sql.firstRow("SELECT nome FROM competencia WHERE nome = ${nomeCompetencia}")
 		return result.nome ? true : false

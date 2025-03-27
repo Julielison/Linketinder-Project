@@ -1,14 +1,17 @@
 package org.linketinder.repository
 
 import groovy.sql.Sql
+import org.linketinder.model.Competencia
 import org.linketinder.model.Vaga
 
 class VagaRepository {
 	static List<Vaga> vagas = []
 	Sql sql
+    CompetenciaRepository competenciaRepository
 
-	VagaRepository(Sql sql){
+	VagaRepository(Sql sql, CompetenciaRepository competenciaRepository){
 		this.sql = sql
+        this.competenciaRepository = competenciaRepository
 	}
 
     List<Vaga> getVagas() {
@@ -25,12 +28,14 @@ class VagaRepository {
 
         try {
             sql.eachRow(query) { row ->
+                Integer vagaId = row.vaga_id as Integer
                 Vaga vaga = new Vaga(
-                        row.vaga_id as Integer,
+                        vagaId,
                         row.vaga_nome as String,
                         row.vaga_descricao as String,
                         row.vaga_local as String,
-                        row.empresa_id as Integer
+                        row.empresa_id as Integer,
+                        competenciaRepository.getCompetenciasPorIdDaVaga(vagaId)
                 )
                 vagas.add(vaga)
             }
@@ -58,12 +63,14 @@ class VagaRepository {
 
         try {
             sql.eachRow(query, [empresaId]) { row ->
+                Integer vagaId = row.vaga_id as Integer
                 Vaga vaga = new Vaga(
-                        row.vaga_id as Integer,
+                        vagaId,
                         row.vaga_nome as String,
                         row.vaga_descricao as String,
                         row.vaga_local as String,
-                        row.empresa_id as Integer
+                        row.empresa_id as Integer,
+                        competenciaRepository.getCompetenciasPorIdDaVaga(vagaId)
                 )
                 vagasEmpresa.add(vaga)
             }

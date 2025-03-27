@@ -6,18 +6,21 @@ class Vaga {
     String descricao
     String local
     Integer idEmpresa
+    List<Competencia> competencias
 
     Vaga(Integer id,
          String nome,
          String descricao,
          String local,
-         Integer idEmpresa)
+         Integer idEmpresa,
+         List<Competencia> competencias)
     {
         this.id = id
         this.nome = nome
         this.descricao = descricao
         this.local = local
         this.idEmpresa = idEmpresa
+        this.competencias = competencias
     }
 
     @Override
@@ -26,7 +29,8 @@ class Vaga {
             Nome da Vaga: ${nome}
             Descrição: ${descricao}
             Local: ${local}
-            Id empresa: ${idEmpresa}"""
+            Id empresa: ${idEmpresa}
+            Competências exigidas: ${competencias}"""
     }
 
 }

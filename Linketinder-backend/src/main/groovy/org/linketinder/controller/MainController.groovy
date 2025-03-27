@@ -19,9 +19,9 @@ class MainController {
 
     MainController() {
         Sql sql = DatabaseConnection.getInstance()
-        VagaRepository vagaRepository = new VagaRepository(sql)
         EmailRepository emailRepository = new EmailRepository(sql)
         CompetenciaRepository competenciaRepository = new CompetenciaRepository(sql)
+        VagaRepository vagaRepository = new VagaRepository(sql, competenciaRepository)
         FormacaoRepository formacaoRepository = new FormacaoRepository(sql)
         EnderecoRepository enderecoRepository = new EnderecoRepository(sql)
         Repository repository = new Repository(sql)
