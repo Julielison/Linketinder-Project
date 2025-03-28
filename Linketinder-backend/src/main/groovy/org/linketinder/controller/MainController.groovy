@@ -88,6 +88,7 @@ class MainController {
                 case '0':
                     view.showExitMessage()
                     sair = true
+                    gestaoService.empresaRepository.sql.close()
                     break
                 default:
                     view.showInvalidOption()
