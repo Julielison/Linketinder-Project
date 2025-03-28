@@ -2,24 +2,29 @@ package org.linketinder.model
 
 class Empresa extends Pessoa {
     String cnpj
-    String pais
     String estado
-    String cep
-    String descricao
-    List<String> competencias
+    List<Vaga> vagas
 
-    Empresa(String nome, String email, String cnpj, String pais, String estado, String cep, String descricao, List<String> competencias) {
-        super(nome, email)
+    Empresa(Integer id,
+            String nome,
+            String email,
+            String cnpj,
+            String cep,
+            String descricao,
+            String senhaLogin,
+            String paisOndeReside,
+            List<Vaga> vagas)
+    {
+        super(id, nome, email, cep, descricao, senhaLogin, paisOndeReside)
         this.cnpj = cnpj
-        this.pais = pais
-        this.estado = estado
-        this.cep = cep
-        this.descricao = descricao
-        this.competencias = competencias
+        this.vagas = vagas
     }
 
     @Override
     String toString() {
-        return "Empresa: ${nome} | Email: ${email} | CNPJ: ${cnpj} | País: ${pais} | Estado: ${estado} | CEP: ${cep} | Descrição: ${descricao} | Competências: ${competencias.join(', ')}"
+        return super.toString() + """
+        CNPJ: ${cnpj}
+        Vagas: ${vagas}
+        """
     }
 }

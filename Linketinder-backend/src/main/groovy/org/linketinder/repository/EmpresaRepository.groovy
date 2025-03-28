@@ -1,26 +1,136 @@
 package org.linketinder.repository
 
+import groovy.sql.GroovyRowResult
+import groovy.sql.Sql
+import org.linketinder.model.Competencia
 import org.linketinder.model.Empresa
+import org.linketinder.model.Vaga
 
+import java.sql.SQLException
 
 class EmpresaRepository {
-    static private List<Empresa> empresas = []
-    static {
-        empresas = [
-                new Empresa("Arroz-Gostoso", "contato@arrozgostoso.com", "12345678000199", "Brasil", "SP", "01001-000", "Empresa de alimentos", ["Python", "Java"]),
-                new Empresa("Império do Boliche", "rh@imperiodoboliche.com", "98765432000155", "Brasil", "RJ", "20001-000", "Empresa de entretenimento", ["Angular", "Spring"]),
-                new Empresa("Tech Solutions", "contato@techsolutions.com", "11223344000177", "Brasil", "MG", "30001-000", "Empresa de tecnologia", ["Groovy", "Java"]),
-                new Empresa("Innovatech", "rh@innovatech.com", "22334455000188", "Brasil", "RS", "90001-000", "Startup de inovação", ["Python", "Django"]),
-                new Empresa("FutureWorks", "info@futureworks.com", "33445566000199", "Brasil", "SC", "88001-000", "Consultoria de TI", ["AWS", "Docker"])
-        ]
-    }
+	public static List<Empresa> empresas = []
+	Sql sql
+	EnderecoRepository endereco
+	VagaRepository vagaRepository
 
-    static void addEmpresa(Empresa empresa) {
-        empresas.add(empresa)
-    }
+	EmpresaRepository(Sql sql, EnderecoRepository enderecoRepository, VagaRepository vagaRepository) {
+		this.sql = sql
+		this.endereco = enderecoRepository
+		this.vagaRepository = vagaRepository
+	}
 
-    static List<Empresa> getEmpresas(){
-        return empresas
-    }
+	List<Empresa> getEmpresas() {
+		empresas.clear()
+		String query = """
+            SELECT 
+                e.id AS empresa_id,
+                e.nome AS empresa_nome,
+                e.email_corporativo AS empresa_email,
+                e.cnpj AS empresa_cnpj,
+                e.descricao_da_empresa AS empresa_descricao,
+                e.senha_de_login AS empresa_senha,
+                endereco.cep AS endereco_cep,
+                p.nome AS pais_nome
+            FROM 
+                EMPRESA e
+            JOIN 
+                ENDERECO endereco ON e.id_endereco = endereco.id
+            JOIN 
+                PAIS_DE_RESIDENCIA p ON endereco.pais_id = p.id"""
 
+		try {
+			sql.eachRow(query) { row ->
+				Integer idEmpresa = row.empresa_id
+
+				Empresa empresa = new Empresa(
+						idEmpresa,
+						row.empresa_nome as String,
+						row.empresa_email as String,
+						row.empresa_cnpj as String,
+						row.endereco_cep as String,
+						row.empresa_descricao as String,
+						row.empresa_senha as String,
+						row.pais_nome as String,
+						vagaRepository.getVagasByEmpresaId(idEmpresa)
+				)
+				empresas.add(empresa)
+			}
+			return empresas
+		} catch (Exception e) {
+			println("Erro ao buscar empresas: ${e.message}")
+			e.printStackTrace()
+			return []
+		}
+	}
+
+	void addEmpresa(Empresa empresa) {
+		try {
+			def resultCnpj = sql.firstRow("SELECT cnpj FROM empresa WHERE cnpj = ${empresa.cnpj}")
+			if (resultCnpj){
+				throw new Exception("A empresa já existe no banco de dados!")
+			}
+
+			String paisOndeReside = empresa.getPaisOndeReside()
+			def paisId = endereco.obterIdPais(paisOndeReside)
+			if (!paisId) {
+				paisId = endereco.inserirPais(paisOndeReside)
+			}
+
+			def enderecoId = endereco.inserirEndereco(empresa.getCep(), paisId)
+
+			def empresaId = inserirEmpresa(empresa, enderecoId)
+
+			empresa.setId(empresaId as Integer)
+			empresas.add(empresa)
+
+		} catch (SQLException e) {
+			e.printStackTrace()
+			throw new Exception("Erro ao inserir empresa no Banco de dados")
+		}
+	}
+
+	Integer inserirEmpresa(Empresa empresa, Integer enderecoId) {
+		def result = sql.executeInsert("""
+            INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, [
+				empresa.nome,
+				empresa.cnpj,
+				empresa.email,
+				empresa.descricao,
+				empresa.senhaLogin,
+				enderecoId
+		])
+		return (result[0][0] as Integer)
+	}
+
+	boolean verificarSeEmpresaExistePorId(Integer idEmpresa) {
+		try {
+			GroovyRowResult result = sql.firstRow("SELECT EXISTS(SELECT 1 FROM EMPRESA WHERE id = ?)", [idEmpresa])
+			return result[0]
+		} catch (SQLException e) {
+			e.printStackTrace()
+			throw new Exception("Erro ao verificar a existência da empresa no Banco de dados")
+		}
+	}
+	void addVaga(Vaga vaga) {
+		try {
+			boolean result = verificarSeEmpresaExistePorId(vaga.idEmpresa)
+			if (!result){
+				throw new Exception("Empresa não existe no banco de dados!")
+			}
+			Integer idvaga = vagaRepository.inserirVaga(vaga)
+			vaga.setId(idvaga)
+
+			Map<String, List<Competencia>> competenciasSeperadas = vagaRepository.competenciaRepository.setIdsCompetenciasExistentes(vaga.competencias)
+			List<Competencia> competenciasComId = vagaRepository.competenciaRepository.addCompetencias(competenciasSeperadas.get("semId"))
+			competenciasComId.addAll(competenciasSeperadas.get('comId'))
+			vagaRepository.inserirIdVagaCompetencia(competenciasComId, vaga.id)
+
+		} catch (SQLException e) {
+			e.printStackTrace()
+			throw new Exception(e.getMessage())
+		}
+	}
 }

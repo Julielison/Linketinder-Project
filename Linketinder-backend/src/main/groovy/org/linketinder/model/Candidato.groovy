@@ -1,25 +1,43 @@
 package org.linketinder.model
 
-class Candidato extends Pessoa {
-    String cpf
-    int idade
-    String estado
-    String cep
-    String descricao
-    List<String> competencias
+import org.linketinder.util.Util
 
-    Candidato(String nome, String email, String cpf, int idade, String estado, String cep, String descricao, List<String> competencias) {
-        super(nome, email)
+class Candidato extends Pessoa {
+    String sobrenome
+    String cpf
+    Date dataNascimento
+    List<Competencia> competencias
+    List<Formacao> formacoes
+
+    Candidato(Integer id,
+              String nome,
+              String email,
+              String cpf,
+              Date dataNascimento,
+              String cep,
+              String descricao,
+              String senhaLogin,
+              String paisOndeReside,
+              List<Competencia> competencias,
+              List<Formacao> formacoes,
+              String sobrenome)
+    {
+        super(id, nome, email, cep, descricao, senhaLogin, paisOndeReside)
         this.cpf = cpf
-        this.idade = idade
-        this.estado = estado
-        this.cep = cep
-        this.descricao = descricao
+        this.sobrenome = sobrenome
+        this.dataNascimento = dataNascimento
         this.competencias = competencias
+        this.formacoes = formacoes
     }
+
 
     @Override
     String toString() {
-        return "Candidato: ${nome} | Email: ${email} | CPF: ${cpf} | Idade: ${idade} | Estado: ${estado} | CEP: ${cep} | Descrição: ${descricao} | Competências: ${competencias.join(', ')}"
+        return super.toString() + """
+        Sobrenome: ${sobrenome}
+        CPF: ${cpf}
+        Data de Nascimento: ${Util.formatarData(dataNascimento, "dd/MM/yyyy")}
+        Competências: ${competencias.join(', ')}
+        Formações: ${formacoes.join('\n\t')}"""
     }
 }
