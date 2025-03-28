@@ -1,5 +1,7 @@
 package org.linketinder.model
 
+import org.linketinder.util.Util
+
 class Candidato extends Pessoa {
     String sobrenome
     String cpf
@@ -34,7 +36,7 @@ class Candidato extends Pessoa {
         return super.toString() + """
         Sobrenome: ${sobrenome}
         CPF: ${cpf}
-        Data de Nascimento: ${dataNascimento}
+        Data de Nascimento: ${Util.formatarData(dataNascimento, "dd/MM/yyyy")}
         Competências: ${competencias.join(', ')}
         Formações: ${formacoes.join('\n\t')}"""
     }
