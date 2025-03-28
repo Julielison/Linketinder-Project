@@ -85,43 +85,6 @@ class VagaRepository {
         }
     }
 
-    void updateVaga(Vaga vaga) {
-        try {
-            sql.executeUpdate("""
-                UPDATE VAGA 
-                SET nome = ?, descricao = ?, local = ?, id_empresa = ?
-                WHERE id = ?
-            """, [
-                vaga.nome,
-                vaga.descricao,
-                vaga.local,
-                vaga.idEmpresa,
-                vaga.id
-            ])
-            
-            println("Vaga '${vaga.nome}' atualizada com sucesso!")
-            
-        } catch (Exception e) {
-            println("Erro ao atualizar vaga: ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
-    void deleteVaga(Integer vagaId) {
-        try {
-            sql.executeUpdate("DELETE FROM VAGA_COMPETENCIA WHERE id_vaga = ?", [vagaId])
-            sql.executeUpdate("DELETE FROM CANDIDATO_CURTE_VAGA WHERE id_vaga = ?", [vagaId])
-            
-            sql.executeUpdate("DELETE FROM VAGA WHERE id = ?", [vagaId])
-            
-            println("Vaga ID ${vagaId} removida com sucesso!")
-            
-        } catch (Exception e) {
-            println("Erro ao remover vaga: ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
     Integer inserirVaga(Vaga vaga){
         try {
             def keys = sql.executeInsert("""

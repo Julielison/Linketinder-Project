@@ -7,7 +7,6 @@ import org.linketinder.model.Formacao
 import org.linketinder.util.Util
 
 import java.sql.SQLException
-import java.text.SimpleDateFormat
 
 class CandidatoRepository {
     private static List<Candidato> candidatos = []

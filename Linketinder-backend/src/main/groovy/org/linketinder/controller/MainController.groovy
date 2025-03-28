@@ -49,8 +49,8 @@ class MainController {
                     view.showFeedback(feedback)
                     break
                 case "6":
-                    Integer idEmprsa = view.getIdEmpresaInput()
-                    feedback = gestaoService.removerEmpresa(idEmprsa)
+                    Integer idEmpresa = view.getIdEmpresaInput()
+                    feedback = gestaoService.removerEmpresa(idEmpresa)
                     view.showFeedback(feedback)
                     break
                 case "7":
