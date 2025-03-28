@@ -1,8 +1,10 @@
 package org.linketinder.repository
 
-
+import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 import org.linketinder.model.Candidato
+import org.linketinder.model.Formacao
+import org.linketinder.util.Util
 
 import java.sql.SQLException
 import java.text.SimpleDateFormat
@@ -10,7 +12,7 @@ import java.text.SimpleDateFormat
 class CandidatoRepository {
     private static List<Candidato> candidatos = []
     Sql sql
-    EnderecoRepository endereco
+    EnderecoRepository enderecoRepository
     CompetenciaRepository competenciaRepository
     FormacaoRepository formacaoRepository
     EmailRepository emailRepository
@@ -18,7 +20,7 @@ class CandidatoRepository {
     CandidatoRepository(Sql sql, EnderecoRepository enderecoRepository,
                         CompetenciaRepository competenciaRepository, FormacaoRepository formacaoRepository, EmailRepository emailRepository) {
         this.sql = sql
-        this.endereco = enderecoRepository
+        this.enderecoRepository = enderecoRepository
         this.competenciaRepository = competenciaRepository
         this.formacaoRepository = formacaoRepository
         this.emailRepository = emailRepository
@@ -46,7 +48,7 @@ class CandidatoRepository {
                 PAIS_DE_RESIDENCIA p ON e.pais_id = p.id"""
 
         try {
-            sql.eachRow(query) { row ->
+            sql.eachRow(query) { GroovyResultSet row ->
                 Integer idCandidato = row.candidato_id
 
                 Candidato candidato = new Candidato(
@@ -84,17 +86,19 @@ class CandidatoRepository {
                 throw new Exception("Email já existe! Candidato não criado!")
             }
 
-            Integer paisId = endereco.obterIdPais(candidato.paisOndeReside)
+            Integer paisId = enderecoRepository.obterIdPais(candidato.paisOndeReside)
             if (!paisId) {
-                paisId = endereco.inserirPais(candidato.paisOndeReside)
+                paisId = enderecoRepository.inserirPais(candidato.paisOndeReside)
             }
 
-            Integer enderecoId = endereco.inserirEndereco(candidato.cep, paisId)
+            Integer enderecoId = enderecoRepository.inserirEndereco(candidato.cep, paisId)
             Integer candidatoId = inserirCandidato(candidato, enderecoId)
-
-
             candidato.setId(candidatoId)
-            candidatos.add(candidato)
+
+            if(!candidato.formacoes.isEmpty()){
+                Candidato candidatoComIdFormacoes = formacaoRepository.inserirFormacoes(candidato)
+                inserirIdsFormacaoCandidatoEDatas(candidatoComIdFormacoes)
+            }
         } catch (SQLException e){
             e.printStackTrace()
             throw new Exception(e.getMessage())
@@ -102,8 +106,7 @@ class CandidatoRepository {
     }
 
     Integer inserirCandidato(Candidato candidato, Integer idEndereco) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd")
-        String dataNascimentoFormatada = dateFormat.format(candidato.dataNascimento)
+        String dataNascimentoFormatada = Util.formatarData(candidato.dataNascimento,'yyyy-MM-dd')
 
         def result = sql.executeInsert("""
     INSERT INTO CANDIDATO (nome, sobrenome, data_nascimento, email, cpf, descricao_pessoal, senha_de_login, id_endereco)
@@ -119,5 +122,18 @@ class CandidatoRepository {
                 idEndereco
         ])
         return result[0][0] as Integer
+    }
+    void inserirIdsFormacaoCandidatoEDatas(Candidato candidato){
+        try {
+            candidato.formacoes.each { Formacao formacao ->
+                sql.executeInsert("""
+                    INSERT INTO formacao_candidato VALUES (?, ?, ?::date, ?::date)""",
+                        [formacao.id, candidato.id, Util.formatarData(formacao.dataInicio, "yyyy-MM-dd"), Util.formatarData(formacao.dataFim,"yyyy-MM-dd")])
+            }
+        } catch (SQLException e){
+            throw new Exception(e.getMessage())
+        } catch (Exception e){
+            throw new Exception(e.getMessage())
+        }
     }
 }

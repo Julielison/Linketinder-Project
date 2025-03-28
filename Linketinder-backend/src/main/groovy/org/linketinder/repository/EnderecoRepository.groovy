@@ -19,7 +19,8 @@ class EnderecoRepository {
 				return paisRow.id as Integer
 			}
 		} catch (SQLException e) {
-			println(e.getMessage())
+			e.printStackTrace()
+		} catch (Exception e){
 			e.printStackTrace()
 		}
 		return null

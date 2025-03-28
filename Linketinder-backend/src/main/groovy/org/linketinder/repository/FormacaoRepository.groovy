@@ -1,6 +1,7 @@
 package org.linketinder.repository
 
 import groovy.sql.Sql
+import org.linketinder.model.Candidato
 import org.linketinder.model.Formacao
 
 class FormacaoRepository {
@@ -53,87 +54,19 @@ class FormacaoRepository {
         }
     }
     
-    void addFormacao(Formacao formacao, Integer candidatoId) {
+    Candidato inserirFormacoes(Candidato candidato) {
         try {
-            def formacaoRow = sql.firstRow("""
-                SELECT id FROM FORMACAO 
-                WHERE nome = ? AND instituicao = ?
-            """, [formacao.nomeCurso, formacao.instituicao])
-            
-            Integer formacaoId
-            
-            if (!formacaoRow) {
-                def keys = sql.executeInsert("""
-                    INSERT INTO FORMACAO (nome, instituicao) 
-                    VALUES (?, ?)
-                """, [formacao.nomeCurso, formacao.instituicao])
-                
-                formacaoId = keys[0][0] as Integer
-            } else {
-                formacaoId = formacaoRow.id
+            candidato.formacoes.each {Formacao formacao ->
+                def result = sql.executeInsert(
+                        """INSERT INTO formacao (nome,  instituicao) VALUES (?, ?)""",
+                        [formacao.nomeCurso, formacao.instituicao])
+                if (result){
+                    formacao.setId(result[0][0] as Integer)
+                }
             }
-            
-            sql.executeInsert("""
-                INSERT INTO FORMACAO_CANDIDATO (id_formacao, id_candidato, data_inicio, data_fim_previsao)
-                VALUES (?, ?, ?, ?)
-            """, [
-                formacaoId,
-                candidatoId,
-                formacao.dataInicio,
-                formacao.dataFim
-            ])
-            
-            println("Formação adicionada com sucesso para o candidato ID ${candidatoId}")
-            
         } catch (Exception e) {
-            println("Erro ao adicionar formação para o candidato ID ${candidatoId}: ${e.message}")
             e.printStackTrace()
         }
-    }
-    
-    void updateFormacao(Formacao formacao, Integer candidatoId) {
-        try {
-            sql.executeUpdate("""
-                UPDATE FORMACAO_CANDIDATO 
-                SET data_inicio = ?, data_fim_previsao = ?
-                WHERE id_formacao = ? AND id_candidato = ?
-            """, [
-                formacao.dataInicio,
-                formacao.dataFim,
-                formacao.id,
-                candidatoId
-            ])
-            
-            println("Formação atualizada com sucesso para o candidato ID ${candidatoId}")
-            
-        } catch (Exception e) {
-            println("Erro ao atualizar formação para o candidato ID ${candidatoId}: ${e.message}")
-            e.printStackTrace()
-        }
-    }
-    
-    void deleteFormacao(Integer formacaoId, Integer candidatoId) {
-        try {
-            sql.executeUpdate("""
-                DELETE FROM FORMACAO_CANDIDATO 
-                WHERE id_formacao = ? AND id_candidato = ?
-            """, [formacaoId, candidatoId])
-            
-            def count = sql.firstRow("""
-                SELECT COUNT(*) as total 
-                FROM FORMACAO_CANDIDATO 
-                WHERE id_formacao = ?
-            """, [formacaoId]).total
-            
-            if (count == 0) {
-                sql.executeUpdate("DELETE FROM FORMACAO WHERE id = ?", [formacaoId])
-            }
-            
-            println("Formação removida com sucesso do candidato ID ${candidatoId}")
-            
-        } catch (Exception e) {
-            println("Erro ao remover formação do candidato ID ${candidatoId}: ${e.message}")
-            e.printStackTrace()
-        }
+        return candidato
     }
 }
