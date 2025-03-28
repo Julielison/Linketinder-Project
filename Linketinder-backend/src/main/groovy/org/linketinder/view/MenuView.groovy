@@ -12,21 +12,14 @@ class MenuView {
 		println "1. Listar dados dos candidatos"
 		println "2. Listar dados das Empresas"
 		println "3. Adicionar Empresa"
-		println "4. Obter dados de uma empresa"
-		println "5. Atualizar dados de uma empresa"
-		println "6. Remover Empresa"
-		println "7. Adicionar Candidato"
-		println "8. Obter dados de um candidato"
-		println "9. Atualizar candidato"
-		println "10. Remover candidato"
-		println "11. Listar todas as vagas"
-		println "12. Listar todas as competências"
-		println "13. Adicionar vaga"
-		println "14. Remover vaga"
-		println "15. Atualizar vaga"
-		println "16. Obter dados de uma vaga"
-		println "17. Adicionar competencia"
-		println "18. Remover competencia"
+		println "4. Remover Empresa"
+		println "5. Adicionar Candidato"
+		println "6. Remover candidato"
+		println "7. Listar todas as vagas"
+		println "8. Listar todas as competências"
+		println "9. Adicionar vaga"
+		println "10. Remover vaga"
+		println "11. Remover competencia"
 		println "0. Sair"
 		print "Escolha uma opção: "
 	}
@@ -69,14 +62,12 @@ class MenuView {
 		print "Email: "
 		String email = System.in.newReader().readLine()
 
-		print "CNPJ: "
-		String cnpj = System.in.newReader().readLine()
+		String cnpj = getPadraoValido("CNPJ (14 dígitos): ", /\d{14}/)
 
 		print "País: "
 		String pais = System.in.newReader().readLine()
 
-		print "CEP: "
-		String cep = System.in.newReader().readLine()
+		String cep = getPadraoValido("Cep (8 dígitos): ", /\d{8}/)
 
 		print "Descrição: "
 		String descricao = System.in.newReader().readLine()
@@ -106,13 +97,11 @@ class MenuView {
 		print "Email: "
 		String email = System.in.newReader().readLine()
 
-		print "Cpf (11 dígitos): "
-		String cpf = System.in.newReader().readLine()
+		String cpf = getPadraoValido("Cpf (11 dígitos): ", /\d{11}/)
 
 		Date dataNascimento = getInputData("Data de Nascimento (dd/mm/aaaa): ")
 
-		print "Cep (8 dígitos): "
-		String cep = System.in.newReader().readLine()
+		String cep = getPadraoValido("Cep (8 dígitos): ", /\d{8}/)
 
 		print "Descrição: "
 		String descricao = System.in.newReader().readLine()
@@ -282,6 +271,17 @@ class MenuView {
 		}
 		return competencias
 	}
+	static String getPadraoValido(String label, def padrao){
+		String inputvalido
+		while (true){
+			print label
+			inputvalido = getUserInput()
+			if(inputvalido ==~ padrao){
+				break
+			}
+			println("Entrada inválida! Digite apenas dígitos e na quantidade esperada!")
+		}
+		return inputvalido
 
-
+	}
 }

@@ -101,6 +101,8 @@ class CandidatoRepository {
         } catch (SQLException e){
             e.printStackTrace()
             throw new Exception(e.getMessage())
+        } catch (Exception e){
+            throw new Exception(e.getMessage())
         }
     }
 

@@ -48,39 +48,39 @@ class MainController {
                     feedback = gestaoService.cadastrarEmpresa(dadosEmpresa)
                     view.showFeedback(feedback)
                     break
-                case "6":
+                case "4":
                     Integer idEmpresa = view.getIdEmpresaInput()
                     feedback = gestaoService.removerEmpresa(idEmpresa)
                     view.showFeedback(feedback)
                     break
-                case "7":
+                case "5":
                     Map<String, ?> dadosCandidato = view.getCandidatoInput()
                     feedback = gestaoService.cadastrarCandidato(dadosCandidato)
                     view.showFeedback(feedback)
                     break
-                case "10":
+                case "6":
                     Integer idCandidatoInput = view.getIdCandidatoInput()
                     feedback = gestaoService.removerCandidato(idCandidatoInput)
                     view.showFeedback(feedback)
                     break
-                case "11":
+                case "7":
                     view.showVagas(gestaoService.listarVagas())
                     break
-                case "12":
+                case "8":
                     view.showCompetencias(gestaoService.listarCompetencias())
                     break
-                case "13":
+                case "9":
                     Integer idEmpresaInput = view.getIdEmpresaInput()
                     Map<String, ?> dadosVaga = view.getDadosVagaInput()
                     feedback = gestaoService.cadastrarVaga(idEmpresaInput, dadosVaga)
                     view.showFeedback(feedback)
                     break
-                case "14":
+                case "10":
                     Integer idVagaInput = view.getIdVagaInput()
                     feedback = gestaoService.removerVaga(idVagaInput)
                     view.showFeedback(feedback)
                     break
-                case "18":
+                case "11":
                     Integer idCompetenciaInput = view.getIdCompetenciaInput()
                     feedback = gestaoService.removerCompetencia(idCompetenciaInput)
                     view.showFeedback(feedback)
