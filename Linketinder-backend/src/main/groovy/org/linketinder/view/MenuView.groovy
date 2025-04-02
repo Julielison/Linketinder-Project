@@ -1,5 +1,6 @@
 package org.linketinder.view
 
+import org.linketinder.enums.MenuOption
 import org.linketinder.model.Competencia
 import org.linketinder.model.Pessoa
 import org.linketinder.model.Vaga
@@ -7,20 +8,13 @@ import org.linketinder.model.Vaga
 import java.text.SimpleDateFormat
 
 class MenuView {
+	static final Integer LAST = 1
 	static void showMenu() {
 		println "\n=== Menu ==="
-		println "1. Listar dados dos candidatos"
-		println "2. Listar dados das Empresas"
-		println "3. Adicionar Empresa"
-		println "4. Remover Empresa"
-		println "5. Adicionar Candidato"
-		println "6. Remover candidato"
-		println "7. Listar todas as vagas"
-		println "8. Listar todas as competências"
-		println "9. Adicionar vaga"
-		println "10. Remover vaga"
-		println "11. Remover competencia"
-		println "0. Sair"
+		for (int i = 0; i < MenuOption.values().size() - LAST; i++) {
+			MenuOption option = MenuOption.values()[i]
+			println "${option.value}. ${option.name().replace('_', ' ').toLowerCase().capitalize()}"
+		}
 		print "Escolha uma opção: "
 	}
 
@@ -34,12 +28,18 @@ class MenuView {
 	}
 
 	static String getUserInput() {
-		String input = System.in.newReader().readLine()
-		if (input == null || input.trim().isEmpty()) {
+		String input
+		while (true) {
+			input = System.in.newReader().readLine()
+			if (inputIsValid(input)) {
+				return input
+			}
 			println "Entrada vazia. Por favor, digite um número."
-			return null
 		}
-		return input
+	}
+
+	static boolean inputIsValid(String input){
+		return input != null && !input.trim().isEmpty()
 	}
 
 	static void showExitMessage() {
@@ -49,6 +49,7 @@ class MenuView {
 	static void showInvalidOption() {
 		println "\nOpção inválida. Tente novamente."
 	}
+
 	static void showFeedback(String feedback){
 		println feedback
 	}
