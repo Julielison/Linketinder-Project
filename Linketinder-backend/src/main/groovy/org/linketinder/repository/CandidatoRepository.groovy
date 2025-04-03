@@ -3,13 +3,15 @@ package org.linketinder.repository
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 import org.linketinder.model.Candidato
+import org.linketinder.model.Competencia
 import org.linketinder.model.Formacao
 import org.linketinder.util.Util
 
 import java.sql.SQLException
+import java.time.LocalDate
+import java.time.format.DateTimeParseException
 
 class CandidatoRepository {
-    private static List<Candidato> candidatos = []
     Sql sql
     EnderecoRepository enderecoRepository
     CompetenciaRepository competenciaRepository
@@ -17,7 +19,10 @@ class CandidatoRepository {
     EmailRepository emailRepository
 
     CandidatoRepository(Sql sql, EnderecoRepository enderecoRepository,
-                        CompetenciaRepository competenciaRepository, FormacaoRepository formacaoRepository, EmailRepository emailRepository) {
+                        CompetenciaRepository competenciaRepository,
+                        FormacaoRepository formacaoRepository,
+                        EmailRepository emailRepository)
+    {
         this.sql = sql
         this.enderecoRepository = enderecoRepository
         this.competenciaRepository = competenciaRepository
@@ -26,52 +31,79 @@ class CandidatoRepository {
     }
 
     List<Candidato> getCandidatos() {
-        candidatos.clear()
+        List<Candidato> candidatos = []
         String query = """
-            SELECT 
-                c.id AS candidato_id,
-                c.nome AS candidato_nome,
-                c.sobrenome AS candidato_sobrenome,
-                c.data_nascimento AS candidato_data_nascimento,
-                c.email AS candidato_email,
-                c.cpf AS candidato_cpf,
-                c.descricao_pessoal AS candidato_descricao_pessoal,
-                c.senha_de_login AS candidato_senha_de_login,
-                e.cep AS endereco_cep,
-                p.nome AS pais_nome
-            FROM 
-                CANDIDATO c
-            JOIN 
-                ENDERECO e ON c.id_endereco = e.id
-            JOIN 
-                PAIS_DE_RESIDENCIA p ON e.pais_id = p.id"""
+        SELECT 
+            c.id AS candidato_id,
+            c.nome AS candidato_nome,
+            c.sobrenome AS candidato_sobrenome,
+            c.data_nascimento AS candidato_data_nascimento,
+            c.email AS candidato_email,
+            c.cpf AS candidato_cpf,
+            c.descricao_pessoal AS candidato_descricao_pessoal,
+            c.senha_de_login AS candidato_senha_de_login,
+            e.id AS endereco_id,
+            e.cep AS endereco_cep,
+            p.id AS pais_id,
+            p.nome AS pais_nome,
+            
+            STRING_AGG(DISTINCT CONCAT(comp.id, ':', comp.nome), ';') AS competencias,
+            
+            STRING_AGG(DISTINCT CONCAT(
+                f.id, ':', 
+                f.nome, ':', 
+                f.instituicao, ':', 
+                TO_CHAR(fc.data_inicio, 'YYYY-MM-DD'), ':', 
+                TO_CHAR(fc.data_fim_previsao, 'YYYY-MM-DD')
+            ), ';') AS formacoes
+            
+        FROM 
+            CANDIDATO c
+        JOIN 
+            ENDERECO e ON c.id_endereco = e.id
+        JOIN 
+            PAIS_DE_RESIDENCIA p ON e.pais_id = p.id
+        LEFT JOIN 
+            CANDIDATO_COMPETENCIA cc ON c.id = cc.id_candidato
+        LEFT JOIN 
+            COMPETENCIA comp ON cc.id_competencia = comp.id
+        LEFT JOIN 
+            FORMACAO_CANDIDATO fc ON c.id = fc.id_candidato
+        LEFT JOIN 
+            FORMACAO f ON fc.id_formacao = f.id
+        GROUP BY 
+            c.id, c.nome, c.sobrenome, c.data_nascimento, c.email, c.cpf, 
+            c.descricao_pessoal, c.senha_de_login, e.id, e.cep, p.id, p.nome
+    """
 
         try {
             sql.eachRow(query) { GroovyResultSet row ->
-                Integer idCandidato = row.candidato_id
+                Integer idCandidato = row.candidato_id as Integer
+                List<Competencia> skills = Competencia.extractSkillsData(row.competencias.toString())
+                List<Formacao> formations = Formacao.extractFormationsData(row.formacoes.toString())
+                LocalDate dateOfBirth = Util.convertToLocalDate(row.candidato_data_nascimento.toString(), 'yyyy-MM-dd')
 
-                Candidato candidato = new Candidato(
+                Candidato candidato = new Candidato (
                         idCandidato,
                         row.candidato_nome as String,
                         row.candidato_email as String,
                         row.candidato_cpf as String,
-                        row.candidato_data_nascimento as Date,
+                        dateOfBirth,
                         row.endereco_cep as String,
                         row.candidato_descricao_pessoal as String,
                         row.candidato_senha_de_login as String,
                         row.pais_nome as String,
-                        competenciaRepository.getCompetenciasPorCandidatoId(idCandidato),
-                        formacaoRepository.getFormacoesByIdCandidato(idCandidato),
-                        row.candidato_sobrenome as String
-                )
+                        skills,
+                        formations,
+                        row.candidato_sobrenome as String)
                 candidatos.add(candidato)
             }
-            return candidatos
-        } catch (Exception e) {
-            println("Erro ao buscar candidatos: ${e.message}")
+        } catch (SQLException e) {
             e.printStackTrace()
-            return []
+        } catch (DateTimeParseException e){
+            e.printStackTrace()
         }
+        return candidatos
     }
 
     void addCandidato(Candidato candidato){

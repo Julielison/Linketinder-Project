@@ -2,10 +2,12 @@ package org.linketinder.model
 
 import org.linketinder.util.Util
 
+import java.time.LocalDate
+
 class Candidato extends Pessoa {
     String sobrenome
     String cpf
-    Date dataNascimento
+    LocalDate dataNascimento
     List<Competencia> competencias
     List<Formacao> formacoes
 
@@ -13,7 +15,7 @@ class Candidato extends Pessoa {
               String nome,
               String email,
               String cpf,
-              Date dataNascimento,
+              LocalDate dataNascimento,
               String cep,
               String descricao,
               String senhaLogin,
@@ -36,7 +38,7 @@ class Candidato extends Pessoa {
         return super.toString() + """
         Sobrenome: ${sobrenome}
         CPF: ${cpf}
-        Data de Nascimento: ${Util.formatarData(dataNascimento, "dd/MM/yyyy")}
+        Data de Nascimento: ${Util.convertToBrFormat(dataNascimento)}
         Competências: ${competencias.join(', ')}
         Formações: ${formacoes.join('\n\t')}"""
     }

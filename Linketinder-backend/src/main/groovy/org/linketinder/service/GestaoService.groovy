@@ -5,6 +5,8 @@ import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.EmpresaRepository
 import org.linketinder.repository.Repository
 
+import java.time.LocalDate
+
 class GestaoService {
 	final EmpresaRepository empresaRepository
 	final CandidatoRepository candidatoRepository
@@ -16,6 +18,10 @@ class GestaoService {
 		this.repository = repository
 	}
 
+	List<Candidato> listarCandidatos() {
+		return candidatoRepository.getCandidatos()
+	}
+
 	String cadastrarCandidato(Map<String, String> dados) {
 		List<Formacao> formacoes = new ArrayList<>()
 		for (Map<String, ?> formacaoMap : dados.get("formacoes") as List<Map<String, ?>>){
@@ -23,8 +29,8 @@ class GestaoService {
 					null,
 					formacaoMap.get('instituicao') as String,
 					formacaoMap.get('nome') as String,
-					formacaoMap.get('dataIncio') as Date,
-					formacaoMap.get('dataFim') as Date
+					formacaoMap.get('dataIncio') as LocalDate,
+					formacaoMap.get('dataFim') as LocalDate
 			)
 			formacoes.add(formacao)
 		}
@@ -36,7 +42,7 @@ class GestaoService {
 				dados.nome,
 				dados.email,
 				dados.cpf,
-				dados.dataNascimento as Date,
+				dados.dataNascimento as LocalDate,
 				dados.cep,
 				dados.descricao,
 				dados.senha,
@@ -73,10 +79,6 @@ class GestaoService {
 			feedback = e.getMessage()
 		}
 		return feedback
-	}
-
-	List<Candidato> listarCandidatos() {
-		return candidatoRepository.getCandidatos()
 	}
 
 	List<Empresa> listarEmpresas() {
