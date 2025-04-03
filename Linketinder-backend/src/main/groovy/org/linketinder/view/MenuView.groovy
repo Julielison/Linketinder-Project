@@ -4,13 +4,15 @@ import org.linketinder.enums.MenuOption
 import org.linketinder.model.Competencia
 import org.linketinder.model.Pessoa
 import org.linketinder.model.Vaga
+import org.linketinder.util.Util
 
-import java.text.SimpleDateFormat
+import java.time.LocalDate
 
 class MenuView {
 	static final Integer LAST = 1
+
 	static void showMenu() {
-		println "\n=== Menu ==="
+		println "=== Menu ==="
 		for (int i = 0; i < MenuOption.values().size() - LAST; i++) {
 			MenuOption option = MenuOption.values()[i]
 			println "${option.value}. ${option.name().replace('_', ' ').toLowerCase().capitalize()}"
@@ -19,11 +21,11 @@ class MenuView {
 	}
 
 	static void showPessoas(List<Pessoa> pessoas, String tipoPessoa) {
-		println "\n--- Lista de ${tipoPessoa} ---"
+		println "--- Lista de ${tipoPessoa} ---"
 		if (pessoas.isEmpty()) {
-			println "Nenhum ${tipoPessoa} cadastrado."
+			println "Nenhum ${tipoPessoa} cadastrado(a)."
 		} else {
-			pessoas.each {Pessoa it -> println it }
+			pessoas.each { Pessoa it -> println it }
 		}
 	}
 
@@ -34,7 +36,7 @@ class MenuView {
 			if (inputIsValid(input)) {
 				return input
 			}
-			println "Entrada vazia. Por favor, digite um número."
+			println "Entrada vazia. Por favor, digite o que se pede."
 		}
 	}
 
@@ -56,25 +58,24 @@ class MenuView {
 
 	static Map<String, ?> getEmpresaInput() {
 		println "\n--- Cadastro de Empresa ---"
-
 		print "Nome: "
-		String nome = System.in.newReader().readLine()
+		String nome = getUserInput()
 
 		print "Email: "
-		String email = System.in.newReader().readLine()
+		String email = getUserInput()
 
 		String cnpj = getPadraoValido("CNPJ (14 dígitos): ", /\d{14}/)
 
 		print "País: "
-		String pais = System.in.newReader().readLine()
+		String pais = getUserInput()
 
 		String cep = getPadraoValido("Cep (8 dígitos): ", /\d{8}/)
 
 		print "Descrição: "
-		String descricao = System.in.newReader().readLine()
+		String descricao = getUserInput()
 
 		print "Senha de login: "
-		String senha = System.in.newReader().readLine()
+		String senha = getUserInput()
 
 		return [
 				nome: nome,
@@ -90,31 +91,31 @@ class MenuView {
 	static Map<String, ?> getCandidatoInput() {
 		println "\n--- Cadastro de Candidato ---"
 		print "Nome: "
-		String nome = System.in.newReader().readLine()
+		String nome = getUserInput()
 
 		print "Sobrenome: "
-		String sobrenome = System.in.newReader().readLine()
+		String sobrenome = getUserInput()
 
 		print "Email: "
-		String email = System.in.newReader().readLine()
+		String email = getUserInput()
 
 		String cpf = getPadraoValido("Cpf (11 dígitos): ", /\d{11}/)
 
-		Date dataNascimento = getInputData("Data de Nascimento (dd/mm/aaaa): ")
+		LocalDate dataNascimento = getInputData("Data de Nascimento (dd/mm/aaaa): ")
 
 		String cep = getPadraoValido("Cep (8 dígitos): ", /\d{8}/)
 
 		print "Descrição: "
-		String descricao = System.in.newReader().readLine()
+		String descricao = getUserInput()
 
 		print "Competências (separadas por vírgula): "
-		List<String> competencias = System.in.newReader().readLine().split(",").collect { it.trim() }
+		List<String> competencias = getUserInput().split(",").collect { it.trim() }
 
 		print("Senha de login: ")
-		String senha = System.in.newReader().readLine()
+		String senha = getUserInput()
 
 		print "País onde reside: "
-		String pais = System.in.newReader().readLine()
+		String pais = getUserInput()
 
 		List<Map<String, ?>> formacoes = new ArrayList<>()
 
@@ -123,7 +124,7 @@ class MenuView {
 			println "Formações :"
 			println "1. Adicionar "
 			println "2. Pular"
-			String opcao = System.in.newReader().readLine()
+			String opcao = getUserInput()
 			switch (opcao){
 				case "1":
 					formacoes.add(getFormacaoInput())
@@ -153,13 +154,13 @@ class MenuView {
 
 	static Map<String, ?> getFormacaoInput(){
 		print "Nome da formação: "
-		String nome = System.in.newReader().readLine()
+		String nome = getUserInput()
 
 		print "Nome da instituição: "
-		String instituicao = System.in.newReader().readLine()
+		String instituicao = getUserInput()
 
-		Date dadtaInicio = getInputData("Data de início: ")
-		Date dataFim = getInputData("Data de fim/previsão: ")
+		LocalDate dadtaInicio = getInputData("Data de início: ")
+		LocalDate dataFim = getInputData("Data de fim/previsão: ")
 
 		return [
 				nome: nome,
@@ -169,16 +170,14 @@ class MenuView {
 		]
 	}
 
-	static Date getInputData(String label){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy")
-		Date data
-
+	static LocalDate getInputData(String label){
+		LocalDate data
 		while (true) {
 			print label
 			try {
-				String dataStr = System.in.newReader().readLine()
+				String dataStr = getUserInput()
 				if (dataStr ==~ /\d{2}\/\d{2}\/\d{4}/) {
-					data = dateFormat.parse(dataStr)
+					data = Util.convertToLocalDate(dataStr, "dd/MM/yyyy")
 					break
 				} else {
 					println "Por favor, insira uma data válida no formato dd/mm/aaaa."
