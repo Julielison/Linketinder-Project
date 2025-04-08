@@ -4,26 +4,23 @@ abstract class Pessoa implements PessoaInterface {
     Integer id
     String nome
     String email
-    String cep
+    Address address
     String descricao
     String senhaLogin
-    String paisOndeReside
 
     Pessoa(Integer id,
            String nome,
            String email,
-           String cep,
+           Address address,
            String descricao,
-           String senhaLogin,
-           String paisOndeReside)
+           String senhaLogin)
     {
         this.id = id
         this.nome = nome
         this.email = email
-        this.cep = cep
+        this.address = address
         this.descricao = descricao
         this.senhaLogin = senhaLogin
-        this.paisOndeReside = paisOndeReside
     }
 
     @Override
@@ -32,8 +29,7 @@ abstract class Pessoa implements PessoaInterface {
         Id: ${id}
         Nome: ${nome}
         Email: ${email}
-        CEP: ${cep}
-        País Onde Reside: ${paisOndeReside}
+        Endereço: ${address}
         Descrição: ${descricao}"""
     }
 }

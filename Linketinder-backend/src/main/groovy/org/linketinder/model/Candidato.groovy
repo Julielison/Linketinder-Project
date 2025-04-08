@@ -16,15 +16,14 @@ class Candidato extends Pessoa {
               String email,
               String cpf,
               LocalDate dataNascimento,
-              String cep,
+              Address address,
               String descricao,
               String senhaLogin,
-              String paisOndeReside,
               List<Competencia> competencias,
               List<Formacao> formacoes,
               String sobrenome)
     {
-        super(id, nome, email, cep, descricao, senhaLogin, paisOndeReside)
+        super(id, nome, email, address, descricao, senhaLogin)
         this.cpf = cpf
         this.sobrenome = sobrenome
         this.dataNascimento = dataNascimento
@@ -32,14 +31,13 @@ class Candidato extends Pessoa {
         this.formacoes = formacoes
     }
 
-
     @Override
     String toString() {
         return super.toString() + """
         Sobrenome: ${sobrenome}
         CPF: ${cpf}
         Data de Nascimento: ${Util.convertToBrFormat(dataNascimento)}
-        Competências: ${competencias.join(', ')}
-        Formações: ${formacoes.join('\n\t')}"""
+        Competências: ${!competencias.isEmpty() ? competencias.join(', ') : "Nenhuma"}
+        Formações: ${!formacoes.isEmpty() ? formacoes.join('\n\t') : "Nenhuma"}"""
     }
 }

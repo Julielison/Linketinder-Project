@@ -2,8 +2,10 @@ package org.linketinder.repository
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
+import org.linketinder.model.Address
 import org.linketinder.model.Candidato
 import org.linketinder.model.Competencia
+import org.linketinder.model.Country
 import org.linketinder.model.Formacao
 import org.linketinder.util.Util
 
@@ -78,21 +80,24 @@ class CandidatoRepository {
 
         try {
             sql.eachRow(query) { GroovyResultSet row ->
-                Integer idCandidato = row.candidato_id as Integer
                 List<Competencia> skills = Competencia.extractSkillsData(row.competencias.toString())
                 List<Formacao> formations = Formacao.extractFormationsData(row.formacoes.toString())
                 LocalDate dateOfBirth = Util.convertToLocalDate(row.candidato_data_nascimento.toString(), 'yyyy-MM-dd')
+                Address address = new Address(
+                        row.endereco_id as Integer,
+                        row.endereco_cep as String,
+                        new Country(row.pais_nome as String, row.pais_id as Integer)
+                )
 
                 Candidato candidato = new Candidato (
-                        idCandidato,
+                        row.candidato_id as Integer,
                         row.candidato_nome as String,
                         row.candidato_email as String,
                         row.candidato_cpf as String,
                         dateOfBirth,
-                        row.endereco_cep as String,
+                        address,
                         row.candidato_descricao_pessoal as String,
                         row.candidato_senha_de_login as String,
-                        row.pais_nome as String,
                         skills,
                         formations,
                         row.candidato_sobrenome as String)
