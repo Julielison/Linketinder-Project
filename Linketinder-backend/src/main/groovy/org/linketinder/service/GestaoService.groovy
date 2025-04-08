@@ -22,6 +22,10 @@ class GestaoService {
 		return candidatoRepository.getCandidatos()
 	}
 
+	List<Empresa> listarEmpresas() {
+		return empresaRepository.getEmpresas()
+	}
+
 	String cadastrarCandidato(Map<String, String> dados) {
 		List<Formacao> formacoes = new ArrayList<>()
 		for (Map<String, ?> formacaoMap : dados.get("formacoes") as List<Map<String, ?>>){
@@ -79,10 +83,6 @@ class GestaoService {
 			feedback = e.getMessage()
 		}
 		return feedback
-	}
-
-	List<Empresa> listarEmpresas() {
-		return empresaRepository.getEmpresas()
 	}
 
 	List<Vaga> listarVagas(){
