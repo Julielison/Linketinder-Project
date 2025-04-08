@@ -34,49 +34,7 @@ class CandidatoRepository {
 
     List<Candidato> getCandidatos() {
         List<Candidato> candidatos = []
-        String query = """
-        SELECT 
-            c.id AS candidato_id,
-            c.nome AS candidato_nome,
-            c.sobrenome AS candidato_sobrenome,
-            c.data_nascimento AS candidato_data_nascimento,
-            c.email AS candidato_email,
-            c.cpf AS candidato_cpf,
-            c.descricao_pessoal AS candidato_descricao_pessoal,
-            c.senha_de_login AS candidato_senha_de_login,
-            e.id AS endereco_id,
-            e.cep AS endereco_cep,
-            p.id AS pais_id,
-            p.nome AS pais_nome,
-            
-            STRING_AGG(DISTINCT CONCAT(comp.id, ':', comp.nome), ';') AS competencias,
-            
-            STRING_AGG(DISTINCT CONCAT(
-                f.id, ':', 
-                f.nome, ':', 
-                f.instituicao, ':', 
-                TO_CHAR(fc.data_inicio, 'YYYY-MM-DD'), ':', 
-                TO_CHAR(fc.data_fim_previsao, 'YYYY-MM-DD')
-            ), ';') AS formacoes
-            
-        FROM 
-            CANDIDATO c
-        JOIN 
-            ENDERECO e ON c.id_endereco = e.id
-        JOIN 
-            PAIS_DE_RESIDENCIA p ON e.pais_id = p.id
-        LEFT JOIN 
-            CANDIDATO_COMPETENCIA cc ON c.id = cc.id_candidato
-        LEFT JOIN 
-            COMPETENCIA comp ON cc.id_competencia = comp.id
-        LEFT JOIN 
-            FORMACAO_CANDIDATO fc ON c.id = fc.id_candidato
-        LEFT JOIN 
-            FORMACAO f ON fc.id_formacao = f.id
-        GROUP BY 
-            c.id, c.nome, c.sobrenome, c.data_nascimento, c.email, c.cpf, 
-            c.descricao_pessoal, c.senha_de_login, e.id, e.cep, p.id, p.nome
-    """
+        String query = selectAllFromCandidates()
 
         try {
             sql.eachRow(query) { GroovyResultSet row ->
@@ -109,6 +67,51 @@ class CandidatoRepository {
             e.printStackTrace()
         }
         return candidatos
+    }
+
+	static String selectAllFromCandidates(){
+        return """
+        SELECT 
+            c.id AS candidato_id,
+            c.nome AS candidato_nome,
+            c.sobrenome AS candidato_sobrenome,
+            c.data_nascimento AS candidato_data_nascimento,
+            c.email AS candidato_email,
+            c.cpf AS candidato_cpf,
+            c.descricao_pessoal AS candidato_descricao_pessoal,
+            c.senha_de_login AS candidato_senha_de_login,
+            e.id AS endereco_id,
+            e.cep AS endereco_cep,
+            p.id AS pais_id,
+            p.nome AS pais_nome,
+            
+            STRING_AGG(DISTINCT CONCAT(comp.id, '.', comp.nome), ',') AS competencias,
+            
+            STRING_AGG(DISTINCT CONCAT(
+                f.id, ':', 
+                f.nome, ':', 
+                f.instituicao, ':', 
+                TO_CHAR(fc.data_inicio, 'YYYY-MM-DD'), ':', 
+                TO_CHAR(fc.data_fim_previsao, 'YYYY-MM-DD')
+            ), ';') AS formacoes
+            
+        FROM 
+            CANDIDATO c
+        JOIN 
+            ENDERECO e ON c.id_endereco = e.id
+        JOIN 
+            PAIS_DE_RESIDENCIA p ON e.pais_id = p.id
+        LEFT JOIN 
+            CANDIDATO_COMPETENCIA cc ON c.id = cc.id_candidato
+        LEFT JOIN 
+            COMPETENCIA comp ON cc.id_competencia = comp.id
+        LEFT JOIN 
+            FORMACAO_CANDIDATO fc ON c.id = fc.id_candidato
+        LEFT JOIN 
+            FORMACAO f ON fc.id_formacao = f.id
+        GROUP BY 
+            c.id, c.nome, c.sobrenome, c.data_nascimento, c.email, c.cpf, 
+            c.descricao_pessoal, c.senha_de_login, e.id, e.cep, p.id, p.nome"""
     }
 
     void addCandidato(Candidato candidato){

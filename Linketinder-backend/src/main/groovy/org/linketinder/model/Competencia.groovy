@@ -9,11 +9,11 @@ class Competencia {
         this.nome = nome
     }
 
-    static List<Competencia> extractSkillsData(String skillsStr) {
+    static List<Competencia> extractSkillsData(String skillsData) {
         List<Competencia> skills = new ArrayList<>()
 
-        skillsStr.split(';').each { String skillStr ->
-            String[] idSkillName = skillStr.split(':')
+        skillsData.split(',').each { String skillData ->
+            String[] idSkillName = skillData.split('\\.')
             if (idSkillName.length > 0) {
                 Integer id = idSkillName[0].toInteger()
                 String name = idSkillName[1]
@@ -22,6 +22,7 @@ class Competencia {
         }
         return skills
     }
+
     @Override
     String toString() {
         return """
