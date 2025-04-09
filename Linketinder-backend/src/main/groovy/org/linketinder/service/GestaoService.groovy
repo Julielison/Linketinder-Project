@@ -4,6 +4,7 @@ import org.linketinder.model.*
 import org.linketinder.repository.CandidatoRepository
 import org.linketinder.repository.EmpresaRepository
 import org.linketinder.repository.Repository
+import org.linketinder.repository.JobRepository
 
 import java.time.LocalDate
 
@@ -11,11 +12,14 @@ class GestaoService {
 	final EmpresaRepository empresaRepository
 	final CandidatoRepository candidatoRepository
 	final Repository repository
+	final JobRepository jobRepository
 
-	GestaoService(EmpresaRepository empresaRepository, CandidatoRepository candidatoRepository, Repository repository) {
+	GestaoService(EmpresaRepository empresaRepository, CandidatoRepository candidatoRepository,
+				  Repository repository, JobRepository jobRepository) {
 		this.empresaRepository = empresaRepository
 		this.candidatoRepository = candidatoRepository
 		this.repository = repository
+		this.jobRepository = jobRepository
 	}
 
 	List<Candidato> listarCandidatos() {
@@ -24,6 +28,10 @@ class GestaoService {
 
 	List<Empresa> listarEmpresas() {
 		return empresaRepository.getEmpresas()
+	}
+
+	List<Vaga> listarVagas(){
+		return jobRepository.getJobs()
 	}
 
 	String cadastrarCandidato(Map<String, String> dados) {
@@ -83,10 +91,6 @@ class GestaoService {
 			feedback = e.getMessage()
 		}
 		return feedback
-	}
-
-	List<Vaga> listarVagas(){
-		return empresaRepository.vagaRepository.getVagas()
 	}
 
 	List<Competencia> listarCompetencias(){

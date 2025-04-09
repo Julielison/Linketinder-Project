@@ -14,9 +14,9 @@ import java.sql.SQLException
 class EmpresaRepository {
 	Sql sql
 	EnderecoRepository endereco
-	VagaRepository vagaRepository
+	JobRepository vagaRepository
 
-	EmpresaRepository(Sql sql, EnderecoRepository enderecoRepository, VagaRepository vagaRepository) {
+	EmpresaRepository(Sql sql, EnderecoRepository enderecoRepository, JobRepository vagaRepository) {
 		this.sql = sql
 		this.endereco = enderecoRepository
 		this.vagaRepository = vagaRepository
