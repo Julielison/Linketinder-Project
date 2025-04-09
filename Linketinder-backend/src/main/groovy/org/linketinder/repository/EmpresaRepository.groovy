@@ -14,12 +14,12 @@ import java.sql.SQLException
 class EmpresaRepository {
 	Sql sql
 	EnderecoRepository endereco
-	JobRepository vagaRepository
+	JobRepository jobRepository
 
-	EmpresaRepository(Sql sql, EnderecoRepository enderecoRepository, JobRepository vagaRepository) {
+	EmpresaRepository(Sql sql, EnderecoRepository enderecoRepository, JobRepository jobRepository) {
 		this.sql = sql
 		this.endereco = enderecoRepository
-		this.vagaRepository = vagaRepository
+		this.jobRepository = jobRepository
 	}
 
 	List<Empresa> getEmpresas() {
@@ -28,7 +28,7 @@ class EmpresaRepository {
 		try {
 			sql.eachRow(query) { GroovyResultSet row ->
 				Integer id_company = row.empresa_id as Integer
-				List<Vaga> jobs = Vaga.extractJobsData(row.vagas.toString(), id_company)
+				List<Vaga> jobs = jobRepository.extractJobsData(row.vagas.toString(), id_company)
 				Address address = new Address(
 						row.endereco_id as Integer,
 						row.endereco_cep as String,
@@ -151,13 +151,13 @@ class EmpresaRepository {
 			if (!result){
 				throw new Exception("Empresa não existe no banco de dados!")
 			}
-			Integer idvaga = vagaRepository.inserirVaga(vaga)
+			Integer idvaga = jobRepository.inserirVaga(vaga)
 			vaga.setId(idvaga)
 
-			Map<String, List<Competencia>> competenciasSeperadas = vagaRepository.competenciaRepository.setIdsCompetenciasExistentes(vaga.competencias)
-			List<Competencia> competenciasComId = vagaRepository.competenciaRepository.addCompetencias(competenciasSeperadas.get("semId"))
+			Map<String, List<Competencia>> competenciasSeperadas = jobRepository.competenciaRepository.setIdsCompetenciasExistentes(vaga.competencias)
+			List<Competencia> competenciasComId = jobRepository.competenciaRepository.addCompetencias(competenciasSeperadas.get("semId"))
 			competenciasComId.addAll(competenciasSeperadas.get('comId'))
-			vagaRepository.inserirIdVagaCompetencia(competenciasComId, vaga.id)
+			jobRepository.inserirIdVagaCompetencia(competenciasComId, vaga.id)
 
 		} catch (SQLException e) {
 			e.printStackTrace()

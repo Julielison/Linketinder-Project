@@ -16,18 +16,18 @@ import java.time.format.DateTimeParseException
 class CandidatoRepository {
     Sql sql
     EnderecoRepository enderecoRepository
-    SkillRepository competenciaRepository
+    SkillRepository skillRepository
     FormacaoRepository formacaoRepository
     EmailRepository emailRepository
 
     CandidatoRepository(Sql sql, EnderecoRepository enderecoRepository,
-                        SkillRepository competenciaRepository,
+                        SkillRepository skillRepository,
                         FormacaoRepository formacaoRepository,
                         EmailRepository emailRepository)
     {
         this.sql = sql
         this.enderecoRepository = enderecoRepository
-        this.competenciaRepository = competenciaRepository
+        this.skillRepository = skillRepository
         this.formacaoRepository = formacaoRepository
         this.emailRepository = emailRepository
     }
@@ -38,7 +38,7 @@ class CandidatoRepository {
 
         try {
             sql.eachRow(query) { GroovyResultSet row ->
-                List<Competencia> skills = Competencia.extractSkillsData(row.competencias.toString())
+                List<Competencia> skills = skillRepository.extractSkillsData(row.competencias.toString())
                 List<Formacao> formations = Formacao.extractFormationsData(row.formacoes.toString())
                 LocalDate dateOfBirth = Util.convertToLocalDate(row.candidato_data_nascimento.toString(), 'yyyy-MM-dd')
                 Address address = new Address(

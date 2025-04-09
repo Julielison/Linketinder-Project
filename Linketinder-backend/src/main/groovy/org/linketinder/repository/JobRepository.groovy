@@ -8,11 +8,11 @@ import java.sql.SQLException
 
 class JobRepository {
 	Sql sql
-	SkillRepository competenciaRepository
+	SkillRepository skillRepository
 
-	JobRepository(Sql sql, SkillRepository competenciaRepository){
+	JobRepository(Sql sql, SkillRepository skillRepository){
 		this.sql = sql
-		this.competenciaRepository = competenciaRepository
+		this.skillRepository = skillRepository
 
 	}
 
@@ -23,7 +23,7 @@ class JobRepository {
 		try {
 			sql.eachRow(query) { row ->
 				Integer jobId = row.vaga_id as Integer
-				List<Competencia> skills = Competencia.extractSkillsData(row.competencias.toString())
+				List<Competencia> skills = skillRepository.extractSkillsData(row.competencias.toString())
 				Vaga job = new Vaga(
 						jobId,
 						row.vaga_nome as String,
@@ -61,6 +61,25 @@ class JobRepository {
 				v.id, v.nome, v.descricao, v.local, v.id_empresa"""
 	}
 
+	List<Vaga> extractJobsData(String jobsData, Integer id_company) {
+		List<Vaga> jobs = []
+		jobsData.split(';').each { String jobStr ->
+			String[] idJobDescriptionLocalSkills = jobStr.split(':')
+			if (idJobDescriptionLocalSkills.length > 1) {
+				Integer id = idJobDescriptionLocalSkills[0].toInteger()
+				String name = idJobDescriptionLocalSkills[1]
+				String description = idJobDescriptionLocalSkills[2]
+				String local = idJobDescriptionLocalSkills[3]
+				List<Competencia> skills = []
+				if (idJobDescriptionLocalSkills.length == 5){
+					skills = skillRepository.extractSkillsData(idJobDescriptionLocalSkills[4])
+				}
+				jobs.add(new Vaga(id, name, description, local, id_company, skills))
+			}
+		}
+		return jobs
+	}
+
 	List<Vaga> getVagasByEmpresaId(Integer empresaId) {
 		List<Vaga> vagasEmpresa = []
 		String query = """
@@ -84,7 +103,7 @@ class JobRepository {
 						row.vaga_descricao as String,
 						row.vaga_local as String,
 						row.empresa_id as Integer,
-						competenciaRepository.getCompetenciasPorIdDaVaga(vagaId)
+						skillRepository.getCompetenciasPorIdDaVaga(vagaId)
 				)
 				vagasEmpresa.add(vaga)
 			}
