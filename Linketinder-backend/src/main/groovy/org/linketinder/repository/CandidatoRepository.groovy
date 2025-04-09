@@ -16,12 +16,12 @@ import java.time.format.DateTimeParseException
 class CandidatoRepository {
     Sql sql
     EnderecoRepository enderecoRepository
-    CompetenciaRepository competenciaRepository
+    SkillRepository competenciaRepository
     FormacaoRepository formacaoRepository
     EmailRepository emailRepository
 
     CandidatoRepository(Sql sql, EnderecoRepository enderecoRepository,
-                        CompetenciaRepository competenciaRepository,
+                        SkillRepository competenciaRepository,
                         FormacaoRepository formacaoRepository,
                         EmailRepository emailRepository)
     {

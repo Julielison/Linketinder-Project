@@ -50,7 +50,7 @@ class Vaga {
             Descrição: ${descricao}
             Local: ${local}
             Id empresa: ${idEmpresa}
-            Competências exigidas: ${competencias}"""
+            Competências exigidas: ${!competencias.isEmpty() ? competencias.join(', ') : "Nenhuma"}"""
     }
 
 }

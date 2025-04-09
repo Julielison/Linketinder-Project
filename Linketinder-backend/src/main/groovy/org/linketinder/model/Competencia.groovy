@@ -25,9 +25,7 @@ class Competencia {
 
     @Override
     String toString() {
-        return """
-            Id: ${id}
-            Nome: ${nome}"""
+        return "$nome"
     }
 }
 

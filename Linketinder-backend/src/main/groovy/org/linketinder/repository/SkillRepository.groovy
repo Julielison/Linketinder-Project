@@ -7,26 +7,28 @@ import org.linketinder.model.Competencia
 
 import java.sql.SQLException
 
-class CompetenciaRepository {
+class SkillRepository {
 	Sql sql
 
-	CompetenciaRepository(Sql sql){
+	SkillRepository(Sql sql){
 		this.sql = sql
 	}
 
-	List<Competencia> getCompetencias(){
-		List<Competencia> competencias = new ArrayList<>()
+	List<Competencia> getSkills(){
+		List<Competencia> skills = new ArrayList<>()
 		try {
 			sql.eachRow("SELECT * FROM competencia"){row->
-				competencias.add(new Competencia(
+				skills.add(new Competencia(
 						row.id as Integer,
 						row.nome as String
 				))
 			}
 		} catch (SQLException e){
 			e.printStackTrace()
+		} catch (Exception e){
+			e.printStackTrace()
 		}
-		return competencias
+		return skills
 	}
 
 

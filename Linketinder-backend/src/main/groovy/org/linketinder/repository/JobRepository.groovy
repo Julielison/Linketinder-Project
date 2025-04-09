@@ -8,9 +8,9 @@ import java.sql.SQLException
 
 class JobRepository {
 	Sql sql
-	CompetenciaRepository competenciaRepository
+	SkillRepository competenciaRepository
 
-	JobRepository(Sql sql, CompetenciaRepository competenciaRepository){
+	JobRepository(Sql sql, SkillRepository competenciaRepository){
 		this.sql = sql
 		this.competenciaRepository = competenciaRepository
 
