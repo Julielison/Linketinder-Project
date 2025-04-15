@@ -13,20 +13,20 @@ import java.sql.SQLException
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
-class CandidatoRepository {
+class CandidateRepository {
     Sql sql
-    EnderecoRepository enderecoRepository
+    EnderecoRepository adressRepository
     SkillRepository skillRepository
     FormacaoRepository formacaoRepository
     EmailRepository emailRepository
 
-    CandidatoRepository(Sql sql, EnderecoRepository enderecoRepository,
+    CandidateRepository(Sql sql, EnderecoRepository adressRepository,
                         SkillRepository skillRepository,
                         FormacaoRepository formacaoRepository,
                         EmailRepository emailRepository)
     {
         this.sql = sql
-        this.enderecoRepository = enderecoRepository
+        this.adressRepository = adressRepository
         this.skillRepository = skillRepository
         this.formacaoRepository = formacaoRepository
         this.emailRepository = emailRepository
@@ -114,36 +114,38 @@ class CandidatoRepository {
             c.descricao_pessoal, c.senha_de_login, e.id, e.cep, p.id, p.nome"""
     }
 
-    void addCandidato(Candidato candidato){
+    void addDataFromCandidate(Candidato candidate){
         try {
-            def resultCpf = sql.firstRow("SELECT cpf FROM candidato WHERE cpf = ?", [candidato.cpf])
+            if (candidateIsValid(candidate)){
+                Integer paisId = adressRepository.obterIdPais(candidate.address.country.name)
+                if (!paisId) {
+                    paisId = adressRepository.inserirPais(candidate.paisOndeReside)
+                }
+                Integer enderecoId = adressRepository.inserirEndereco(candidate.cep, paisId)
+                Integer candidateId = inserirCandidato(candidate, enderecoId)
+                candidate.setId(candidateId)
 
-            if (resultCpf){
-                throw new Exception("Candidato já existe!")
-            }
-            if (emailRepository.verificarSeEmailJaExiste(candidato.email)){
-                throw new Exception("Email já existe! Candidato não criado!")
-            }
-
-            Integer paisId = enderecoRepository.obterIdPais(candidato.paisOndeReside)
-            if (!paisId) {
-                paisId = enderecoRepository.inserirPais(candidato.paisOndeReside)
-            }
-
-            Integer enderecoId = enderecoRepository.inserirEndereco(candidato.cep, paisId)
-            Integer candidatoId = inserirCandidato(candidato, enderecoId)
-            candidato.setId(candidatoId)
-
-            if(!candidato.formacoes.isEmpty()){
-                Candidato candidatoComIdFormacoes = formacaoRepository.inserirFormacoes(candidato)
-                inserirIdsFormacaoCandidatoEDatas(candidatoComIdFormacoes)
+                if(!candidate.formacoes.isEmpty()){
+                    Candidato candidateComIdFormacoes = formacaoRepository.inserirFormacoes(candidate)
+                    inserirIdsFormacaoCandidatoEDatas(candidateComIdFormacoes)
+                }
             }
         } catch (SQLException e){
             e.printStackTrace()
-            throw new Exception(e.getMessage())
         } catch (Exception e){
-            throw new Exception(e.getMessage())
+            throw new Exception(e.message)
         }
+    }
+
+    boolean candidateIsValid(Candidato candidate) throws Exception {
+        def resultCpf = sql.firstRow("SELECT cpf FROM candidato WHERE cpf = ?", [candidate.cpf])
+        if (resultCpf){
+            throw new Exception("Cpf já existe!")
+        }
+        if (emailRepository.checkIfEmailAlreadyExists(candidate.email)){
+            throw new Exception("Email já existe!")
+        }
+        return true
     }
 
     Integer inserirCandidato(Candidato candidato, Integer idEndereco) {
@@ -176,5 +178,14 @@ class CandidatoRepository {
         } catch (Exception e){
             throw new Exception(e.getMessage())
         }
+    }
+
+    boolean removeCandidateById(Integer id) {
+        try {
+            return sql.executeUpdate("DELETE FROM candidato WHERE id = ?", [id]) > 0
+        } catch (SQLException e) {
+            e.printStackTrace()
+        }
+        return false
     }
 }

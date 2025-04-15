@@ -142,4 +142,13 @@ class JobRepository {
 			e.printStackTrace()
 		}
 	}
+
+	boolean removeJobById(Integer id){
+		try {
+			return sql.executeUpdate("DELETE FROM vaga WHERE id = ?", [id]) > 0
+		} catch (SQLException e) {
+			e.printStackTrace()
+		}
+		return false
+	}
 }

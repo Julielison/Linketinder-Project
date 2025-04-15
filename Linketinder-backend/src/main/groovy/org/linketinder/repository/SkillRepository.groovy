@@ -45,7 +45,6 @@ class SkillRepository {
 		return skills
 	}
 
-
 	List<Competencia> getCompetenciasPorCandidatoId(Integer idCandidato){
 		List<Competencia> competencias = new ArrayList<>()
 		String query = """
@@ -120,7 +119,14 @@ class SkillRepository {
 		} catch (SQLException e){
 			e.printStackTrace()
 		}
-
 		return competencias
+	}
+	boolean removeSkillById(Integer id) {
+		try {
+			return sql.executeUpdate("DELETE FROM competencia WHERE id = ?", [id]) > 0
+		} catch (SQLException e) {
+			e.printStackTrace()
+		}
+		return false
 	}
 }

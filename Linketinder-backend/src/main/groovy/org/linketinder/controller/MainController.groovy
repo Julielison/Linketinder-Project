@@ -1,16 +1,17 @@
 package org.linketinder.controller
 
 import org.linketinder.enums.MenuOption
-import org.linketinder.service.GestaoService
+import org.linketinder.repository.DatabaseConnection
+import org.linketinder.service.ServiceManager
 import org.linketinder.view.MenuView
 
 class MainController {
     MenuView view
-    GestaoService gestaoService
+    ServiceManager serviceManager
 
-    MainController(MenuView view, GestaoService gestaoService) {
+    MainController(MenuView view, ServiceManager serviceManager) {
         this.view = view
-        this.gestaoService = gestaoService
+        this.serviceManager = serviceManager
     }
 
     void executar() {
@@ -22,57 +23,57 @@ class MainController {
             MenuOption menu = MenuOption.fromValue(option)
             switch(menu) {
                 case menu.LISTAR_CANDIDATOS:
-                    view.showPessoas(gestaoService.listarCandidatos(), 'candidatos')
+                    view.showPessoas(serviceManager.listarCandidatos(), 'candidatos')
                     break
                 case menu.CADASTRAR_CANDIDATO:
-                    Map<String, ?> dadosCandidato = view.getCandidatoInput()
-                    feedback = gestaoService.cadastrarCandidato(dadosCandidato)
+                    Map<String, ?> candidateData = view.getCandidateInput()
+                    feedback = serviceManager.registerCandidate(candidateData)
                     view.showFeedback(feedback)
                     break
                 case menu.REMOVER_CANDIDATO:
                     Integer idCandidatoInput = view.getIdCandidatoInput()
-                    feedback = gestaoService.removerCandidato(idCandidatoInput)
+                    feedback = serviceManager.removeCandidate(idCandidatoInput)
                     view.showFeedback(feedback)
                     break
                 case menu.LISTAR_EMPRESAS:
-                    view.showPessoas(gestaoService.listarEmpresas(), 'empresas')
+                    view.showPessoas(serviceManager.listarEmpresas(), 'empresas')
                     break
                 case menu.CADASTRAR_EMPRESA:
                     Map<String, ?> dadosEmpresa = view.getEmpresaInput()
-                    feedback = gestaoService.cadastrarEmpresa(dadosEmpresa)
+                    feedback = serviceManager.cadastrarEmpresa(dadosEmpresa)
                     view.showFeedback(feedback)
                     break
                 case menu.REMOVER_EMPRESA:
                     Integer idEmpresa = view.getIdEmpresaInput()
-                    feedback = gestaoService.removerEmpresa(idEmpresa)
+                    feedback = serviceManager.removeCompany(idEmpresa)
                     view.showFeedback(feedback)
                     break
                 case menu.LISTAR_VAGAS:
-                    view.showVagas(gestaoService.listarVagas())
+                    view.showVagas(serviceManager.listarVagas())
                     break
                 case menu.CADASTRAR_VAGA:
                     Integer idEmpresaInput = view.getIdEmpresaInput()
                     Map<String, ?> dadosVaga = view.getDadosVagaInput()
-                    feedback = gestaoService.cadastrarVaga(idEmpresaInput, dadosVaga)
+                    feedback = serviceManager.cadastrarVaga(idEmpresaInput, dadosVaga)
                     view.showFeedback(feedback)
                     break
                 case menu.REMOVER_VAGA:
                     Integer idVagaInput = view.getIdVagaInput()
-                    feedback = gestaoService.removerVaga(idVagaInput)
+                    feedback = serviceManager.removeJob(idVagaInput)
                     view.showFeedback(feedback)
                     break
                 case menu.LISTAR_COMPETENCIAS:
-                    view.showCompetencias(gestaoService.listarCompetencias())
+                    view.showCompetencias(serviceManager.listarCompetencias())
                     break
                 case menu.REMOVER_COMPETENCIA:
                     Integer idCompetenciaInput = view.getIdCompetenciaInput()
-                    feedback = gestaoService.removerCompetencia(idCompetenciaInput)
+                    feedback = serviceManager.removeSkill(idCompetenciaInput)
                     view.showFeedback(feedback)
                     break
                 case menu.SAIR:
                     view.showExitMessage()
                     sair = true
-                    gestaoService.empresaRepository.sql.close()
+                    DatabaseConnection.getInstance().close()
                     break
                 default:
                     view.showInvalidOption()

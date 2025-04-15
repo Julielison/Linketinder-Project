@@ -11,7 +11,9 @@ class Competencia {
 
     @Override
     String toString() {
-        return "$nome"
+        return """
+        Id: $id
+        Nome: $nome"""
     }
 }
 

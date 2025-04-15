@@ -1,10 +1,10 @@
 package org.linketinder.model
 
-class Empresa extends Pessoa {
+class Company extends Pessoa {
     String cnpj
     List<Vaga> vagas
 
-    Empresa(Integer id,
+    Company(Integer id,
             String nome,
             String email,
             String cnpj,

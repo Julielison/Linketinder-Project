@@ -6,24 +6,24 @@ import groovy.sql.Sql
 import org.linketinder.model.Address
 import org.linketinder.model.Competencia
 import org.linketinder.model.Country
-import org.linketinder.model.Empresa
+import org.linketinder.model.Company
 import org.linketinder.model.Vaga
 
 import java.sql.SQLException
 
-class EmpresaRepository {
+class CompanyRepository {
 	Sql sql
 	EnderecoRepository endereco
 	JobRepository jobRepository
 
-	EmpresaRepository(Sql sql, EnderecoRepository enderecoRepository, JobRepository jobRepository) {
+	CompanyRepository(Sql sql, EnderecoRepository enderecoRepository, JobRepository jobRepository) {
 		this.sql = sql
 		this.endereco = enderecoRepository
 		this.jobRepository = jobRepository
 	}
 
-	List<Empresa> getEmpresas() {
-		List<Empresa> empresas = []
+	List<Company> getEmpresas() {
+		List<Company> empresas = []
 		String query = selectAllFromCompanies()
 		try {
 			sql.eachRow(query) { GroovyResultSet row ->
@@ -34,7 +34,7 @@ class EmpresaRepository {
 						row.endereco_cep as String,
 						new Country(row.pais_nome as String, row.pais_id as Integer)
 				)
-				Empresa empresa = new Empresa(
+				Company empresa = new Company(
 						id_company,
 						row.empresa_nome as String,
 						row.empresa_email as String,
@@ -95,7 +95,7 @@ class EmpresaRepository {
 			e.senha_de_login, endereco.cep, p.nome, endereco.id, p.id"""
 	}
 
-	void addEmpresa(Empresa empresa) {
+	void addEmpresa(Company empresa) {
 		try {
 			def resultCnpj = sql.firstRow("SELECT cnpj FROM empresa WHERE cnpj = ${empresa.cnpj}")
 			if (resultCnpj){
@@ -121,7 +121,7 @@ class EmpresaRepository {
 		}
 	}
 
-	Integer inserirEmpresa(Empresa empresa, Integer enderecoId) {
+	Integer inserirEmpresa(Company empresa, Integer enderecoId) {
 		def result = sql.executeInsert("""
             INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -163,5 +163,13 @@ class EmpresaRepository {
 			e.printStackTrace()
 			throw new Exception(e.getMessage())
 		}
+	}
+	boolean removeCompanyById(Integer id){
+		try {
+			return sql.executeUpdate("DELETE FROM empresa WHERE id = ?", [id]) > 0
+		} catch (SQLException e) {
+			e.printStackTrace()
+		}
+		return false
 	}
 }
