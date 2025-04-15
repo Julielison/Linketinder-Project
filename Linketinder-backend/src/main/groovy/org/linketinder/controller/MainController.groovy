@@ -39,12 +39,12 @@ class MainController {
                     view.showPessoas(serviceManager.listarEmpresas(), 'empresas')
                     break
                 case menu.CADASTRAR_EMPRESA:
-                    Map<String, ?> dadosEmpresa = view.getEmpresaInput()
-                    feedback = serviceManager.cadastrarEmpresa(dadosEmpresa)
+                    Map<String, ?> companyData = view.getCompanyInput()
+                    feedback = serviceManager.registerCompany(companyData)
                     view.showFeedback(feedback)
                     break
                 case menu.REMOVER_EMPRESA:
-                    Integer idEmpresa = view.getIdEmpresaInput()
+                    Integer idEmpresa = view.getIdCompanyInput()
                     feedback = serviceManager.removeCompany(idEmpresa)
                     view.showFeedback(feedback)
                     break

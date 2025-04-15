@@ -66,8 +66,7 @@ class ServiceManager {
 		return feedback
 	}
 
-	String cadastrarEmpresa(Map<String, String> dados) {
-		String feedback = "Cadastro feito com sucesso!"
+	String registerCompany(Map<String, String> dados) {
 		Person novaEmpresa = new Company(
 				null,
 				dados.nome,
@@ -79,6 +78,7 @@ class ServiceManager {
 				dados.pais,
 				new ArrayList<>()
 		)
+		String feedback = "Cadastro feito com sucesso!"
 		try {
 			companyRepository.addEmpresa(novaEmpresa)
 		} catch (Exception e){
@@ -101,18 +101,18 @@ class ServiceManager {
 	}
 
 	String registerJob(Integer idCompany, Map<String, ?> data){
-		List<Skill> skills = extrairCompetencias(data)
+		List<Skill> skills = extractSkillsFromMap(data)
 		Job job = new Job (
 				null,
-				data.descricao as String,
-				data.nome as String,
+				data.description as String,
+				data.name as String,
 				data.local as String,
 				idCompany,
 				skills
 		)
 		String feedback = "Cadastro feito com sucesso!"
 		try {
-			companyRepository.addVaga(job)
+			jobRepository.addJobData(job)
 		} catch (Exception e){
 			feedback = e.getMessage()
 		}

@@ -56,7 +56,7 @@ class MenuView {
 		println feedback
 	}
 
-	static Map<String, ?> getEmpresaInput() {
+	static Map<String, ?> getCompanyInput() {
 		println "\n--- Cadastro de Empresa ---"
 		print "Nome: "
 		String name = getUserInput()
@@ -267,7 +267,6 @@ class MenuView {
 				local: local,
 				skills: skills
 		]
-
 	}
 
 	static String getValidPattern(String label, def padrao){

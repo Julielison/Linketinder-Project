@@ -145,25 +145,7 @@ class CompanyRepository {
 			throw new Exception("Erro ao verificar a existência da empresa no Banco de dados")
 		}
 	}
-	void addVaga(Job vaga) {
-		try {
-			boolean result = verificarSeEmpresaExistePorId(vaga.idEmpresa)
-			if (!result){
-				throw new Exception("Empresa não existe no banco de dados!")
-			}
-			Integer idvaga = jobRepository.inserirVaga(vaga)
-			vaga.setId(idvaga)
 
-			Map<String, List<Skill>> competenciasSeperadas = jobRepository.competenciaRepository.setIdsCompetenciasExistentes(vaga.competencias)
-			List<Skill> competenciasComId = jobRepository.competenciaRepository.addCompetencias(competenciasSeperadas.get("semId"))
-			competenciasComId.addAll(competenciasSeperadas.get('comId'))
-			jobRepository.inserirIdVagaCompetencia(competenciasComId, vaga.id)
-
-		} catch (SQLException e) {
-			e.printStackTrace()
-			throw new Exception(e.getMessage())
-		}
-	}
 	boolean removeCompanyById(Integer id){
 		try {
 			return sql.executeUpdate("DELETE FROM empresa WHERE id = ?", [id]) > 0

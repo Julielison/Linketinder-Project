@@ -169,20 +169,19 @@ class CandidateRepository {
 
     void insertCandidateSkills(Candidate candidate){
         if (candidate.skills.isEmpty()) return
-        List<Skill> skillsWithId =  skillRepository.insertSkillsReturningId(candidate.skills)
+        List<Integer> skillsWithId =  skillRepository.insertSkillsReturningId(candidate.skills)
         associateSkillsToCandidate(candidate.id, skillsWithId)
     }
 
-    void associateSkillsToCandidate(Integer idCandidato, List<Skill> skills) {
-        if (!idCandidato || skills.isEmpty()) return
+    void associateSkillsToCandidate(Integer candidateId, List<Integer> skillsIds) {
         try {
-            String valuesSql = skills.collect { "(?, ?)" }.join(", ")
+            String valuesSql = skillsIds.collect { "(?, ?)" }.join(", ")
             GString sqlQuery = """
             INSERT INTO candidato_competencia (id_candidato, id_competencia)
             VALUES ${valuesSql}
             ON CONFLICT DO NOTHING"""
 
-            List<Integer> params = skills.collectMany {Skill skill -> [idCandidato, skill.id] }
+            List<Integer> params = skillsIds.collectMany {Integer skillId -> [candidateId, skillId] }
             sql.execute(sqlQuery, params)
         } catch (Exception e) {
             e.printStackTrace()

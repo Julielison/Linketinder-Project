@@ -45,27 +45,8 @@ class SkillRepository {
 		return skills
 	}
 
-	List<Skill> getCompetenciasPorIdDaVaga(Integer id){
-		List<Skill> competencias = new ArrayList<>()
-		try {
-			sql.eachRow("""
-				SELECT c.nome as nome_competencia
-				FROM vaga_competencia vc
-				JOIN competencia c
-				ON c.id = vc.id_competencia
-				WHERE vc.id_vaga = ?
-		""", [id]){ GroovyResultSet it ->
-				competencias.add(it.nome_competencia)
-			}
-		} catch (SQLException e){
-			e.printStackTrace()
-			throw new SQLException(e.getMessage())
-		}
-		return competencias
-	}
-
-	List<Skill> insertSkillsReturningId(List<Skill> skills) {
-		List<Skill> skillsWithId = []
+	List<Integer> insertSkillsReturningId(List<Skill> skills) {
+		List<Integer> skillsWithId = []
 		try {
 			List<String> names = skills*.name.unique()
 			String valuesSql = names.collect { "(?)" }.join(", ")
@@ -73,14 +54,11 @@ class SkillRepository {
 			INSERT INTO competencia (nome)
 			VALUES ${valuesSql}
 			ON CONFLICT (nome) DO UPDATE SET nome = competencia.nome
-			RETURNING id, nome"""
+			RETURNING id"""
 
 			List<GroovyRowResult> results = sql.rows(sqlQuery, names)
 			results.each { GroovyRowResult row ->
-				skillsWithId.add(new Skill(
-						row.id as Integer,
-						row.nome as String
-				))
+				skillsWithId.add(row.id as Integer)
 			}
 		} catch (Exception e) {
 			e.printStackTrace()
@@ -88,20 +66,6 @@ class SkillRepository {
 		return skillsWithId
 	}
 
-
-	List<Skill> addCompetencias(List<Skill> competencias) {
-		try {
-			competencias.each { Skill competencia ->
-				def result = sql.executeInsert("INSERT INTO competencia (nome) VALUES (?)", [competencia.nome])
-				if (result) {
-					competencia.id = result[0][0] as Integer
-				}
-			}
-		} catch (SQLException e){
-			e.printStackTrace()
-		}
-		return competencias
-	}
 	boolean removeSkillById(Integer id) {
 		try {
 			return sql.executeUpdate("DELETE FROM competencia WHERE id = ?", [id]) > 0
