@@ -2,11 +2,7 @@ package org.linketinder.repository
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
-import org.linketinder.model.Address
-import org.linketinder.model.Candidate
-import org.linketinder.model.Skill
-import org.linketinder.model.Country
-import org.linketinder.model.Formation
+import org.linketinder.model.*
 import org.linketinder.util.Util
 
 import java.sql.SQLException
@@ -110,61 +106,86 @@ class CandidateRepository {
             c.descricao_pessoal, c.senha_de_login, e.id, e.cep, p.id, p.nome"""
     }
 
-    void addDataFromCandidate(Candidate candidate){
-        try {
-            Integer countryId = addressRepository.getIdCountry(candidate.address.country.name)
-            countryId = !countryId ? addressRepository.insertCountry(candidate.address.country.name) : null
-            Integer addressId = addressRepository.insertAddress(candidate.address.zipCode, countryId)
-            Integer candidateId = insertCandidate(candidate, addressId)
-            candidate.setId(candidateId)
+    void addDataFromCandidate(Candidate candidate) {
+        sql.withTransaction {
+            try {
+                Integer countryId = addressRepository.getIdCountry(candidate.address.country.name)
+                countryId = !countryId ? addressRepository.insertCountry(candidate.address.country.name) : null
+                Integer addressId = addressRepository.insertAddress(candidate.address.zipCode, countryId)
+                Integer candidateId = insertCandidate(candidate, addressId)
+                candidate.setId(candidateId)
 
-            if(!candidate.formations.isEmpty()){
-                Candidate candidateWithFormationsId = formationRepository.insertFormations(candidate)
-                insertIdsAndDatesFromFormation(candidateWithFormationsId)
+                if (!candidate.formations.isEmpty()) {
+                    Candidate candidateWithFormationsId = formationRepository.insertFormations(candidate)
+                    insertIdsAndDatesFromFormation(candidateWithFormationsId)
+                }
+                insertCandidateSkills(candidate)
+            } catch (Exception e) {
+                e.printStackTrace()
+                throw new RuntimeException("Erro ao adicionar dados do candidato: ${e.message}")
             }
-        } catch (Exception e){
-            e.printStackTrace()
         }
     }
 
     Integer insertCandidate(Candidate candidate, Integer idAddress) {
-        String dataNascimentoFormatada = Util.convertToLocalDate(candidate.dateBirth,'yyyy-MM-dd')
+        String dateBirthFormated = Util.convertToString(candidate.dateBirth)
 
         List<List<Object>> result = sql.executeInsert("""
     INSERT INTO CANDIDATO (nome, sobrenome, data_nascimento, email, cpf, descricao_pessoal, senha_de_login, id_endereco)
-    VALUES (?, ?, ?::date, ?, ?, ?, ?, ?)
-""", [
+    VALUES (?, ?, ?::date, ?, ?, ?, ?, ?)""", [
                 candidate.name,
                 candidate.lastName,
-                dataNascimentoFormatada,
+                dateBirthFormated,
                 candidate.email,
                 candidate.cpf,
-                candidate.descricao,
-                candidate.senhaLogin,
+                candidate.description,
+                candidate.passwordLogin,
                 idAddress
         ])
         return result[0][0] as Integer
     }
     void insertIdsAndDatesFromFormation(Candidate candidate) {
         try {
-            StringBuilder insertSql = new StringBuilder()
-            candidato.formations.each { Formation formation ->
-                LocalDate dataInicio = Util.convertToLocalDate(formation.dateStart, "yyyy-MM-dd")
-                LocalDate dataFim = Util.convertToLocalDate(formation.dateEnd, "yyyy-MM-dd")
-                insertSql.append(
-                        "INSERT INTO formacao_candidato VALUES (" +
-                                "${formation.id}, ${candidate.id}, " +
-                                "'${dataInicio}'::date, '${dataFim}'::date);\n"
-                )
-            }
-            if (insertSql) {
-                sql.execute(insertSql.toString())
-            }
+            List<Formation> formations = candidate.formations
 
-        } catch (SQLException e) {
-            throw new Exception(e.getMessage())
+            String valuesSql = formations.collect { "(?, ?, ?, ?)" }.join(", ")
+            String sqlQuery = """
+            INSERT INTO formacao_candidato (id_formacao, id_candidato, data_inicio, data_fim_previsao)
+            VALUES ${valuesSql}"""
+
+            List<Object> params = formations.collectMany { Formation formation ->
+                [
+                        formation.id,
+                        candidate.id,
+                        formation.dateStart,
+                        formation.dateEnd
+                ]
+            }
+            sql.execute(sqlQuery, params)
         } catch (Exception e) {
-            throw new Exception(e.getMessage())
+            throw new Exception(e)
+        }
+    }
+
+    void insertCandidateSkills(Candidate candidate){
+        if (candidate.skills.isEmpty()) return
+        List<Skill> skillsWithId =  skillRepository.insertSkillsReturningId(candidate.skills)
+        associateSkillsToCandidate(candidate.id, skillsWithId)
+    }
+
+    void associateSkillsToCandidate(Integer idCandidato, List<Skill> skills) {
+        if (!idCandidato || skills.isEmpty()) return
+        try {
+            String valuesSql = skills.collect { "(?, ?)" }.join(", ")
+            GString sqlQuery = """
+            INSERT INTO candidato_competencia (id_candidato, id_competencia)
+            VALUES ${valuesSql}
+            ON CONFLICT DO NOTHING"""
+
+            List<Integer> params = skills.collectMany {Skill skill -> [idCandidato, skill.id] }
+            sql.execute(sqlQuery, params)
+        } catch (Exception e) {
+            e.printStackTrace()
         }
     }
 

@@ -56,9 +56,9 @@ class FormationRepository {
         }
     }
 
-    Candidate insertFormations(Candidate candidato) {
+    Candidate insertFormations(Candidate candidate) {
         try {
-            candidato.formations.each { Formation formation ->
+            candidate.formations.each { Formation formation ->
                 List<List<Object>> result = sql.executeInsert(
                         """INSERT INTO formacao (nome,  instituicao) VALUES (?, ?)""",
                         [formation.nameCourse, formation.institution])
@@ -69,7 +69,7 @@ class FormationRepository {
         } catch (Exception e) {
             e.printStackTrace()
         }
-        return candidato
+        return candidate
     }
 
     static List<Formation> extractFormationsData(String formationsStr) {

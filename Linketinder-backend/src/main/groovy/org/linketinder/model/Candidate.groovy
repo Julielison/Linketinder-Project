@@ -12,18 +12,18 @@ class Candidate extends Person {
     List<Formation> formations
 
     Candidate(Integer id,
-              String nome,
+              String firstName,
               String email,
               String cpf,
               LocalDate dateBirth,
               Address address,
               String descricao,
-              String senhaLogin,
+              String passwordLogin,
               List<Skill> skills,
               List<Formation> formations,
               String lastName)
     {
-        super(id, nome, email, address, descricao, senhaLogin)
+        super(id, firstName, email, address, descricao, passwordLogin)
         this.cpf = cpf
         this.lastName = lastName
         this.dateBirth = dateBirth

@@ -46,7 +46,7 @@ class ServiceManager {
 
 		Person newCandidate = new Candidate(
 				null,
-				data.name,
+				data.firstName,
 				data.email,
 				data.cpf,
 				data.dateBirth as LocalDate,
@@ -120,26 +120,26 @@ class ServiceManager {
 	}
 
 	private static List<Skill> extractSkillsFromMap(Map<String, ?> dados){
-		List<Skill> competencias = new ArrayList<>()
-		for (String competenciaStr : dados.get('competencias')){
-			Skill competencia = new Skill(
+		List<Skill> skills = []
+		for (String skillName : dados.get('skills')){
+			Skill skill = new Skill(
 					null,
-					competenciaStr
+					skillName
 			)
-			competencias.add(competencia)
+			skills.add(skill)
 		}
-		return competencias
+		return skills
 	}
 
 	private static List<Formation> extractFormationsFromMap(Map<String, ?> data){
 		List<Formation> formations = []
-		for (Map<String, ?> formationMap : data.get("formacoes") as List<Map<String, ?>>){
+		for (Map<String, ?> formationMap : data.get("formations") as List<Map<String, ?>>){
 			Formation formation = new Formation(
 					null,
-					formationMap.get('instituicao') as String,
-					formationMap.get('nome') as String,
-					formationMap.get('dataIncio') as LocalDate,
-					formationMap.get('dataFim') as LocalDate
+					formationMap.get('institution') as String,
+					formationMap.get('name') as String,
+					formationMap.get('dateStart') as LocalDate,
+					formationMap.get('dateEnd') as LocalDate
 			)
 			formations.add(formation)
 		}

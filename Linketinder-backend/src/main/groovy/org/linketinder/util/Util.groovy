@@ -14,4 +14,7 @@ class Util {
 		if (data == null) return ""
 		return data.format(DateTimeFormatter.ofPattern('dd/MM/yyyy'))
 	}
+	static String convertToString(LocalDate date){
+		return date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+	}
 }

@@ -106,7 +106,6 @@ class MenuView {
 		print "Descrição: "
 		String description = getUserInput()
 
-		print "Competências: "
 		List<String> skills = getSkillsInput()
 
 		print("Senha de login: ")
@@ -142,7 +141,7 @@ class MenuView {
 			String option = getUserInput()
 			switch (option){
 				case "1":
-					println "Nome da competência"
+					print "Nome da competência (ex: Java): "
 					skills.add(getUserInput())
 					break
 				case "2":
@@ -252,46 +251,25 @@ class MenuView {
 	}
 	static Map<String, ?> getDataJobInput(){
 		print "Nome da vaga: "
-		String nome = getUserInput()
+		String name = getUserInput()
 
 		print "Descrição: "
-		String descricao = getUserInput()
+		String description = getUserInput()
 
 		print "Local da vaga: "
 		String local = getUserInput()
 
-		List<String> competencias = getCompetenciasInput()
+		List<String> skills = getSkillsInput()
 
 		return [
-		        nome: nome,
-				descricao: descricao,
+		        name: name,
+				description: description,
 				local: local,
-				competencias: competencias
+				skills: skills
 		]
 
 	}
-	static List<String> getCompetenciasInput(){
-		List<String> competencias = new ArrayList<>()
-		boolean adicionar = true
-		while (adicionar){
-			println " -- Competências --"
-			println "1. Adicionar"
-			println "2. Próximo"
-			String opcao = getUserInput()
-			switch (opcao){
-				case "1":
-					print "Nome (ex: Java): "
-					competencias.add(getUserInput())
-					break
-				case "2":
-					adicionar = false
-					break
-				default:
-					showInvalidOption()
-			}
-		}
-		return competencias
-	}
+
 	static String getValidPattern(String label, def padrao){
 		String inputvalido
 		while (true){

@@ -45,28 +45,6 @@ class SkillRepository {
 		return skills
 	}
 
-	List<Skill> getCompetenciasPorCandidatoId(Integer idCandidato){
-		List<Skill> competencias = new ArrayList<>()
-		String query = """
-            SELECT c.id, c.nome
-            FROM competencia c
-            JOIN candidato_competencia cc ON id_competencia = c.id 
-            WHERE cc.id_candidato = ${idCandidato} 
-            """
-
-		try {
-			sql.eachRow(query) {row ->
-				competencias.add(new Skill(
-						row.id as Integer,
-						row.nome as String
-				))
-			}
-		} catch (SQLException e){
-			e.printStackTrace()
-		}
-		return competencias
-	}
-
 	List<Skill> getCompetenciasPorIdDaVaga(Integer id){
 		List<Skill> competencias = new ArrayList<>()
 		try {
@@ -85,28 +63,31 @@ class SkillRepository {
 		}
 		return competencias
 	}
-	Map<String, List<Skill>> setIdsCompetenciasExistentes(List<Skill> competencias) {
-		List<Skill> competenciasComId = new ArrayList<>()
-		List<Skill> competenciasSemId = new ArrayList<>()
+
+	List<Skill> insertSkillsReturningId(List<Skill> skills) {
+		List<Skill> skillsWithId = []
 		try {
-			competencias.forEach { Skill it ->
-				GroovyRowResult result = sql.firstRow("SELECT id FROM competencia WHERE nome = ?", [it.nome])
-				if (result != null) {
-					it.setId(result.id as Integer)
-					competenciasComId.add(it)
-				} else {
-					competenciasSemId.add(it)
-				}
+			List<String> names = skills*.name.unique()
+			String valuesSql = names.collect { "(?)" }.join(", ")
+			String sqlQuery = """
+			INSERT INTO competencia (nome)
+			VALUES ${valuesSql}
+			ON CONFLICT (nome) DO UPDATE SET nome = competencia.nome
+			RETURNING id, nome"""
+
+			List<GroovyRowResult> results = sql.rows(sqlQuery, names)
+			results.each { GroovyRowResult row ->
+				skillsWithId.add(new Skill(
+						row.id as Integer,
+						row.nome as String
+				))
 			}
-		} catch (SQLException e){
+		} catch (Exception e) {
 			e.printStackTrace()
 		}
-
-		return [
-		        comId: competenciasComId,
-				semId: competenciasSemId
-		]
+		return skillsWithId
 	}
+
 
 	List<Skill> addCompetencias(List<Skill> competencias) {
 		try {
