@@ -52,9 +52,9 @@ class MainController {
                     view.showVagas(serviceManager.listarVagas())
                     break
                 case menu.CADASTRAR_VAGA:
-                    Integer idEmpresaInput = view.getIdEmpresaInput()
-                    Map<String, ?> dadosVaga = view.getDadosVagaInput()
-                    feedback = serviceManager.cadastrarVaga(idEmpresaInput, dadosVaga)
+                    Integer idCompanyInput = view.getIdCompanyInput()
+                    Map<String, ?> dataJob = view.getDataJobInput()
+                    feedback = serviceManager.registerJob(idCompanyInput, dataJob)
                     view.showFeedback(feedback)
                     break
                 case menu.REMOVER_VAGA:

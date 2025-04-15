@@ -1,8 +1,8 @@
 package org.linketinder.repository
 
 import groovy.sql.Sql
-import org.linketinder.model.Competencia
-import org.linketinder.model.Vaga
+import org.linketinder.model.Skill
+import org.linketinder.model.Job
 
 import java.sql.SQLException
 
@@ -16,15 +16,15 @@ class JobRepository {
 
 	}
 
-	List<Vaga> getJobs() {
-		List<Vaga> jobs = []
+	List<Job> getJobs() {
+		List<Job> jobs = []
 		String query = selectAllJobs()
 
 		try {
 			sql.eachRow(query) { row ->
 				Integer jobId = row.vaga_id as Integer
-				List<Competencia> skills = skillRepository.extractSkillsData(row.competencias.toString())
-				Vaga job = new Vaga(
+				List<Skill> skills = skillRepository.extractSkillsData(row.competencias.toString())
+				Job job = new Job(
 						jobId,
 						row.vaga_nome as String,
 						row.vaga_descricao as String,
@@ -61,8 +61,8 @@ class JobRepository {
 				v.id, v.nome, v.descricao, v.local, v.id_empresa"""
 	}
 
-	List<Vaga> extractJobsData(String jobsData, Integer id_company) {
-		List<Vaga> jobs = []
+	List<Job> extractJobsData(String jobsData, Integer id_company) {
+		List<Job> jobs = []
 		jobsData.split(';').each { String jobStr ->
 			String[] idJobDescriptionLocalSkills = jobStr.split(':')
 			if (idJobDescriptionLocalSkills.length > 1) {
@@ -70,18 +70,18 @@ class JobRepository {
 				String name = idJobDescriptionLocalSkills[1]
 				String description = idJobDescriptionLocalSkills[2]
 				String local = idJobDescriptionLocalSkills[3]
-				List<Competencia> skills = []
+				List<Skill> skills = []
 				if (idJobDescriptionLocalSkills.length == 5){
 					skills = skillRepository.extractSkillsData(idJobDescriptionLocalSkills[4])
 				}
-				jobs.add(new Vaga(id, name, description, local, id_company, skills))
+				jobs.add(new Job(id, name, description, local, id_company, skills))
 			}
 		}
 		return jobs
 	}
 
-	List<Vaga> getVagasByEmpresaId(Integer empresaId) {
-		List<Vaga> vagasEmpresa = []
+	List<Job> getVagasByEmpresaId(Integer empresaId) {
+		List<Job> vagasEmpresa = []
 		String query = """
             SELECT 
                 v.id AS vaga_id,
@@ -97,7 +97,7 @@ class JobRepository {
 		try {
 			sql.eachRow(query, [empresaId]) { row ->
 				Integer vagaId = row.vaga_id as Integer
-				Vaga vaga = new Vaga(
+				Job vaga = new Job(
 						vagaId,
 						row.vaga_nome as String,
 						row.vaga_descricao as String,
@@ -115,7 +115,7 @@ class JobRepository {
 		}
 	}
 
-	Integer inserirVaga(Vaga vaga){
+	Integer inserirVaga(Job vaga){
 		try {
 			def keys = sql.executeInsert("""
                     INSERT INTO VAGA (nome, descricao, local, id_empresa)
@@ -133,9 +133,9 @@ class JobRepository {
 		return vaga.id
 	}
 
-	void inserirIdVagaCompetencia(List<Competencia> competencias, Integer idVaga) {
+	void inserirIdVagaCompetencia(List<Skill> competencias, Integer idVaga) {
 		try {
-			competencias.each {Competencia competencia -> {
+			competencias.each { Skill competencia -> {
 				sql.executeInsert("INSERT INTO vaga_competencia(id_vaga, id_competencia) VALUES (?, ?)", [idVaga, competencia.id])
 			}}
 		} catch (SQLException e) {

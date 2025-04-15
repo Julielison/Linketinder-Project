@@ -3,10 +3,10 @@ package org.linketinder.repository
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 import org.linketinder.model.Address
-import org.linketinder.model.Candidato
-import org.linketinder.model.Competencia
+import org.linketinder.model.Candidate
+import org.linketinder.model.Skill
 import org.linketinder.model.Country
-import org.linketinder.model.Formacao
+import org.linketinder.model.Formation
 import org.linketinder.util.Util
 
 import java.sql.SQLException
@@ -15,31 +15,28 @@ import java.time.format.DateTimeParseException
 
 class CandidateRepository {
     Sql sql
-    EnderecoRepository adressRepository
+    AddressRepository addressRepository
     SkillRepository skillRepository
-    FormacaoRepository formacaoRepository
-    EmailRepository emailRepository
+    FormationRepository formationRepository
 
-    CandidateRepository(Sql sql, EnderecoRepository adressRepository,
+    CandidateRepository(Sql sql, AddressRepository addressRepository,
                         SkillRepository skillRepository,
-                        FormacaoRepository formacaoRepository,
-                        EmailRepository emailRepository)
+                        FormationRepository formationRepository)
     {
         this.sql = sql
-        this.adressRepository = adressRepository
+        this.addressRepository = addressRepository
         this.skillRepository = skillRepository
-        this.formacaoRepository = formacaoRepository
-        this.emailRepository = emailRepository
+        this.formationRepository = formationRepository
     }
 
-    List<Candidato> getCandidatos() {
-        List<Candidato> candidatos = []
+    List<Candidate> getCandidatos() {
+        List<Candidate> candidatos = []
         String query = selectAllFromCandidates()
 
         try {
             sql.eachRow(query) { GroovyResultSet row ->
-                List<Competencia> skills = skillRepository.extractSkillsData(row.competencias.toString())
-                List<Formacao> formations = Formacao.extractFormationsData(row.formacoes.toString())
+                List<Skill> skills = skillRepository.extractSkillsData(row.competencias.toString())
+                List<Formation> formations = formationRepository.extractFormationsData(row.formacoes.toString())
                 LocalDate dateOfBirth = Util.convertToLocalDate(row.candidato_data_nascimento.toString(), 'yyyy-MM-dd')
                 Address address = new Address(
                         row.endereco_id as Integer,
@@ -47,7 +44,7 @@ class CandidateRepository {
                         new Country(row.pais_nome as String, row.pais_id as Integer)
                 )
 
-                Candidato candidato = new Candidato (
+                Candidate candidato = new Candidate (
                         row.candidato_id as Integer,
                         row.candidato_nome as String,
                         row.candidato_email as String,
@@ -94,7 +91,6 @@ class CandidateRepository {
                 TO_CHAR(fc.data_inicio, 'YYYY-MM-DD'), ':', 
                 TO_CHAR(fc.data_fim_previsao, 'YYYY-MM-DD')
             ), ';') AS formacoes
-            
         FROM 
             CANDIDATO c
         JOIN 
@@ -114,71 +110,64 @@ class CandidateRepository {
             c.descricao_pessoal, c.senha_de_login, e.id, e.cep, p.id, p.nome"""
     }
 
-    void addDataFromCandidate(Candidato candidate){
+    void addDataFromCandidate(Candidate candidate){
         try {
-            if (candidateIsValid(candidate)){
-                Integer paisId = adressRepository.obterIdPais(candidate.address.country.name)
-                if (!paisId) {
-                    paisId = adressRepository.inserirPais(candidate.paisOndeReside)
-                }
-                Integer enderecoId = adressRepository.inserirEndereco(candidate.cep, paisId)
-                Integer candidateId = inserirCandidato(candidate, enderecoId)
-                candidate.setId(candidateId)
+            Integer countryId = addressRepository.getIdCountry(candidate.address.country.name)
+            countryId = !countryId ? addressRepository.insertCountry(candidate.address.country.name) : null
+            Integer addressId = addressRepository.insertAddress(candidate.address.zipCode, countryId)
+            Integer candidateId = insertCandidate(candidate, addressId)
+            candidate.setId(candidateId)
 
-                if(!candidate.formacoes.isEmpty()){
-                    Candidato candidateComIdFormacoes = formacaoRepository.inserirFormacoes(candidate)
-                    inserirIdsFormacaoCandidatoEDatas(candidateComIdFormacoes)
-                }
+            if(!candidate.formations.isEmpty()){
+                Candidate candidateWithFormationsId = formationRepository.insertFormations(candidate)
+                insertIdsAndDatesFromFormation(candidateWithFormationsId)
             }
-        } catch (SQLException e){
-            e.printStackTrace()
         } catch (Exception e){
-            throw new Exception(e.message)
+            e.printStackTrace()
         }
     }
 
-    boolean candidateIsValid(Candidato candidate) throws Exception {
-        def resultCpf = sql.firstRow("SELECT cpf FROM candidato WHERE cpf = ?", [candidate.cpf])
-        if (resultCpf){
-            throw new Exception("Cpf já existe!")
-        }
-        if (emailRepository.checkIfEmailAlreadyExists(candidate.email)){
-            throw new Exception("Email já existe!")
-        }
-        return true
-    }
+    Integer insertCandidate(Candidate candidate, Integer idAddress) {
+        String dataNascimentoFormatada = Util.convertToLocalDate(candidate.dateBirth,'yyyy-MM-dd')
 
-    Integer inserirCandidato(Candidato candidato, Integer idEndereco) {
-        String dataNascimentoFormatada = Util.formatarData(candidato.dataNascimento,'yyyy-MM-dd')
-
-        def result = sql.executeInsert("""
+        List<List<Object>> result = sql.executeInsert("""
     INSERT INTO CANDIDATO (nome, sobrenome, data_nascimento, email, cpf, descricao_pessoal, senha_de_login, id_endereco)
     VALUES (?, ?, ?::date, ?, ?, ?, ?, ?)
 """, [
-                candidato.nome,
-                candidato.sobrenome,
+                candidate.name,
+                candidate.lastName,
                 dataNascimentoFormatada,
-                candidato.email,
-                candidato.cpf,
-                candidato.descricao,
-                candidato.senhaLogin,
-                idEndereco
+                candidate.email,
+                candidate.cpf,
+                candidate.descricao,
+                candidate.senhaLogin,
+                idAddress
         ])
         return result[0][0] as Integer
     }
-    void inserirIdsFormacaoCandidatoEDatas(Candidato candidato){
+    void insertIdsAndDatesFromFormation(Candidate candidate) {
         try {
-            candidato.formacoes.each { Formacao formacao ->
-                sql.executeInsert("""
-                    INSERT INTO formacao_candidato VALUES (?, ?, ?::date, ?::date)""",
-                        [formacao.id, candidato.id, Util.formatarData(formacao.dataInicio, "yyyy-MM-dd"), Util.formatarData(formacao.dataFim,"yyyy-MM-dd")])
+            StringBuilder insertSql = new StringBuilder()
+            candidato.formations.each { Formation formation ->
+                LocalDate dataInicio = Util.convertToLocalDate(formation.dateStart, "yyyy-MM-dd")
+                LocalDate dataFim = Util.convertToLocalDate(formation.dateEnd, "yyyy-MM-dd")
+                insertSql.append(
+                        "INSERT INTO formacao_candidato VALUES (" +
+                                "${formation.id}, ${candidate.id}, " +
+                                "'${dataInicio}'::date, '${dataFim}'::date);\n"
+                )
             }
-        } catch (SQLException e){
+            if (insertSql) {
+                sql.execute(insertSql.toString())
+            }
+
+        } catch (SQLException e) {
             throw new Exception(e.getMessage())
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.getMessage())
         }
     }
+
 
     boolean removeCandidateById(Integer id) {
         try {

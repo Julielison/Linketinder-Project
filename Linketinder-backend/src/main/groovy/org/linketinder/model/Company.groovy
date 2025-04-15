@@ -1,28 +1,28 @@
 package org.linketinder.model
 
-class Company extends Pessoa {
+class Company extends Person {
     String cnpj
-    List<Vaga> vagas
+    List<Job> jobs
 
     Company(Integer id,
-            String nome,
+            String name,
             String email,
             String cnpj,
             Address address,
-            String descricao,
-            String senhaLogin,
-            List<Vaga> vagas)
+            String description,
+            String passwordLogin,
+            List<Job> jobs)
     {
-        super(id, nome, email, address, descricao, senhaLogin)
+        super(id, name, email, address, description, passwordLogin)
         this.cnpj = cnpj
-        this.vagas = vagas
+        this.jobs = jobs
     }
 
     @Override
     String toString() {
         return super.toString() + """
         CNPJ: ${cnpj}
-        Vagas: ${vagas}
+        Vagas: ${jobs}
         """
     }
 }

@@ -1,11 +1,12 @@
 package org.linketinder.util
 
+import jdk.jshell.execution.LoaderDelegate
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class Util {
-	static convertToLocalDate(String dateStr, String format){
+	static LocalDate convertToLocalDate(String dateStr, String format){
 		DateTimeFormatter formatDate = DateTimeFormatter.ofPattern(format)
 		return LocalDate.parse(dateStr, formatDate)
 	}

@@ -1,19 +1,19 @@
 package org.linketinder.model
 
-class Competencia {
+class Skill {
     Integer id
-    String nome
+    String name
 
-    Competencia(Integer id, String nome) {
+    Skill(Integer id, String name) {
         this.id = id
-        this.nome = nome
+        this.name = name
     }
 
     @Override
     String toString() {
         return """
         Id: $id
-        Nome: $nome"""
+        Nome: $name"""
     }
 }
 

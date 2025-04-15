@@ -23,7 +23,7 @@ class ServiceManager {
 		this.skillRepository = skillRepository
 	}
 
-	List<Candidato> listarCandidatos() {
+	List<Candidate> listarCandidatos() {
 		return candidateRepository.getCandidatos()
 	}
 
@@ -31,20 +31,20 @@ class ServiceManager {
 		return companyRepository.getEmpresas()
 	}
 
-	List<Vaga> listarVagas(){
+	List<Job> listarVagas(){
 		return jobRepository.getJobs()
 	}
 
-	List<Competencia> listarCompetencias(){
+	List<Skill> listarCompetencias(){
 		return skillRepository.getSkills()
 	}
 
 	String registerCandidate(Map<String, String> data) {
-		List<Formacao> formations = extractFormationsFromMap(data)
-		List<Competencia> skills = extractSkillsFromMap(data)
+		List<Formation> formations = extractFormationsFromMap(data)
+		List<Skill> skills = extractSkillsFromMap(data)
 		Address address = new Address(null, data.zipCode, new Country(data.country, null))
 
-		Pessoa newCandidate = new Candidato(
+		Person newCandidate = new Candidate(
 				null,
 				data.name,
 				data.email,
@@ -68,7 +68,7 @@ class ServiceManager {
 
 	String cadastrarEmpresa(Map<String, String> dados) {
 		String feedback = "Cadastro feito com sucesso!"
-		Pessoa novaEmpresa = new Company(
+		Person novaEmpresa = new Company(
 				null,
 				dados.nome,
 				dados.email,
@@ -100,29 +100,29 @@ class ServiceManager {
 		return skillRepository.removeSkillById(id) ? "Competência removida com sucesso!" : "Competência não existe!"
 	}
 
-	String cadastrarVaga(Integer idEmpresa, Map<String, ?> dados){
-		List<Competencia> competencias = extrairCompetencias(dados)
-		Vaga vaga = new Vaga (
+	String registerJob(Integer idCompany, Map<String, ?> data){
+		List<Skill> skills = extrairCompetencias(data)
+		Job job = new Job (
 				null,
-				dados.descricao as String,
-				dados.nome as String,
-				dados.local as String,
-				idEmpresa,
-				competencias
+				data.descricao as String,
+				data.nome as String,
+				data.local as String,
+				idCompany,
+				skills
 		)
 		String feedback = "Cadastro feito com sucesso!"
 		try {
-			companyRepository.addVaga(vaga)
+			companyRepository.addVaga(job)
 		} catch (Exception e){
 			feedback = e.getMessage()
 		}
 		return feedback
 	}
 
-	private static List<Competencia> extractSkillsFromMap(Map<String, ?> dados){
-		List<Competencia> competencias = new ArrayList<>()
+	private static List<Skill> extractSkillsFromMap(Map<String, ?> dados){
+		List<Skill> competencias = new ArrayList<>()
 		for (String competenciaStr : dados.get('competencias')){
-			Competencia competencia = new Competencia(
+			Skill competencia = new Skill(
 					null,
 					competenciaStr
 			)
@@ -131,10 +131,10 @@ class ServiceManager {
 		return competencias
 	}
 
-	private static List<Formacao> extractFormationsFromMap(Map<String, ?> data){
-		List<Formacao> formations = []
+	private static List<Formation> extractFormationsFromMap(Map<String, ?> data){
+		List<Formation> formations = []
 		for (Map<String, ?> formationMap : data.get("formacoes") as List<Map<String, ?>>){
-			Formacao formation = new Formacao(
+			Formation formation = new Formation(
 					null,
 					formationMap.get('instituicao') as String,
 					formationMap.get('nome') as String,

@@ -3,7 +3,7 @@ package org.linketinder.repository
 import groovy.sql.GroovyResultSet
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
-import org.linketinder.model.Competencia
+import org.linketinder.model.Skill
 
 import java.sql.SQLException
 
@@ -14,11 +14,11 @@ class SkillRepository {
 		this.sql = sql
 	}
 
-	List<Competencia> getSkills(){
-		List<Competencia> skills = new ArrayList<>()
+	List<Skill> getSkills(){
+		List<Skill> skills = new ArrayList<>()
 		try {
 			sql.eachRow("SELECT * FROM competencia"){row->
-				skills.add(new Competencia(
+				skills.add(new Skill(
 						row.id as Integer,
 						row.nome as String
 				))
@@ -31,22 +31,22 @@ class SkillRepository {
 		return skills
 	}
 
-	static List<Competencia> extractSkillsData(String skillsData) {
-		List<Competencia> skills = new ArrayList<>()
+	static List<Skill> extractSkillsData(String skillsData) {
+		List<Skill> skills = new ArrayList<>()
 
 		skillsData.split(',').each { String skillData ->
 			String[] idSkillName = skillData.split('\\.')
 			if (idSkillName.length > 0) {
 				Integer id = idSkillName[0].toInteger()
 				String name = idSkillName[1]
-				skills.add(new Competencia(id, name))
+				skills.add(new Skill(id, name))
 			}
 		}
 		return skills
 	}
 
-	List<Competencia> getCompetenciasPorCandidatoId(Integer idCandidato){
-		List<Competencia> competencias = new ArrayList<>()
+	List<Skill> getCompetenciasPorCandidatoId(Integer idCandidato){
+		List<Skill> competencias = new ArrayList<>()
 		String query = """
             SELECT c.id, c.nome
             FROM competencia c
@@ -56,7 +56,7 @@ class SkillRepository {
 
 		try {
 			sql.eachRow(query) {row ->
-				competencias.add(new Competencia(
+				competencias.add(new Skill(
 						row.id as Integer,
 						row.nome as String
 				))
@@ -67,8 +67,8 @@ class SkillRepository {
 		return competencias
 	}
 
-	List<Competencia> getCompetenciasPorIdDaVaga(Integer id){
-		List<Competencia> competencias = new ArrayList<>()
+	List<Skill> getCompetenciasPorIdDaVaga(Integer id){
+		List<Skill> competencias = new ArrayList<>()
 		try {
 			sql.eachRow("""
 				SELECT c.nome as nome_competencia
@@ -85,11 +85,11 @@ class SkillRepository {
 		}
 		return competencias
 	}
-	Map<String, List<Competencia>> setIdsCompetenciasExistentes(List<Competencia> competencias) {
-		List<Competencia> competenciasComId = new ArrayList<>()
-		List<Competencia> competenciasSemId = new ArrayList<>()
+	Map<String, List<Skill>> setIdsCompetenciasExistentes(List<Skill> competencias) {
+		List<Skill> competenciasComId = new ArrayList<>()
+		List<Skill> competenciasSemId = new ArrayList<>()
 		try {
-			competencias.forEach {Competencia it ->
+			competencias.forEach { Skill it ->
 				GroovyRowResult result = sql.firstRow("SELECT id FROM competencia WHERE nome = ?", [it.nome])
 				if (result != null) {
 					it.setId(result.id as Integer)
@@ -108,9 +108,9 @@ class SkillRepository {
 		]
 	}
 
-	List<Competencia> addCompetencias(List<Competencia> competencias) {
+	List<Skill> addCompetencias(List<Skill> competencias) {
 		try {
-			competencias.each { Competencia competencia ->
+			competencias.each { Skill competencia ->
 				def result = sql.executeInsert("INSERT INTO competencia (nome) VALUES (?)", [competencia.nome])
 				if (result) {
 					competencia.id = result[0][0] as Integer

@@ -4,19 +4,19 @@ import groovy.sql.GroovyResultSet
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import org.linketinder.model.Address
-import org.linketinder.model.Competencia
+import org.linketinder.model.Skill
 import org.linketinder.model.Country
 import org.linketinder.model.Company
-import org.linketinder.model.Vaga
+import org.linketinder.model.Job
 
 import java.sql.SQLException
 
 class CompanyRepository {
 	Sql sql
-	EnderecoRepository endereco
+	AddressRepository endereco
 	JobRepository jobRepository
 
-	CompanyRepository(Sql sql, EnderecoRepository enderecoRepository, JobRepository jobRepository) {
+	CompanyRepository(Sql sql, AddressRepository enderecoRepository, JobRepository jobRepository) {
 		this.sql = sql
 		this.endereco = enderecoRepository
 		this.jobRepository = jobRepository
@@ -28,7 +28,7 @@ class CompanyRepository {
 		try {
 			sql.eachRow(query) { GroovyResultSet row ->
 				Integer id_company = row.empresa_id as Integer
-				List<Vaga> jobs = jobRepository.extractJobsData(row.vagas.toString(), id_company)
+				List<Job> jobs = jobRepository.extractJobsData(row.vagas.toString(), id_company)
 				Address address = new Address(
 						row.endereco_id as Integer,
 						row.endereco_cep as String,
@@ -145,7 +145,7 @@ class CompanyRepository {
 			throw new Exception("Erro ao verificar a existência da empresa no Banco de dados")
 		}
 	}
-	void addVaga(Vaga vaga) {
+	void addVaga(Job vaga) {
 		try {
 			boolean result = verificarSeEmpresaExistePorId(vaga.idEmpresa)
 			if (!result){
@@ -154,8 +154,8 @@ class CompanyRepository {
 			Integer idvaga = jobRepository.inserirVaga(vaga)
 			vaga.setId(idvaga)
 
-			Map<String, List<Competencia>> competenciasSeperadas = jobRepository.competenciaRepository.setIdsCompetenciasExistentes(vaga.competencias)
-			List<Competencia> competenciasComId = jobRepository.competenciaRepository.addCompetencias(competenciasSeperadas.get("semId"))
+			Map<String, List<Skill>> competenciasSeperadas = jobRepository.competenciaRepository.setIdsCompetenciasExistentes(vaga.competencias)
+			List<Skill> competenciasComId = jobRepository.competenciaRepository.addCompetencias(competenciasSeperadas.get("semId"))
 			competenciasComId.addAll(competenciasSeperadas.get('comId'))
 			jobRepository.inserirIdVagaCompetencia(competenciasComId, vaga.id)
 
