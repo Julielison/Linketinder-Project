@@ -1,33 +1,17 @@
 package org.linketinder.controller
 
-import org.linketinder.repository.CandidatoRepository
-import org.linketinder.repository.CompetenciaRepository
-import org.linketinder.repository.EmailRepository
-import org.linketinder.repository.EmpresaRepository
-import org.linketinder.repository.EnderecoRepository
-import org.linketinder.repository.FormacaoRepository
-import org.linketinder.repository.Repository
-import org.linketinder.repository.VagaRepository
-import org.linketinder.service.GestaoService
+import org.linketinder.enums.MenuOption
+import org.linketinder.dao.DatabaseConnection
+import org.linketinder.service.ServiceManager
 import org.linketinder.view.MenuView
-import groovy.sql.Sql
-import org.linketinder.repository.DatabaseConnection
 
 class MainController {
-    MenuView view = new MenuView()
-    GestaoService gestaoService
+    MenuView view
+    ServiceManager serviceManager
 
-    MainController() {
-        Sql sql = DatabaseConnection.getInstance()
-        EmailRepository emailRepository = new EmailRepository(sql)
-        CompetenciaRepository competenciaRepository = new CompetenciaRepository(sql)
-        VagaRepository vagaRepository = new VagaRepository(sql, competenciaRepository)
-        FormacaoRepository formacaoRepository = new FormacaoRepository(sql)
-        EnderecoRepository enderecoRepository = new EnderecoRepository(sql)
-        Repository repository = new Repository(sql)
-        EmpresaRepository empresaRepository = new EmpresaRepository(sql, enderecoRepository, vagaRepository)
-        CandidatoRepository candidatoRepository = new CandidatoRepository(sql, enderecoRepository, competenciaRepository, formacaoRepository, emailRepository)
-        this.gestaoService = new GestaoService(empresaRepository, candidatoRepository, repository)
+    MainController(MenuView view, ServiceManager serviceManager) {
+        this.view = view
+        this.serviceManager = serviceManager
     }
 
     void executar() {
@@ -35,60 +19,61 @@ class MainController {
         String feedback
         while (!sair) {
             view.showMenu()
-            String opcao = view.getUserInput()
-            switch(opcao) {
-                case "1":
-                    view.showPessoas(gestaoService.listarCandidatos(), 'candidatos')
+            String option = view.getUserInput()
+            MenuOption menu = MenuOption.fromValue(option)
+            switch(menu) {
+                case menu.LISTAR_CANDIDATOS:
+                    view.showPessoas(serviceManager.listarCandidatos(), 'candidatos')
                     break
-                case "2":
-                    view.showPessoas(gestaoService.listarEmpresas(), 'empresas')
-                    break
-                case "3":
-                    Map<String, ?> dadosEmpresa = view.getEmpresaInput()
-                    feedback = gestaoService.cadastrarEmpresa(dadosEmpresa)
+                case menu.CADASTRAR_CANDIDATO:
+                    Map<String, ?> candidateData = view.getCandidateInput()
+                    feedback = serviceManager.registerCandidate(candidateData)
                     view.showFeedback(feedback)
                     break
-                case "4":
-                    Integer idEmpresa = view.getIdEmpresaInput()
-                    feedback = gestaoService.removerEmpresa(idEmpresa)
+                case menu.REMOVER_CANDIDATO:
+                    Integer idCandidatoInput = view.getIdCandidateInput()
+                    feedback = serviceManager.removeCandidate(idCandidatoInput)
                     view.showFeedback(feedback)
                     break
-                case "5":
-                    Map<String, ?> dadosCandidato = view.getCandidatoInput()
-                    feedback = gestaoService.cadastrarCandidato(dadosCandidato)
+                case menu.LISTAR_EMPRESAS:
+                    view.showPessoas(serviceManager.listarEmpresas(), 'empresas')
+                    break
+                case menu.CADASTRAR_EMPRESA:
+                    Map<String, ?> companyData = view.getCompanyInput()
+                    feedback = serviceManager.registerCompany(companyData)
                     view.showFeedback(feedback)
                     break
-                case "6":
-                    Integer idCandidatoInput = view.getIdCandidatoInput()
-                    feedback = gestaoService.removerCandidato(idCandidatoInput)
+                case menu.REMOVER_EMPRESA:
+                    Integer idEmpresa = view.getIdCompanyInput()
+                    feedback = serviceManager.removeCompany(idEmpresa)
                     view.showFeedback(feedback)
                     break
-                case "7":
-                    view.showVagas(gestaoService.listarVagas())
+                case menu.LISTAR_VAGAS:
+                    view.showVagas(serviceManager.listarVagas())
                     break
-                case "8":
-                    view.showCompetencias(gestaoService.listarCompetencias())
-                    break
-                case "9":
-                    Integer idEmpresaInput = view.getIdEmpresaInput()
-                    Map<String, ?> dadosVaga = view.getDadosVagaInput()
-                    feedback = gestaoService.cadastrarVaga(idEmpresaInput, dadosVaga)
+                case menu.CADASTRAR_VAGA:
+                    Integer idCompanyInput = view.getIdCompanyInput()
+                    Map<String, ?> dataJob = view.getDataJobInput()
+                    feedback = serviceManager.registerJob(idCompanyInput, dataJob)
                     view.showFeedback(feedback)
                     break
-                case "10":
-                    Integer idVagaInput = view.getIdVagaInput()
-                    feedback = gestaoService.removerVaga(idVagaInput)
+                case menu.REMOVER_VAGA:
+                    Integer idVagaInput = view.getIdJobInput()
+                    feedback = serviceManager.removeJob(idVagaInput)
                     view.showFeedback(feedback)
                     break
-                case "11":
-                    Integer idCompetenciaInput = view.getIdCompetenciaInput()
-                    feedback = gestaoService.removerCompetencia(idCompetenciaInput)
+                case menu.LISTAR_COMPETENCIAS:
+                    view.showCompetencias(serviceManager.listarCompetencias())
+                    break
+                case menu.REMOVER_COMPETENCIA:
+                    Integer idCompetenciaInput = view.getIdSkillInput()
+                    feedback = serviceManager.removeSkill(idCompetenciaInput)
                     view.showFeedback(feedback)
                     break
-                case '0':
+                case menu.SAIR:
                     view.showExitMessage()
                     sair = true
-                    gestaoService.empresaRepository.sql.close()
+                    DatabaseConnection.getInstance().close()
                     break
                 default:
                     view.showInvalidOption()

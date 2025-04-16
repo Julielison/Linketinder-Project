@@ -22,6 +22,8 @@ dependencies {
     implementation "org.apache.groovy:groovy-all:${groovyVersion}"
 
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
+    testImplementation 'org.junit.platform:junit-platform-runner:1.9.2'
+    testImplementation 'org.junit.platform:junit-platform-suite-api:1.9.2'
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     testImplementation "org.spockframework:spock-core:${spockVersion}"

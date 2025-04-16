@@ -1,10 +1,20 @@
 package org.linketinder.util
 
-import java.text.SimpleDateFormat
+import jdk.jshell.execution.LoaderDelegate
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class Util {
-	static String formatarData(Date data, String formato) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(formato)
-		return dateFormat.format(data)
+	static LocalDate convertToLocalDate(String dateStr, String format){
+		DateTimeFormatter formatDate = DateTimeFormatter.ofPattern(format)
+		return LocalDate.parse(dateStr, formatDate)
+	}
+	static String convertToBrFormat(LocalDate data) {
+		if (data == null) return ""
+		return data.format(DateTimeFormatter.ofPattern('dd/MM/yyyy'))
+	}
+	static String convertToString(LocalDate date){
+		return date.format(DateTimeFormatter.ISO_LOCAL_DATE)
 	}
 }

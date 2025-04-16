@@ -1,45 +1,47 @@
 package org.linketinder.view
 
-import org.linketinder.model.Competencia
-import org.linketinder.model.Pessoa
-import org.linketinder.model.Vaga
+import org.linketinder.enums.MenuOption
+import org.linketinder.model.Skill
+import org.linketinder.model.Person
+import org.linketinder.model.Job
+import org.linketinder.util.Util
 
-import java.text.SimpleDateFormat
+import java.time.LocalDate
 
 class MenuView {
+	static final Integer LAST = 1
+
 	static void showMenu() {
-		println "\n=== Menu ==="
-		println "1. Listar dados dos candidatos"
-		println "2. Listar dados das Empresas"
-		println "3. Adicionar Empresa"
-		println "4. Remover Empresa"
-		println "5. Adicionar Candidato"
-		println "6. Remover candidato"
-		println "7. Listar todas as vagas"
-		println "8. Listar todas as competências"
-		println "9. Adicionar vaga"
-		println "10. Remover vaga"
-		println "11. Remover competencia"
-		println "0. Sair"
+		println "=== Menu ==="
+		for (int i = 0; i < MenuOption.values().size() - LAST; i++) {
+			MenuOption option = MenuOption.values()[i]
+			println "${option.value}. ${option.name().replace('_', ' ').toLowerCase().capitalize()}"
+		}
 		print "Escolha uma opção: "
 	}
 
-	static void showPessoas(List<Pessoa> pessoas, String tipoPessoa) {
-		println "\n--- Lista de ${tipoPessoa} ---"
+	static void showPessoas(List<Person> pessoas, String tipoPessoa) {
+		println "--- Lista de ${tipoPessoa} ---"
 		if (pessoas.isEmpty()) {
-			println "Nenhum ${tipoPessoa} cadastrado."
+			println "Nenhum ${tipoPessoa} cadastrado(a)."
 		} else {
-			pessoas.each {Pessoa it -> println it }
+			pessoas.each { Person it -> println it }
 		}
 	}
 
 	static String getUserInput() {
-		String input = System.in.newReader().readLine()
-		if (input == null || input.trim().isEmpty()) {
-			println "Entrada vazia. Por favor, digite um número."
-			return null
+		String input
+		while (true) {
+			input = System.in.newReader().readLine()
+			if (inputIsValid(input)) {
+				return input
+			}
+			println "Entrada vazia. Por favor, digite o que se pede."
 		}
-		return input
+	}
+
+	static boolean inputIsValid(String input){
+		return input != null && !input.trim().isEmpty()
 	}
 
 	static void showExitMessage() {
@@ -49,135 +51,153 @@ class MenuView {
 	static void showInvalidOption() {
 		println "\nOpção inválida. Tente novamente."
 	}
+
 	static void showFeedback(String feedback){
 		println feedback
 	}
 
-	static Map<String, ?> getEmpresaInput() {
+	static Map<String, ?> getCompanyInput() {
 		println "\n--- Cadastro de Empresa ---"
-
 		print "Nome: "
-		String nome = System.in.newReader().readLine()
+		String name = getUserInput()
 
 		print "Email: "
-		String email = System.in.newReader().readLine()
+		String email = getUserInput()
 
-		String cnpj = getPadraoValido("CNPJ (14 dígitos): ", /\d{14}/)
+		String cnpj = getValidPattern("CNPJ (14 dígitos): ", /\d{14}/)
 
 		print "País: "
-		String pais = System.in.newReader().readLine()
+		String country = getUserInput()
 
-		String cep = getPadraoValido("Cep (8 dígitos): ", /\d{8}/)
+		String zipCode = getValidPattern("Cep (8 dígitos): ", /\d{8}/)
 
 		print "Descrição: "
-		String descricao = System.in.newReader().readLine()
+		String description = getUserInput()
 
 		print "Senha de login: "
-		String senha = System.in.newReader().readLine()
+		String password = getUserInput()
 
 		return [
-				nome: nome,
+				name: name,
 				email: email,
 				cnpj: cnpj,
-				pais: pais,
-				cep: cep,
-				descricao: descricao,
-				senha: senha
+				country: country,
+				zipCode: zipCode,
+				description: description,
+				password: password
 		]
 	}
 
-	static Map<String, ?> getCandidatoInput() {
+	static Map<String, ?> getCandidateInput() {
 		println "\n--- Cadastro de Candidato ---"
 		print "Nome: "
-		String nome = System.in.newReader().readLine()
+		String firstName = getUserInput()
 
 		print "Sobrenome: "
-		String sobrenome = System.in.newReader().readLine()
+		String lastName = getUserInput()
 
 		print "Email: "
-		String email = System.in.newReader().readLine()
+		String email = getUserInput()
 
-		String cpf = getPadraoValido("Cpf (11 dígitos): ", /\d{11}/)
-
-		Date dataNascimento = getInputData("Data de Nascimento (dd/mm/aaaa): ")
-
-		String cep = getPadraoValido("Cep (8 dígitos): ", /\d{8}/)
+		String cpf = getValidPattern("Cpf (11 dígitos): ", /\d{11}/)
+		LocalDate dateBirth = getInputData("Data de Nascimento (dd/mm/aaaa): ")
+		String zipCode = getValidPattern("Cep (8 dígitos): ", /\d{8}/)
 
 		print "Descrição: "
-		String descricao = System.in.newReader().readLine()
+		String description = getUserInput()
 
-		print "Competências (separadas por vírgula): "
-		List<String> competencias = System.in.newReader().readLine().split(",").collect { it.trim() }
+		List<String> skills = getSkillsInput()
 
 		print("Senha de login: ")
-		String senha = System.in.newReader().readLine()
+		String password = getUserInput()
 
 		print "País onde reside: "
-		String pais = System.in.newReader().readLine()
+		String country = getUserInput()
 
-		List<Map<String, ?>> formacoes = new ArrayList<>()
+		List<Map<String, ?>> formations = getFormationInput()
 
-		boolean adicionar = true
-		while (adicionar){
-			println "Formações :"
+		return [
+				firstName: firstName,
+				email: email,
+				skills: skills,
+				cpf: cpf,
+				description: description,
+				zipCode: zipCode,
+				dateBirth: dateBirth,
+				formations: formations,
+				country: country,
+				password: password,
+				lastName: lastName
+		]
+	}
+
+	static List<String> getSkillsInput(){
+		List<String> skills = []
+		boolean add = true
+		while (add){
+			println "-- Competências --"
 			println "1. Adicionar "
 			println "2. Pular"
-			String opcao = System.in.newReader().readLine()
-			switch (opcao){
+			String option = getUserInput()
+			switch (option){
 				case "1":
-					formacoes.add(getFormacaoInput())
+					print "Nome da competência (ex: Java): "
+					skills.add(getUserInput())
 					break
 				case "2":
-					adicionar = false
+					add = false
 					break
 				default:
 					showInvalidOption()
 			}
 		}
-
-		return [
-				nome: nome,
-				email: email,
-				competencias: competencias,
-				cpf: cpf,
-				descricao: descricao,
-				cep: cep,
-				dataNascimento: dataNascimento,
-				formacoes: formacoes,
-				pais: pais,
-				senha: senha,
-				sobrenome: sobrenome
-		]
+		return skills
 	}
 
-	static Map<String, ?> getFormacaoInput(){
-		print "Nome da formação: "
-		String nome = System.in.newReader().readLine()
+	static List<Map<String, ?>> getFormationInput(){
+		List<Map<String, ?>> formations = []
+		boolean add = true
+		while (add){
+			println "Formações :"
+			println "1. Adicionar "
+			println "2. Pular"
+			String option = getUserInput()
+			switch (option){
+				case "1":
+					print "Nome da formação: "
+					String name = getUserInput()
 
-		print "Nome da instituição: "
-		String instituicao = System.in.newReader().readLine()
+					print "Nome da instituição: "
+					String institution = getUserInput()
 
-		Date dadtaInicio = getInputData("Data de início: ")
-		Date dataFim = getInputData("Data de fim/previsão: ")
+					LocalDate dateStart = getInputData("Data de início: ")
+					LocalDate dateEnd = getInputData("Data de fim/previsão: ")
 
-		return [
-				nome: nome,
-				instituicao: instituicao,
-				dataIncio: dadtaInicio,
-				dataFim: dataFim
-		]
+					Map<String, ?> formation = new HashMap<>()
+					formation.put("name", name )
+					formation.put("institution", institution)
+					formation.put("dateStart", dateStart)
+					formation.put("dateEnd", dateEnd)
+					formations.add(formation)
+					break
+				case "2":
+					add = false
+					break
+				default:
+					showInvalidOption()
+			}
+		}
+		return formations
 	}
 
-	static Date getInputData(String label){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy")
-		Date data
-
+	static LocalDate getInputData(String label){
+		LocalDate date
 		while (true) {
 			print label
 			try {
-				String dataStr = System.in.newReader().readLine()
-				if (dataStr ==~ /\d{2}\/\d{2}\/\d{4}/) {
-					data = dateFormat.parse(dataStr)
+				String dateStr = getUserInput()
+				if (dateStr ==~ /\d{2}\/\d{2}\/\d{4}/) {
+					date = Util.convertToLocalDate(dateStr, "dd/MM/yyyy")
 					break
 				} else {
 					println "Por favor, insira uma data válida no formato dd/mm/aaaa."
@@ -186,31 +206,31 @@ class MenuView {
 				println "Erro ao ler a data: ${e.message}"
 			}
 		}
-		return data
+		return date
 	}
 
-	static void showVagas(List<Vaga> vagas){
+	static void showVagas(List<Job> vagas){
 		println(" --- Vagas ---")
 		vagas.forEach {it -> println(it)}
 	}
 
-	static void showCompetencias(List<Competencia> competencias){
+	static void showCompetencias(List<Skill> competencias){
 		println(" --- Competencias ---")
-		competencias.forEach {Competencia it -> println(it)}
+		competencias.forEach { Skill it -> println(it)}
 	}
-	static Integer getIdEmpresaInput(){
+	static Integer getIdCompanyInput(){
 		print "Informe o id da empresa: "
-		return getIdValido()
+		return getIdValid()
 	}
-	static Integer getIdCandidatoInput(){
+	static Integer getIdCandidateInput(){
 		print "Informe o id do candidato: "
-		return getIdValido()
+		return getIdValid()
 	}
-	static Integer getIdVagaInput(){
+	static Integer getIdJobInput(){
 		print "Informe o id da vaga: "
-		return getIdValido()
+		return getIdValid()
 	}
-	static Integer getIdValido(){
+	static Integer getIdValid(){
 		Integer id
 		while (true){
 			String input = getUserInput()
@@ -225,58 +245,36 @@ class MenuView {
 		}
 		return id
 	}
-	static Integer getIdCompetenciaInput() {
+	static Integer getIdSkillInput() {
 		print "Informe o id da competência: "
-		return getIdValido()
+		return getIdValid()
 	}
-	static Map<String, ?> getDadosVagaInput(){
+	static Map<String, ?> getDataJobInput(){
 		print "Nome da vaga: "
-		String nome = getUserInput()
+		String name = getUserInput()
 
 		print "Descrição: "
-		String descricao = getUserInput()
+		String description = getUserInput()
 
 		print "Local da vaga: "
 		String local = getUserInput()
 
-		List<String> competencias = getCompetenciasInput()
+		List<String> skills = getSkillsInput()
 
 		return [
-		        nome: nome,
-				descricao: descricao,
+		        name: name,
+				description: description,
 				local: local,
-				competencias: competencias
+				skills: skills
 		]
+	}
 
-	}
-	static List<String> getCompetenciasInput(){
-		List<String> competencias = new ArrayList<>()
-		boolean adicionar = true
-		while (adicionar){
-			println " -- Competências --"
-			println "1. Adicionar"
-			println "2. Próximo"
-			String opcao = getUserInput()
-			switch (opcao){
-				case "1":
-					print "Nome (ex: Java): "
-					competencias.add(getUserInput())
-					break
-				case "2":
-					adicionar = false
-					break
-				default:
-					showInvalidOption()
-			}
-		}
-		return competencias
-	}
-	static String getPadraoValido(String label, def padrao){
+	static String getValidPattern(String label, String pattern){
 		String inputvalido
 		while (true){
 			print label
 			inputvalido = getUserInput()
-			if(inputvalido ==~ padrao){
+			if(inputvalido ==~ pattern){
 				break
 			}
 			println("Entrada inválida! Digite apenas dígitos e na quantidade esperada!")
