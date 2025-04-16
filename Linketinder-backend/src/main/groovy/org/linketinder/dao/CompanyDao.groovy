@@ -1,4 +1,4 @@
-package org.linketinder.repository
+package org.linketinder.dao
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
@@ -9,12 +9,12 @@ import org.linketinder.model.Job
 
 import java.sql.SQLException
 
-class CompanyRepository {
+class CompanyDao {
 	Sql sql
-	AddressRepository addressRepository
-	JobRepository jobRepository
+	AddressDao addressRepository
+	JobDao jobRepository
 
-	CompanyRepository(Sql sql, AddressRepository addressRepository, JobRepository jobRepository) {
+	CompanyDao(Sql sql, AddressDao addressRepository, JobDao jobRepository) {
 		this.sql = sql
 		this.addressRepository = addressRepository
 		this.jobRepository = jobRepository

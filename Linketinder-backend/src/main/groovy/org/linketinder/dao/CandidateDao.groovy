@@ -1,4 +1,4 @@
-package org.linketinder.repository
+package org.linketinder.dao
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
@@ -9,15 +9,15 @@ import java.sql.SQLException
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
-class CandidateRepository {
+class CandidateDao {
     Sql sql
-    AddressRepository addressRepository
-    SkillRepository skillRepository
-    FormationRepository formationRepository
+    AddressDao addressRepository
+    SkillDao skillRepository
+    FormationDao formationRepository
 
-    CandidateRepository(Sql sql, AddressRepository addressRepository,
-                        SkillRepository skillRepository,
-                        FormationRepository formationRepository)
+    CandidateDao(Sql sql, AddressDao addressRepository,
+                 SkillDao skillRepository,
+                 FormationDao formationRepository)
     {
         this.sql = sql
         this.addressRepository = addressRepository

@@ -1,4 +1,4 @@
-package org.linketinder.repository
+package org.linketinder.dao
 
 import groovy.sql.Sql
 import java.sql.SQLException

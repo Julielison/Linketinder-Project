@@ -1,7 +1,7 @@
 package org.linketinder.controller
 
 import org.linketinder.enums.MenuOption
-import org.linketinder.repository.DatabaseConnection
+import org.linketinder.dao.DatabaseConnection
 import org.linketinder.service.ServiceManager
 import org.linketinder.view.MenuView
 

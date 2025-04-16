@@ -1,14 +1,14 @@
-package org.linketinder.repository
+package org.linketinder.dao
 
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 
 import java.sql.SQLException
 
-class AddressRepository {
+class AddressDao {
 	Sql sql
 
-	AddressRepository(Sql sql){
+	AddressDao(Sql sql){
 		this.sql = sql
 	}
 

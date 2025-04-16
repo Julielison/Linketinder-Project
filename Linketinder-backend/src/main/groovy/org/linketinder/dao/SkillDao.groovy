@@ -1,16 +1,16 @@
-package org.linketinder.repository
+package org.linketinder.dao
 
-import groovy.sql.GroovyResultSet
+
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import org.linketinder.model.Skill
 
 import java.sql.SQLException
 
-class SkillRepository {
+class SkillDao {
 	Sql sql
 
-	SkillRepository(Sql sql){
+	SkillDao(Sql sql){
 		this.sql = sql
 	}
 

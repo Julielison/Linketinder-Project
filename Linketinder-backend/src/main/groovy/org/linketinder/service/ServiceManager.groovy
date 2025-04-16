@@ -1,22 +1,22 @@
 package org.linketinder.service
 
 import org.linketinder.model.*
-import org.linketinder.repository.CandidateRepository
-import org.linketinder.repository.CompanyRepository
+import org.linketinder.dao.CandidateDao
+import org.linketinder.dao.CompanyDao
 
-import org.linketinder.repository.JobRepository
-import org.linketinder.repository.SkillRepository
+import org.linketinder.dao.JobDao
+import org.linketinder.dao.SkillDao
 
 import java.time.LocalDate
 
 class ServiceManager {
-	final CompanyRepository companyRepository
-	final CandidateRepository candidateRepository
-	final JobRepository jobRepository
-	final SkillRepository skillRepository
+	final CompanyDao companyRepository
+	final CandidateDao candidateRepository
+	final JobDao jobRepository
+	final SkillDao skillRepository
 
-	ServiceManager(CompanyRepository companyRepository, CandidateRepository candidateRepository,
-				   JobRepository jobRepository, SkillRepository skillRepository) {
+	ServiceManager(CompanyDao companyRepository, CandidateDao candidateRepository,
+				   JobDao jobRepository, SkillDao skillRepository) {
 		this.companyRepository = companyRepository
 		this.candidateRepository = candidateRepository
 		this.jobRepository = jobRepository
