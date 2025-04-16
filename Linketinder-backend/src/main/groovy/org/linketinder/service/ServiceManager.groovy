@@ -24,7 +24,7 @@ class ServiceManager {
 	}
 
 	List<Candidate> listarCandidatos() {
-		return candidateRepository.getCandidatos()
+		return candidateRepository.getCandidates()
 	}
 
 	List<Company> listarEmpresas() {

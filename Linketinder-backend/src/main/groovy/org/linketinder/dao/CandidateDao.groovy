@@ -25,33 +25,33 @@ class CandidateDao {
         this.formationRepository = formationRepository
     }
 
-    List<Candidate> getCandidatos() {
+    List<Candidate> getCandidates() {
         List<Candidate> candidatos = []
         String query = selectAllFromCandidates()
 
         try {
             sql.eachRow(query) { GroovyResultSet row ->
-                List<Skill> skills = skillRepository.extractSkillsData(row.competencias.toString())
-                List<Formation> formations = formationRepository.extractFormationsData(row.formacoes.toString())
-                LocalDate dateOfBirth = Util.convertToLocalDate(row.candidato_data_nascimento.toString(), 'yyyy-MM-dd')
+                List<Skill> skills = skillRepository.extractSkillsData(row['competencias'].toString())
+                List<Formation> formations = formationRepository.extractFormationsData(row['formacoes'].toString())
+                LocalDate dateOfBirth = Util.convertToLocalDate(row['candidato_data_nascimento'].toString(), 'yyyy-MM-dd')
                 Address address = new Address(
-                        row.endereco_id as Integer,
-                        row.endereco_cep as String,
-                        new Country(row.pais_nome as String, row.pais_id as Integer)
+                        row['endereco_id'] as Integer,
+                        row['endereco_cep'] as String,
+                        new Country(row['pais_nome'] as String, row['pais_id'] as Integer)
                 )
 
                 Candidate candidato = new Candidate (
-                        row.candidato_id as Integer,
-                        row.candidato_nome as String,
-                        row.candidato_email as String,
-                        row.candidato_cpf as String,
+                        row['candidato_id'] as Integer,
+                        row['candidato_nome'] as String,
+                        row['candidato_email'] as String,
+                        row['candidato_cpf'] as String,
                         dateOfBirth,
                         address,
-                        row.candidato_descricao_pessoal as String,
-                        row.candidato_senha_de_login as String,
+                        row['candidato_descricao_pessoal'] as String,
+                        row['candidato_senha_de_login'] as String,
                         skills,
                         formations,
-                        row.candidato_sobrenome as String)
+                        row['candidato_sobrenome'] as String)
                 candidatos.add(candidato)
             }
         } catch (SQLException e) {

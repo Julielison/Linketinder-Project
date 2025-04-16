@@ -25,21 +25,21 @@ class CompanyDao {
 		String query = selectAllFromCompanies()
 		try {
 			sql.eachRow(query) { GroovyResultSet row ->
-				Integer id_company = row.empresa_id as Integer
-				List<Job> jobs = jobRepository.extractJobsData(row.vagas.toString(), id_company)
+				Integer id_company = row['empresa_id'] as Integer
+				List<Job> jobs = jobRepository.extractJobsData(row['vagas'].toString(), id_company)
 				Address address = new Address(
-						row.endereco_id as Integer,
-						row.endereco_cep as String,
-						new Country(row.pais_nome as String, row.pais_id as Integer)
+						row['endereco_id'] as Integer,
+						row['endereco_cep'] as String,
+						new Country(row['pais_nome'] as String, row['pais_id'] as Integer)
 				)
 				Company empresa = new Company(
 						id_company,
-						row.empresa_nome as String,
-						row.empresa_email as String,
-						row.empresa_cnpj as String,
+						row['empresa_nome'] as String,
+						row['empresa_email'] as String,
+						row['empresa_cnpj'] as String,
 						address,
-						row.empresa_descricao as String,
-						row.empresa_senha as String,
+						row['empresa_descricao'] as String,
+						row['empresa_senha'] as String,
 						jobs
 				)
 				empresas.add(empresa)
