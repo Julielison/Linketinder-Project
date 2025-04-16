@@ -110,7 +110,9 @@ class CandidateRepository {
         sql.withTransaction {
             try {
                 Integer countryId = addressRepository.getIdCountry(candidate.address.country.name)
-                countryId = !countryId ? addressRepository.insertCountry(candidate.address.country.name) : null
+                if(!countryId) {
+                    countryId = addressRepository.insertCountry(candidate.address.country.name)
+                }
                 Integer addressId = addressRepository.insertAddress(candidate.address.zipCode, countryId)
                 Integer candidateId = insertCandidate(candidate, addressId)
                 candidate.setId(candidateId)

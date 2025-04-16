@@ -222,11 +222,11 @@ class MenuView {
 		print "Informe o id da empresa: "
 		return getIdValid()
 	}
-	static Integer getIdCandidatoInput(){
+	static Integer getIdCandidateInput(){
 		print "Informe o id do candidato: "
 		return getIdValid()
 	}
-	static Integer getIdVagaInput(){
+	static Integer getIdJobInput(){
 		print "Informe o id da vaga: "
 		return getIdValid()
 	}
@@ -245,7 +245,7 @@ class MenuView {
 		}
 		return id
 	}
-	static Integer getIdCompetenciaInput() {
+	static Integer getIdSkillInput() {
 		print "Informe o id da competência: "
 		return getIdValid()
 	}
@@ -269,12 +269,12 @@ class MenuView {
 		]
 	}
 
-	static String getValidPattern(String label, def padrao){
+	static String getValidPattern(String label, String pattern){
 		String inputvalido
 		while (true){
 			print label
 			inputvalido = getUserInput()
-			if(inputvalido ==~ padrao){
+			if(inputvalido ==~ pattern){
 				break
 			}
 			println("Entrada inválida! Digite apenas dígitos e na quantidade esperada!")

@@ -1,10 +1,8 @@
 package org.linketinder.repository
 
 import groovy.sql.GroovyResultSet
-import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import org.linketinder.model.Address
-import org.linketinder.model.Skill
 import org.linketinder.model.Country
 import org.linketinder.model.Company
 import org.linketinder.model.Job
@@ -13,12 +11,12 @@ import java.sql.SQLException
 
 class CompanyRepository {
 	Sql sql
-	AddressRepository endereco
+	AddressRepository addressRepository
 	JobRepository jobRepository
 
-	CompanyRepository(Sql sql, AddressRepository enderecoRepository, JobRepository jobRepository) {
+	CompanyRepository(Sql sql, AddressRepository addressRepository, JobRepository jobRepository) {
 		this.sql = sql
-		this.endereco = enderecoRepository
+		this.addressRepository = addressRepository
 		this.jobRepository = jobRepository
 	}
 
@@ -95,54 +93,33 @@ class CompanyRepository {
 			e.senha_de_login, endereco.cep, p.nome, endereco.id, p.id"""
 	}
 
-	void addEmpresa(Company empresa) {
+	void addCompanyData(Company company) {
 		try {
-			def resultCnpj = sql.firstRow("SELECT cnpj FROM empresa WHERE cnpj = ${empresa.cnpj}")
-			if (resultCnpj){
-				throw new Exception("A empresa já existe no banco de dados!")
-			}
-
-			String paisOndeReside = empresa.getPaisOndeReside()
-			def paisId = endereco.obterIdPais(paisOndeReside)
-			if (!paisId) {
-				paisId = endereco.inserirPais(paisOndeReside)
-			}
-
-			def enderecoId = endereco.inserirEndereco(empresa.getCep(), paisId)
-
-			def empresaId = inserirEmpresa(empresa, enderecoId)
-
-			empresa.setId(empresaId as Integer)
-			empresas.add(empresa)
-
-		} catch (SQLException e) {
+			Integer countryId = addressRepository.getIdCountry(company.address.country.name)
+			countryId = !countryId ? addressRepository.insertCountry(company.address.country.name) : null
+			Integer addressId = addressRepository.insertAddress(company.address.zipCode, countryId)
+			insertCompany(company, addressId)
+		} catch (Exception e) {
 			e.printStackTrace()
 			throw new Exception("Erro ao inserir empresa no Banco de dados")
 		}
 	}
 
-	Integer inserirEmpresa(Company empresa, Integer enderecoId) {
-		def result = sql.executeInsert("""
-            INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, [
-				empresa.nome,
-				empresa.cnpj,
-				empresa.email,
-				empresa.descricao,
-				empresa.senhaLogin,
-				enderecoId
-		])
-		return (result[0][0] as Integer)
-	}
-
-	boolean verificarSeEmpresaExistePorId(Integer idEmpresa) {
+	void insertCompany(Company company, Integer addressId) {
 		try {
-			GroovyRowResult result = sql.firstRow("SELECT EXISTS(SELECT 1 FROM EMPRESA WHERE id = ?)", [idEmpresa])
-			return result[0]
-		} catch (SQLException e) {
-			e.printStackTrace()
-			throw new Exception("Erro ao verificar a existência da empresa no Banco de dados")
+			sql.executeInsert("""
+				INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
+				VALUES (?, ?, ?, ?, ?, ?)
+			""", [
+					company.name,
+					company.cnpj,
+					company.email,
+					company.description,
+					company.passwordLogin,
+					addressId
+			])
+		} catch (Exception e){
+			throw new Exception(e.message)
 		}
 	}
 

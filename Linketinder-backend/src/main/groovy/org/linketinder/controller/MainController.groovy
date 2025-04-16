@@ -31,7 +31,7 @@ class MainController {
                     view.showFeedback(feedback)
                     break
                 case menu.REMOVER_CANDIDATO:
-                    Integer idCandidatoInput = view.getIdCandidatoInput()
+                    Integer idCandidatoInput = view.getIdCandidateInput()
                     feedback = serviceManager.removeCandidate(idCandidatoInput)
                     view.showFeedback(feedback)
                     break
@@ -58,7 +58,7 @@ class MainController {
                     view.showFeedback(feedback)
                     break
                 case menu.REMOVER_VAGA:
-                    Integer idVagaInput = view.getIdVagaInput()
+                    Integer idVagaInput = view.getIdJobInput()
                     feedback = serviceManager.removeJob(idVagaInput)
                     view.showFeedback(feedback)
                     break
@@ -66,7 +66,7 @@ class MainController {
                     view.showCompetencias(serviceManager.listarCompetencias())
                     break
                 case menu.REMOVER_COMPETENCIA:
-                    Integer idCompetenciaInput = view.getIdCompetenciaInput()
+                    Integer idCompetenciaInput = view.getIdSkillInput()
                     feedback = serviceManager.removeSkill(idCompetenciaInput)
                     view.showFeedback(feedback)
                     break

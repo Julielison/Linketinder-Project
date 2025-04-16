@@ -66,21 +66,25 @@ class ServiceManager {
 		return feedback
 	}
 
-	String registerCompany(Map<String, String> dados) {
-		Person novaEmpresa = new Company(
+	String registerCompany(Map<String, String> data) {
+		Address address = new Address(
 				null,
-				dados.nome,
-				dados.email,
-				dados.cnpj,
-				dados.cep,
-				dados.descricao,
-				dados.senha,
-				dados.pais,
-				new ArrayList<>()
+				data.zipCode,
+				new Country(data.country, null)
+		)
+		Person newCompany = new Company(
+				null,
+				data.name,
+				data.email,
+				data.cnpj,
+				address,
+				data.description,
+				data.password,
+				[]
 		)
 		String feedback = "Cadastro feito com sucesso!"
 		try {
-			companyRepository.addEmpresa(novaEmpresa)
+			companyRepository.addCompanyData(newCompany)
 		} catch (Exception e){
 			feedback = e.getMessage()
 		}
