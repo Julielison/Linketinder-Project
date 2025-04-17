@@ -1,20 +1,25 @@
 package org.linketinder.dao
 
 import groovy.sql.Sql
+import io.github.cdimascio.dotenv.Dotenv
+
 import java.sql.SQLException
 
 class DatabaseConnection {
-    private static final String URL = "jdbc:postgresql://localhost/linketinder"
-    private static final String USER = 'julielison'
-    private static final String PASSWORD = 'teste'
-    private static final String DRIVER = 'org.postgresql.Driver'
     private static Sql sqlInstance
+    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load()
+    private static final String URL = dotenv.get("DB_URL")
+    private static final String USER = dotenv.get("DB_USER")
+    private static final String PASSWORD = dotenv.get("DB_PASSWORD")
+    private static final String DRIVER = dotenv.get("DB_DRIVER")
 
     private DatabaseConnection() {}
 
     static Sql getInstance() {
         try {
-            sqlInstance = sqlInstance == null ? Sql.newInstance(URL, USER, PASSWORD, DRIVER) : sqlInstance
+            if (sqlInstance == null) {
+                sqlInstance = Sql.newInstance(URL, USER, PASSWORD, DRIVER)
+            }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace()
         }

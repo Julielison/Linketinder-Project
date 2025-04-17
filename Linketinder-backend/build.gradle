@@ -20,17 +20,14 @@ repositories {
 
 dependencies {
     implementation "org.apache.groovy:groovy-all:${groovyVersion}"
+    implementation "org.postgresql:postgresql:${postgresVersion}"
+    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation 'org.junit.platform:junit-platform-runner:1.9.2'
     testImplementation 'org.junit.platform:junit-platform-suite-api:1.9.2'
     testImplementation 'org.junit.jupiter:junit-jupiter'
-
     testImplementation "org.spockframework:spock-core:${spockVersion}"
-
-    implementation "org.postgresql:postgresql:${postgresVersion}"
-
-    // Adicionando Byte Buddy para permitir o mock de classes concretas
     testImplementation "net.bytebuddy:byte-buddy:${byteBuddyVersion}"
     testImplementation "net.bytebuddy:byte-buddy-agent:${byteBuddyVersion}"
     testImplementation "org.objenesis:objenesis:3.2"

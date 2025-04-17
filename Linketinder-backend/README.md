@@ -27,15 +27,15 @@ O projeto é dividido em três camadas principais:
 ## Modelagem do Banco de Dados
 
 ### Modelo Entidade-Relacionamento (MER)
-![Modelo Entidade-Relacionamento](dataBase/ModeloConceitual/MER_LinkeTinder.png)
+![Modelo Entidade-Relacionamento](docs/dataBase/ModeloConceitual/MER_LinkeTinder.png)
 
 ### Modelo Lógico (ML)
-![Modelo Lógico](dataBase/ModeloLógico/ML_LinkeTinder.png)
+![Modelo Lógico](docs/dataBase/ModeloLógico/ML_LinkeTinder.png)
 
 ### Modelo Físico (MF)
 O banco de dados foi implementado com base no modelo físico abaixo:
 
-[Modelo Físico](dataBase/Modelo_Físico_LinkeTinder.sql)
+[Modelo Físico](docs/dataBase/Modelo_Físico_LinkeTinder.sql)
 
 ### Principais Tabelas
 - **CANDIDATO:** Armazena informações sobre os candidatos, como nome, sobrenome, data de nascimento, email, CPF, descrição pessoal, endereço e competências.
