@@ -1,15 +1,15 @@
 package org.linketinder.controller
 
 import org.linketinder.enums.MenuOption
-import org.linketinder.dao.DatabaseConnection
+import org.linketinder.dao.connection.DatabaseConnection
 import org.linketinder.service.ServiceManager
-import org.linketinder.view.MenuView
+import org.linketinder.view.ViewFacade
 
 class MainController {
-    MenuView view
+    ViewFacade view
     ServiceManager serviceManager
 
-    MainController(MenuView view, ServiceManager serviceManager) {
+    MainController(ViewFacade view, ServiceManager serviceManager) {
         this.view = view
         this.serviceManager = serviceManager
     }
@@ -23,7 +23,7 @@ class MainController {
             MenuOption menu = MenuOption.fromValue(option)
             switch(menu) {
                 case menu.LISTAR_CANDIDATOS:
-                    view.showPessoas(serviceManager.listarCandidatos(), 'candidatos')
+                    view.showCandidates(serviceManager.listarCandidatos())
                     break
                 case menu.CADASTRAR_CANDIDATO:
                     Map<String, ?> candidateData = view.getCandidateInput()
@@ -36,7 +36,7 @@ class MainController {
                     view.showFeedback(feedback)
                     break
                 case menu.LISTAR_EMPRESAS:
-                    view.showPessoas(serviceManager.listarEmpresas(), 'empresas')
+                    view.showCompanies(serviceManager.listarEmpresas())
                     break
                 case menu.CADASTRAR_EMPRESA:
                     Map<String, ?> companyData = view.getCompanyInput()
@@ -49,7 +49,7 @@ class MainController {
                     view.showFeedback(feedback)
                     break
                 case menu.LISTAR_VAGAS:
-                    view.showVagas(serviceManager.listarVagas())
+                    view.showJobs(serviceManager.listJobs())
                     break
                 case menu.CADASTRAR_VAGA:
                     Integer idCompanyInput = view.getIdCompanyInput()
@@ -63,7 +63,7 @@ class MainController {
                     view.showFeedback(feedback)
                     break
                 case menu.LISTAR_COMPETENCIAS:
-                    view.showCompetencias(serviceManager.listarCompetencias())
+                    view.showSkills(serviceManager.listarCompetencias())
                     break
                 case menu.REMOVER_COMPETENCIA:
                     Integer idCompetenciaInput = view.getIdSkillInput()
