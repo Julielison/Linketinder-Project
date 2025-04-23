@@ -3,7 +3,7 @@ package org.linketinder.dao
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 import org.linketinder.model.*
-import org.linketinder.util.Util
+import org.linketinder.util.convertUtil
 
 import java.sql.SQLException
 import java.time.LocalDate
@@ -11,18 +11,18 @@ import java.time.format.DateTimeParseException
 
 class CandidateDao {
     Sql sql
-    AddressDao addressRepository
-    SkillDao skillRepository
-    FormationDao formationRepository
+    AddressDao addressDao
+    SkillDao skillDao
+    FormationDao formationDao
 
-    CandidateDao(Sql sql, AddressDao addressRepository,
-                 SkillDao skillRepository,
-                 FormationDao formationRepository)
+    CandidateDao(Sql sql, AddressDao addressDao,
+                 SkillDao skillDao,
+                 FormationDao formationDao)
     {
         this.sql = sql
-        this.addressRepository = addressRepository
-        this.skillRepository = skillRepository
-        this.formationRepository = formationRepository
+        this.addressDao = addressDao
+        this.skillDao = skillDao
+        this.formationDao = formationDao
     }
 
     List<Candidate> getCandidates() {
@@ -31,9 +31,9 @@ class CandidateDao {
 
         try {
             sql.eachRow(query) { GroovyResultSet row ->
-                List<Skill> skills = skillRepository.extractSkillsData(row['competencias'].toString())
-                List<Formation> formations = formationRepository.extractFormationsData(row['formacoes'].toString())
-                LocalDate dateOfBirth = Util.convertToLocalDate(row['candidato_data_nascimento'].toString(), 'yyyy-MM-dd')
+                List<Skill> skills = skillDao.extractSkillsData(row['competencias'].toString())
+                List<Formation> formations = formationDao.extractFormationsData(row['formacoes'].toString())
+                LocalDate dateOfBirth = convertUtil.convertToLocalDate(row['candidato_data_nascimento'].toString(), 'yyyy-MM-dd')
                 Address address = new Address(
                         row['endereco_id'] as Integer,
                         row['endereco_cep'] as String,
@@ -109,16 +109,13 @@ class CandidateDao {
     void addDataFromCandidate(Candidate candidate) {
         sql.withTransaction {
             try {
-                Integer countryId = addressRepository.getIdCountry(candidate.address.country.name)
-                if(!countryId) {
-                    countryId = addressRepository.insertCountry(candidate.address.country.name)
-                }
-                Integer addressId = addressRepository.insertAddress(candidate.address.zipCode, countryId)
+                Integer countryId = addressDao.insertCountryReturningId(candidate.address.country.name)
+                Integer addressId = addressDao.insertAddressReturningId(candidate.address.zipCode, countryId)
                 Integer candidateId = insertCandidate(candidate, addressId)
                 candidate.setId(candidateId)
 
                 if (!candidate.formations.isEmpty()) {
-                    Candidate candidateWithFormationsId = formationRepository.insertFormations(candidate)
+                    Candidate candidateWithFormationsId = formationDao.insertFormations(candidate)
                     insertIdsAndDatesFromFormation(candidateWithFormationsId)
                 }
                 insertCandidateSkills(candidate)
@@ -130,7 +127,7 @@ class CandidateDao {
     }
 
     Integer insertCandidate(Candidate candidate, Integer idAddress) {
-        String dateBirthFormated = Util.convertToString(candidate.dateBirth)
+        String dateBirthFormated = convertUtil.convertToString(candidate.dateBirth)
 
         List<List<Object>> result = sql.executeInsert("""
     INSERT INTO CANDIDATO (nome, sobrenome, data_nascimento, email, cpf, descricao_pessoal, senha_de_login, id_endereco)
@@ -171,7 +168,7 @@ class CandidateDao {
 
     void insertCandidateSkills(Candidate candidate){
         if (candidate.skills.isEmpty()) return
-        List<Integer> skillsWithId =  skillRepository.insertSkillsReturningId(candidate.skills)
+        List<Integer> skillsWithId =  skillDao.insertSkillsReturningId(candidate.skills)
         associateSkillsToCandidate(candidate.id, skillsWithId)
     }
 

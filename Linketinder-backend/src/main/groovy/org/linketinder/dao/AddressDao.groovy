@@ -2,44 +2,39 @@ package org.linketinder.dao
 
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
+import org.linketinder.dao.interfaces.IAddressDao
 
 import java.sql.SQLException
 
-class AddressDao {
+class AddressDao implements IAddressDao{
 	Sql sql
+	CountryDao countryDao
 
-	AddressDao(Sql sql){
+	AddressDao(Sql sql, CountryDao countryDao){
 		this.sql = sql
+		this.countryDao = countryDao
 	}
 
-	Integer getIdCountry(String nameCountry) {
+	Integer insertAddressReturningId(String cep, Integer paisId) {
 		try {
-			GroovyRowResult row = sql.firstRow("SELECT id FROM PAIS_DE_RESIDENCIA WHERE nome = ?", [nameCountry])
-			if (row){
-				return row['id'] as Integer
-			}
-		} catch (Exception e) {
-			e.printStackTrace()
-		}
-		return null
-	}
-
-	Integer insertAddress(String cep, Integer paisId) {
-		GroovyRowResult enderecoRow = sql.firstRow("SELECT id FROM ENDERECO WHERE cep = ?", [cep])
-		if (enderecoRow) {
-			return enderecoRow['id'] as Integer
-		} else {
-			List<List<Object>> keys = sql.executeInsert("INSERT INTO ENDERECO (cep, pais_id) VALUES (?, ?)", [cep, paisId])
+			List<List<Object>> keys = sql.executeInsert(
+					"""
+            INSERT INTO ENDERECO (cep, pais_id) 
+            VALUES (?, ?) 
+            ON CONFLICT (cep) DO UPDATE 
+            SET pais_id = EXCLUDED.pais_id 
+            RETURNING id
+            """,
+					[cep, paisId]
+			)
 			return keys[0][0] as Integer
-		}
-	}
-	Integer insertCountry(String nome) {
-		try {
-			List<List<Object>> row = sql.executeInsert("INSERT INTO PAIS_DE_RESIDENCIA(nome) VALUES(?)", [nome])
-			return row[0][0] as Integer
 		} catch (SQLException e) {
 			e.printStackTrace()
 			return null
 		}
+	}
+
+	Integer insertCountryReturningId(String name){
+		countryDao.insertReturningId(name)
 	}
 }

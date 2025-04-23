@@ -20,7 +20,7 @@ class CompanyDao {
 		this.jobRepository = jobRepository
 	}
 
-	List<Company> getEmpresas() {
+	List<Company> getCompanies() {
 		List<Company> empresas = []
 		String query = selectAllFromCompanies()
 		try {
@@ -95,9 +95,8 @@ class CompanyDao {
 
 	void addCompanyData(Company company) {
 		try {
-			Integer countryId = addressRepository.getIdCountry(company.address.country.name)
-			countryId = !countryId ? addressRepository.insertCountry(company.address.country.name) : null
-			Integer addressId = addressRepository.insertAddress(company.address.zipCode, countryId)
+			Integer countryId = addressRepository.insertCountryReturningId(company.address.country.name)
+			Integer addressId = addressRepository.insertAddressReturningId(company.address.zipCode, countryId)
 			insertCompany(company, addressId)
 		} catch (Exception e) {
 			e.printStackTrace()

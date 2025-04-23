@@ -1,4 +1,4 @@
-package org.linketinder.dao
+package org.linketinder.dao.connection
 
 import groovy.sql.Sql
 import io.github.cdimascio.dotenv.Dotenv

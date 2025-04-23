@@ -49,7 +49,7 @@ class CompanyDaoSpec extends Specification {
 		jobDao.extractJobsData("10:Dev:Desenvolvedor:Remoto:1.Java,2.Python", 1) >> [job]
 
 		when: "busca as empresas"
-		def empresas = companyDao.getEmpresas()
+		def empresas = companyDao.getCompanies()
 
 		then: "verifica se os dados foram retornados corretamente"
 		empresas.size() == 1
@@ -74,7 +74,7 @@ class CompanyDaoSpec extends Specification {
 		sql.eachRow(_, _) >> { throw new SQLException("Erro ao consultar") }
 
 		when:
-		def empresas = companyDao.getEmpresas()
+		def empresas = companyDao.getCompanies()
 
 		then:
 		empresas == []

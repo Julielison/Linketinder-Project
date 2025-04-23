@@ -1,7 +1,7 @@
 -- Tabela de países de residência
 CREATE TABLE PAIS_DE_RESIDENCIA (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(30) NOT NULL
+    nome VARCHAR(30) UNIQUE NOT NULL
 );
 
 -- Tabela de endereços

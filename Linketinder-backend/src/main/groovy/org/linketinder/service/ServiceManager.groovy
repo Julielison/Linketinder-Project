@@ -28,10 +28,10 @@ class ServiceManager {
 	}
 
 	List<Company> listarEmpresas() {
-		return companyRepository.getEmpresas()
+		return companyRepository.getCompanies()
 	}
 
-	List<Job> listarVagas(){
+	List<Job> listJobs(){
 		return jobRepository.getJobs()
 	}
 
