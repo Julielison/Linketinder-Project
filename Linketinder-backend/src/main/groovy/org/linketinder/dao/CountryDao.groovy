@@ -1,6 +1,6 @@
 package org.linketinder.dao
 
-import groovy.sql.GroovyRowResult
+
 import groovy.sql.Sql
 import org.linketinder.dao.interfaces.ICountryDao
 
