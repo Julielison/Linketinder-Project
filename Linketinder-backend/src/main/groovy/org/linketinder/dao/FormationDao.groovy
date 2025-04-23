@@ -12,49 +12,6 @@ class FormationDao {
     FormationDao(Sql sql){
         this.sql = sql
     }
-    
-    List<Formation> getFormacoesByIdCandidato(Integer candidatoId) {
-        List<Formation> formacoes = []
-
-        try {
-            String query = """
-                SELECT 
-                    f.id AS formacao_id,
-                    f.nome AS formacao_nome,
-                    f.instituicao AS formacao_instituicao,
-                    fc.data_inicio AS formacao_data_inicio,
-                    fc.data_fim_previsao AS formacao_data_fim
-                FROM 
-                    FORMACAO f
-                JOIN 
-                    FORMACAO_CANDIDATO fc ON f.id = fc.id_formacao
-                WHERE 
-                    fc.id_candidato = ?
-            """
-            
-            sql.eachRow(query, [candidatoId]) { row ->
-                Date dataInicio = row.formacao_data_inicio ? row.formacao_data_inicio as Date : null
-                Date dataFim = row.formacao_data_fim ? row.formacao_data_fim as Date : null
-                
-                Formation formacao = new Formation(
-                    row.formacao_id as Integer,
-                    row.formacao_instituicao as String,
-                    row.formacao_nome as String,
-                    dataInicio,
-                    dataFim
-                )
-                
-                formacoes.add(formacao)
-            }
-            
-            return formacoes
-            
-        } catch (Exception e) {
-            println("Erro ao buscar formações do candidato ID ${candidatoId}: ${e.message}")
-            e.printStackTrace()
-            return []
-        }
-    }
 
     Candidate insertFormations(Candidate candidate) {
         try {

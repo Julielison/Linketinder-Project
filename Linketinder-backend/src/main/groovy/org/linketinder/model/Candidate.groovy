@@ -1,6 +1,6 @@
 package org.linketinder.model
 
-import org.linketinder.util.Util
+import org.linketinder.util.convertUtil
 
 import java.time.LocalDate
 
@@ -36,7 +36,7 @@ class Candidate extends Person {
         return super.toString() + """
         Sobrenome: ${lastName}
         CPF: ${cpf}
-        Data de Nascimento: ${Util.convertToBrFormat(dateBirth)}
+        Data de Nascimento: ${convertUtil.convertToBrFormat(dateBirth)}
         Competências: ${!skills.isEmpty() ? skills.join(', ') : 'Nenhuma'}
         Formações: ${!formations.isEmpty() ? formations.join('\n\t') : 'Nenhuma'}"""
     }
