@@ -1,9 +1,9 @@
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
-import org.linketinder.dao.AddressDao
-import org.linketinder.dao.CandidateDao
-import org.linketinder.dao.FormationDao
-import org.linketinder.dao.SkillDao
+import org.linketinder.dao.impl.AddressDao
+import org.linketinder.dao.impl.CandidateDao
+import org.linketinder.dao.impl.FormationDao
+import org.linketinder.dao.impl.SkillDao
 import org.linketinder.model.*
 import spock.lang.Specification
 

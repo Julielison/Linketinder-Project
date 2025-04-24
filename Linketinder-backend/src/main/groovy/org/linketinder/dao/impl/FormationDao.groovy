@@ -1,4 +1,4 @@
-package org.linketinder.dao
+package org.linketinder.dao.impl
 
 import groovy.sql.Sql
 import org.linketinder.model.Candidate
@@ -27,21 +27,5 @@ class FormationDao {
             e.printStackTrace()
         }
         return candidate
-    }
-
-    static List<Formation> extractFormationsData(String formationsStr) {
-        List<Formation> formations = []
-        formationsStr.toString().split(';').each { String formationStr ->
-            String[] formationData = formationStr.split(':')
-            if (formationData.length > 0){
-                Integer id = formationData[0].toInteger()
-                String name = formationData[1]
-                String institution = formationData[2]
-                LocalDate date_start = LocalDate.parse(formationData[3])
-                LocalDate date_end = LocalDate.parse(formationData[4])
-                formations.add(new Formation(id, institution, name, date_start, date_end))
-            }
-        }
-        return formations
     }
 }

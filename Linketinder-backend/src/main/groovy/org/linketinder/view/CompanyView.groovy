@@ -9,7 +9,7 @@ class CompanyView {
 		this.genericView = genericView
 	}
 
-	Map<String, ?> getCompanyInput() {
+	Map<String, String> getCompanyInput() {
 		println "\n--- Cadastro de Empresa ---"
 		print "Nome: "
 		String name = genericView.getUserInput()

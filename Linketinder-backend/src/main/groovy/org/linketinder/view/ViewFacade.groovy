@@ -50,7 +50,7 @@ class ViewFacade {
 		companyView.showCompanies(companies)
 	}
 
-	Map<String, ?> getCompanyInput(){
+	Map<String, String> getCompanyInput(){
 		return companyView.getCompanyInput()
 	}
 

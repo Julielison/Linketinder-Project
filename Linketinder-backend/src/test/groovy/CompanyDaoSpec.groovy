@@ -1,8 +1,8 @@
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
-import org.linketinder.dao.AddressDao
-import org.linketinder.dao.CompanyDao
-import org.linketinder.dao.JobDao
+import org.linketinder.dao.impl.AddressDao
+import org.linketinder.dao.impl.CompanyDao
+import org.linketinder.dao.impl.JobDao
 import org.linketinder.model.Address
 import org.linketinder.model.Company
 import org.linketinder.model.Country
