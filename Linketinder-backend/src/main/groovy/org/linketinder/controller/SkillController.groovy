@@ -13,4 +13,8 @@ class SkillController {
 	List<Skill> getAllSkills(){
 		return skillService.listAllSkills()
 	}
+
+	String deleteSkillById(Integer id){
+		return skillService.removeSkillById(id)
+	}
 }

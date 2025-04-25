@@ -35,9 +35,10 @@ class GenericView {
 			String input = getUserInput()
 			try {
 				id = input.toInteger()
-				if (id > 0) {
-					break
+				if (id <= 0) {
+					throw new Exception()
 				}
+				break
 			} catch (Exception ignored) {
 				println("Insira um número inteiro maior que zero!")
 			}

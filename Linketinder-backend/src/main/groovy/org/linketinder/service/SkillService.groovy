@@ -15,6 +15,10 @@ class SkillService {
 		return setupSkillsToController(rawSkills)
 	}
 
+	String removeSkillById(Integer id){
+		return skillDao.removeSkillById(id) ? "Competência removida com sucesso!" : "Competência não existe!"
+	}
+
 	private static List<Skill> setupSkillsToController(List<Map<String, Object>> rawSkills){
 		return rawSkills.collect { Map<String, Object> row ->
 			new Skill(row['id'] as Integer, row['nome'] as String)

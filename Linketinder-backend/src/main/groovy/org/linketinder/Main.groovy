@@ -8,6 +8,7 @@ import org.linketinder.dao.impl.CandidateDao
 import org.linketinder.dao.impl.CandidateSkillDao
 import org.linketinder.dao.impl.CountryDao
 import org.linketinder.dao.impl.FormationCandidateDao
+import org.linketinder.dao.impl.JobSkillDao
 import org.linketinder.dao.impl.SkillDao
 
 import org.linketinder.dao.impl.CompanyDao
@@ -28,7 +29,8 @@ class Main {
 		Sql sql = DatabaseConnection.getInstance()
 		CountryDao countryDao = new CountryDao(sql)
 		SkillDao skillDao = new SkillDao(sql)
-		JobDao jobDao = new JobDao(sql, skillDao)
+		JobSkillDao jobSkillDao = new JobSkillDao(sql)
+		JobDao jobDao = new JobDao(sql, skillDao, jobSkillDao)
 		FormationDao formationDao = new FormationDao(sql)
 		FormationCandidateDao formationCandidateDao = new FormationCandidateDao(sql)
 		CandidateSkillDao candidateSkillDao = new CandidateSkillDao(sql)

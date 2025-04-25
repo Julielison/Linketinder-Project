@@ -6,6 +6,6 @@ import org.linketinder.model.Person
 
 interface ICompanyDao {
 	List<Company> getCompaniesRawData()
-	Integer insertCompany(Person company, Integer addressId)
+	Integer insertCompany(Company company, Integer addressId)
 	boolean deleteCompanyById(Integer id)
 }

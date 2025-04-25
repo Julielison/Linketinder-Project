@@ -1,6 +1,6 @@
 package org.linketinder.view
 
-import org.linketinder.enums.MenuOption
+
 import org.linketinder.model.Job
 import org.linketinder.model.Person
 import org.linketinder.model.Skill

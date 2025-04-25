@@ -4,8 +4,6 @@ import groovy.sql.Sql
 import org.linketinder.model.Candidate
 import org.linketinder.model.Formation
 
-import java.time.LocalDate
-
 class FormationDao {
     Sql sql
 

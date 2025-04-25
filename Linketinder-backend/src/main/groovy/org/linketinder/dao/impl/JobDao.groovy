@@ -4,18 +4,18 @@ import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 import org.linketinder.dao.interfaces.IJobDao
 import org.linketinder.model.Job
-import org.linketinder.model.Skill
 
 import java.sql.SQLException
 
-class JobDao implements IJobDao{
+class JobDao implements IJobDao {
 	Sql sql
 	SkillDao skillDao
+	JobSkillDao jobSkillDao
 
-	JobDao(Sql sql, SkillDao skillDao){
+	JobDao(Sql sql, SkillDao skillDao, JobSkillDao jobSkillDao){
 		this.sql = sql
 		this.skillDao = skillDao
-
+		this.jobSkillDao = jobSkillDao
 	}
 
 	List<Map<String, Object>> getJobsRawData() {
@@ -52,9 +52,11 @@ class JobDao implements IJobDao{
 
 	void addJobData(Job job){
 		try {
-			Integer jobId = insertJob(job)
-			job.setId(jobId)
-			insertJobSkills(job)
+			sql.withTransaction {
+				Integer jobId = insertJob(job)
+				job.setId(jobId)
+				this.insertJobSkills(job)
+			}
 		} catch (Exception e){
 			e.printStackTrace()
 			throw new Exception(e)
@@ -64,7 +66,7 @@ class JobDao implements IJobDao{
 	void insertJobSkills(Job job){
 		if (job.skills.isEmpty()) return
 		List<Integer> skillsIds = skillDao.insertSkillsReturningId(job.skills)
-		associateSkillsToJob(job.id, skillsIds)
+		jobSkillDao.associateSkillsToJob(job.id, skillsIds)
 	}
 
 	Integer insertJob(Job job){

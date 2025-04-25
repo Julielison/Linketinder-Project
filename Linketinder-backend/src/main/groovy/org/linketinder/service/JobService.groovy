@@ -16,6 +16,33 @@ class JobService {
 		return setupJobsToController(rawJobs)
 	}
 
+	String removeJobById(Integer id){
+		return jobDao.removeJobById(id) ? "Vaga removida com sucesso!" : "Vaga não existe!"
+	}
+
+	String registerJob(Integer idCompany, Map<String, ?> data){
+		Job job = setupJobToDao(idCompany, data)
+		String feedback = "Cadastro feito com sucesso!"
+		try {
+			jobDao.addJobData(job)
+		} catch (Exception e){
+			feedback = e.getMessage()
+		}
+		return feedback
+	}
+
+	private static setupJobToDao(Integer idCompany, Map<String, ?> data){
+		List<Skill> skills = SkillService.extractSkillsFromMap(data)
+		return new Job (
+				null,
+				data.description as String,
+				data.name as String,
+				data.local as String,
+				idCompany,
+				skills
+		)
+	}
+
 	private static List<Job> setupJobsToController(List<Map<String, Object>> rawJobs){
 		return rawJobs.collect {Map<String, Object> row ->
 			Integer jobId = row.vaga_id as Integer

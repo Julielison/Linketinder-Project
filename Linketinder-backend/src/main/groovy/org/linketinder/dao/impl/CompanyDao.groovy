@@ -3,11 +3,7 @@ package org.linketinder.dao.impl
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 import org.linketinder.dao.interfaces.ICompanyDao
-import org.linketinder.model.Address
-import org.linketinder.model.Country
 import org.linketinder.model.Company
-import org.linketinder.model.Job
-import org.linketinder.model.Person
 
 import java.sql.SQLException
 
@@ -73,31 +69,31 @@ class CompanyDao implements ICompanyDao {
 			e.senha_de_login, endereco.cep, p.nome, endereco.id, p.id"""
 	}
 
-	void addAllCompanyData(Person company) {
-		sql.withTransaction {
-			try {
+	void addAllCompanyData(Company company) {
+		try {
+			sql.withTransaction {
 				Integer countryId = addressDao.insertCountryReturningId(company.address.country.name)
 				Integer addressId = addressDao.insertAddressReturningId(company.address.zipCode, countryId)
 				Integer companyId = this.insertCompany(company, addressId)
 				company.setId(companyId)
 
-				if (company instanceof Company && !company.jobs.isEmpty()) {
+				if (!company.jobs.isEmpty()) {
 					jobDao.insertJobsForCompany(company)
 				}
+			}
 			} catch (Exception e) {
 				e.printStackTrace()
 				throw new RuntimeException("Erro ao adicionar dados da empresa: ${e.message}")
 			}
-		}
 	}
 
-	Integer insertCompany(Person company, Integer addressId) {
+	Integer insertCompany(Company company, Integer addressId) {
 		List<List<Object>> result = sql.executeInsert("""
 			INSERT INTO EMPRESA (nome, cnpj, email_corporativo, descricao_da_empresa, senha_de_login, id_endereco)
 			VALUES (?, ?, ?, ?, ?, ?)
 		""", [
 				company.name,
-				company instanceof Company ? company.cnpj : "",
+				company.cnpj,
 				company.email,
 				company.description,
 				company.passwordLogin,

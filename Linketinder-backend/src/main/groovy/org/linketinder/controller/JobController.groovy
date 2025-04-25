@@ -13,4 +13,12 @@ class JobController {
 	List<Job> getAllJobs(){
 		return jobService.listAllJobs()
 	}
+
+	String deleteJobById(Integer id){
+		return jobService.removeJobById(id)
+	}
+
+	String createJob(Integer idCompany, Map<String, ?> data){
+		return jobService.registerJob(idCompany, data)
+	}
 }

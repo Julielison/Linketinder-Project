@@ -1,8 +1,9 @@
 package org.linketinder.dao.impl
 
 import groovy.sql.Sql
+import org.linketinder.dao.interfaces.IJobSkillDao
 
-class JobSkillDao {
+class JobSkillDao implements IJobSkillDao {
 	Sql sql
 
 	JobSkillDao(Sql sql) {

@@ -3,11 +3,12 @@ package org.linketinder.dao.impl
 
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
+import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.model.Skill
 
 import java.sql.SQLException
 
-class SkillDao {
+class SkillDao implements ISkillDao{
 	Sql sql
 
 	SkillDao(Sql sql){

@@ -84,8 +84,8 @@ class CandidateDao implements ICandidateDao {
     }
 
     void addAllDataFromCandidate(Candidate candidate) {
-        sql.withTransaction {
-            try {
+        try {
+            sql.withTransaction {
                 Integer countryId = addressDao.insertCountryReturningId(candidate.address.country.name)
                 Integer addressId = addressDao.insertAddressReturningId(candidate.address.zipCode, countryId)
                 Integer candidateId = this.insertCandidate(candidate, addressId)
@@ -95,15 +95,15 @@ class CandidateDao implements ICandidateDao {
                     Candidate candidateWithFormationsId = formationDao.insertFormations(candidate)
                     formationCandidateDao.insertIdsAndDatesFromFormation(candidateWithFormationsId)
                 }
-                if (!candidate.skills.isEmpty()){
-                    List<Integer> skillsWithId =  skillDao.insertSkillsReturningId(candidate.skills)
+                if (!candidate.skills.isEmpty()) {
+                    List<Integer> skillsWithId = skillDao.insertSkillsReturningId(candidate.skills)
                     candidateSkillDao.associateSkillsToCandidate(candidate.id, skillsWithId)
                 }
+            }
             } catch (Exception e) {
                 e.printStackTrace()
                 throw new RuntimeException("Erro ao adicionar dados do candidato: ${e.message}")
             }
-        }
     }
 
     private Integer insertCandidate(Candidate candidate, Integer idAddress) {

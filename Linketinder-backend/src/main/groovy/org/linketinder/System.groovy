@@ -71,12 +71,12 @@ class System {
 				case menu.CADASTRAR_VAGA:
 					Integer idCompanyInput = view.getIdCompanyInput()
 					Map<String, ?> dataJob = view.getDataJobInput()
-					feedback = serviceManager.registerJob(idCompanyInput, dataJob)
+					feedback = jobController.createJob(idCompanyInput, dataJob)
 					view.showFeedback(feedback)
 					break
 				case menu.REMOVER_VAGA:
 					Integer idVagaInput = view.getIdJobInput()
-					feedback = serviceManager.removeJob(idVagaInput)
+					feedback = jobController.deleteJobById(idVagaInput)
 					view.showFeedback(feedback)
 					break
 				case menu.LISTAR_COMPETENCIAS:
@@ -85,7 +85,7 @@ class System {
 					break
 				case menu.REMOVER_COMPETENCIA:
 					Integer idCompetenciaInput = view.getIdSkillInput()
-					feedback = serviceManager.removeSkill(idCompetenciaInput)
+					feedback = skillController.deleteSkillById(idCompetenciaInput)
 					view.showFeedback(feedback)
 					break
 				case menu.SAIR:
