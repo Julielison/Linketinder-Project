@@ -3,16 +3,18 @@ package org.linketinder.dao.impl
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 import org.linketinder.dao.interfaces.IJobDao
+import org.linketinder.dao.interfaces.IJobSkillDao
+import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.model.Job
 
 import java.sql.SQLException
 
 class JobDao implements IJobDao {
 	Sql sql
-	SkillDao skillDao
-	JobSkillDao jobSkillDao
+	ISkillDao skillDao
+	IJobSkillDao jobSkillDao
 
-	JobDao(Sql sql, SkillDao skillDao, JobSkillDao jobSkillDao){
+	JobDao(Sql sql, ISkillDao skillDao, IJobSkillDao jobSkillDao){
 		this.sql = sql
 		this.skillDao = skillDao
 		this.jobSkillDao = jobSkillDao
@@ -59,7 +61,7 @@ class JobDao implements IJobDao {
 			}
 		} catch (Exception e){
 			e.printStackTrace()
-			throw new Exception(e)
+			throw e
 		}
 	}
 
@@ -81,8 +83,8 @@ class JobDao implements IJobDao {
 					job.idCompany
 			])
 			return keys[0][0] as Integer
-		} catch (SQLException e){
-			throw new Exception(e.message)
+		} catch (SQLException ignored){
+			throw new Exception("Empresa não existe!")
 		}
 	}
 

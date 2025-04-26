@@ -16,6 +16,16 @@ import org.linketinder.dao.impl.AddressDao
 import org.linketinder.dao.impl.FormationDao
 
 import org.linketinder.dao.impl.JobDao
+import org.linketinder.dao.interfaces.IAddressDao
+import org.linketinder.dao.interfaces.ICandidateDao
+import org.linketinder.dao.interfaces.ICandidateSkillDao
+import org.linketinder.dao.interfaces.ICompanyDao
+import org.linketinder.dao.interfaces.ICountryDao
+import org.linketinder.dao.interfaces.IFormationCandidateDao
+import org.linketinder.dao.interfaces.IFormationDao
+import org.linketinder.dao.interfaces.IJobDao
+import org.linketinder.dao.interfaces.IJobSkillDao
+import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.service.CandidateService
 import groovy.sql.Sql
 import org.linketinder.dao.connection.DatabaseConnection
@@ -27,16 +37,16 @@ import org.linketinder.view.ViewFacade
 class Main {
 	static void main(String[] args) {
 		Sql sql = DatabaseConnection.getInstance()
-		CountryDao countryDao = new CountryDao(sql)
-		SkillDao skillDao = new SkillDao(sql)
-		JobSkillDao jobSkillDao = new JobSkillDao(sql)
-		JobDao jobDao = new JobDao(sql, skillDao, jobSkillDao)
-		FormationDao formationDao = new FormationDao(sql)
-		FormationCandidateDao formationCandidateDao = new FormationCandidateDao(sql)
-		CandidateSkillDao candidateSkillDao = new CandidateSkillDao(sql)
-		AddressDao addressDao = new AddressDao(sql, countryDao)
-		CompanyDao companyDao = new CompanyDao(sql, addressDao, jobDao)
-		CandidateDao candidateDao = new CandidateDao(sql, addressDao, formationDao, skillDao, formationCandidateDao, candidateSkillDao)
+		ICountryDao countryDao = new CountryDao(sql)
+		ISkillDao skillDao = new SkillDao(sql)
+		IJobSkillDao jobSkillDao = new JobSkillDao(sql)
+		IJobDao jobDao = new JobDao(sql, skillDao, jobSkillDao)
+		IFormationDao formationDao = new FormationDao(sql)
+		IFormationCandidateDao formationCandidateDao = new FormationCandidateDao(sql)
+		ICandidateSkillDao candidateSkillDao = new CandidateSkillDao(sql)
+		IAddressDao addressDao = new AddressDao(sql, countryDao)
+		ICompanyDao companyDao = new CompanyDao(sql, addressDao, jobDao)
+		ICandidateDao candidateDao = new CandidateDao(sql, addressDao, formationDao, skillDao, formationCandidateDao, candidateSkillDao)
 		ViewFacade view = new ViewFacade()
 		CandidateService candidateService = new CandidateService(candidateDao)
 		JobService jobService = new JobService(jobDao)

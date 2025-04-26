@@ -2,17 +2,19 @@ package org.linketinder.dao.impl
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
+import org.linketinder.dao.interfaces.IAddressDao
 import org.linketinder.dao.interfaces.ICompanyDao
+import org.linketinder.dao.interfaces.IJobDao
 import org.linketinder.model.Company
 
 import java.sql.SQLException
 
 class CompanyDao implements ICompanyDao {
 	Sql sql
-	AddressDao addressDao
-	JobDao jobDao
+	IAddressDao addressDao
+	IJobDao jobDao
 
-	CompanyDao(Sql sql, AddressDao addressDao, JobDao jobDao) {
+	CompanyDao(Sql sql, IAddressDao addressDao, IJobDao jobDao) {
 		this.sql = sql
 		this.addressDao = addressDao
 		this.jobDao = jobDao

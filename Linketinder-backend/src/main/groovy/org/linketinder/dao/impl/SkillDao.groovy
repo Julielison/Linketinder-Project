@@ -1,6 +1,6 @@
 package org.linketinder.dao.impl
 
-
+import groovy.sql.GroovyResultSet
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import org.linketinder.dao.interfaces.ISkillDao
@@ -16,9 +16,9 @@ class SkillDao implements ISkillDao{
 	}
 
 	List<Map<String, Object>> getSkillsRawData(){
-		List<Skill> skills = []
+		List<Map<String, Object>> skills = []
 		try {
-			sql.eachRow("SELECT * FROM competencia"){row->
+			sql.eachRow("SELECT * FROM competencia"){ GroovyResultSet row ->
 				skills.add(row.toRowResult())
 			}
 		} catch (SQLException e) {

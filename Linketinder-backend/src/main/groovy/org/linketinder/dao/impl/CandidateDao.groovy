@@ -2,7 +2,12 @@ package org.linketinder.dao.impl
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
+import org.linketinder.dao.interfaces.IAddressDao
 import org.linketinder.dao.interfaces.ICandidateDao
+import org.linketinder.dao.interfaces.ICandidateSkillDao
+import org.linketinder.dao.interfaces.IFormationCandidateDao
+import org.linketinder.dao.interfaces.IFormationDao
+import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.model.Candidate
 import org.linketinder.util.ConvertUtil
 
@@ -10,14 +15,14 @@ import java.sql.SQLException
 
 class CandidateDao implements ICandidateDao {
     Sql sql
-    AddressDao addressDao
-    FormationDao formationDao
-    SkillDao skillDao
-    FormationCandidateDao formationCandidateDao
-    CandidateSkillDao candidateSkillDao
+    IAddressDao addressDao
+    IFormationDao formationDao
+    ISkillDao skillDao
+    IFormationCandidateDao formationCandidateDao
+    ICandidateSkillDao candidateSkillDao
 
-    CandidateDao(Sql sql, AddressDao addressDao, FormationDao formationDao, SkillDao skillDao,
-                 FormationCandidateDao formationCandidateDao, CandidateSkillDao candidateSkillDao) {
+    CandidateDao(Sql sql, IAddressDao addressDao, IFormationDao formationDao, ISkillDao skillDao,
+                 IFormationCandidateDao formationCandidateDao, ICandidateSkillDao candidateSkillDao) {
         this.sql = sql
         this.addressDao = addressDao
         this.formationDao = formationDao
