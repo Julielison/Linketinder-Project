@@ -12,12 +12,10 @@ import java.sql.SQLException
 class CompanyDao implements ICompanyDao {
 	Sql sql
 	IAddressDao addressDao
-	IJobDao jobDao
 
-	CompanyDao(Sql sql, IAddressDao addressDao, IJobDao jobDao) {
+	CompanyDao(Sql sql, IAddressDao addressDao) {
 		this.sql = sql
 		this.addressDao = addressDao
-		this.jobDao = jobDao
 	}
 
 	List<Map<String, Object>> getCompaniesRawData() {
@@ -78,10 +76,6 @@ class CompanyDao implements ICompanyDao {
 				Integer addressId = addressDao.insertAddressReturningId(company.address.zipCode, countryId)
 				Integer companyId = this.insertCompany(company, addressId)
 				company.setId(companyId)
-
-				if (!company.jobs.isEmpty()) {
-					jobDao.insertJobsForCompany(company)
-				}
 			}
 			} catch (Exception e) {
 				e.printStackTrace()

@@ -45,7 +45,7 @@ class Main {
 		IFormationCandidateDao formationCandidateDao = new FormationCandidateDao(sql)
 		ICandidateSkillDao candidateSkillDao = new CandidateSkillDao(sql)
 		IAddressDao addressDao = new AddressDao(sql, countryDao)
-		ICompanyDao companyDao = new CompanyDao(sql, addressDao, jobDao)
+		ICompanyDao companyDao = new CompanyDao(sql, addressDao)
 		ICandidateDao candidateDao = new CandidateDao(sql, addressDao, formationDao, skillDao, formationCandidateDao, candidateSkillDao)
 		ViewFacade view = new ViewFacade()
 		CandidateService candidateService = new CandidateService(candidateDao)
