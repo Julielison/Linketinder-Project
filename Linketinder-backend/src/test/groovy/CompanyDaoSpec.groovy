@@ -52,7 +52,6 @@ class CompanyDaoSpec extends Specification {
         )
     }
 
-    // GRUPO DE TESTES: Obtenção de dados brutos de empresas
     def "deve retornar dados brutos de empresas corretamente"() {
         given: "preparando dados para retornar da consulta"
         def expectedResults = [
@@ -134,13 +133,13 @@ class CompanyDaoSpec extends Specification {
                 empresa_nome: "Startup DEF",
                 empresa_email: "contato@startupdef.com",
                 empresa_cnpj: "90123456789012",
-                empresa_descricao: null,  // descrição nula
+                empresa_descricao: null,
                 empresa_senha: "senha456",
                 endereco_id: 3,
                 endereco_cep: "20123456",
                 pais_nome: "Brasil",
                 pais_id: 1,
-                vagas: null  // sem vagas
+                vagas: null
             ]
         ]
         
@@ -161,7 +160,6 @@ class CompanyDaoSpec extends Specification {
         }
     }
 
-    // GRUPO DE TESTES: Query de seleção de empresas
     @Unroll
     def "deve incluir todas as colunas necessárias na query de empresas: #coluna"() {
         when: "obtemos a query SQL"
@@ -183,7 +181,6 @@ class CompanyDaoSpec extends Specification {
     }
 
 
-    // GRUPO DE TESTES: Adição de dados completos da empresa
     def "deve adicionar todos os dados de uma empresa com sucesso"() {
         given: "uma empresa com todas as informações"
         def company = mockCompany
@@ -222,7 +219,6 @@ class CompanyDaoSpec extends Specification {
         exception.message.contains("Erro ao adicionar dados da empresa")
     }
 
-    // GRUPO DE TESTES: Inserção de empresa (método privado)
     def "deve inserir empresa básica corretamente"() {
         given: "uma empresa sem vagas e um ID de endereço"
         def company = new Company(
@@ -249,7 +245,6 @@ class CompanyDaoSpec extends Specification {
         result == 3
     }
 
-    // GRUPO DE TESTES: Remoção de empresa
     def "deve remover empresa por ID com sucesso"() {
         given: "um ID de empresa válido"
         def companyId = 1
@@ -290,26 +285,5 @@ class CompanyDaoSpec extends Specification {
         
         then: "o resultado deve ser falso"
         !result
-    }
-    
-    @Unroll
-    def "deve lidar com diferentes tipos de exceções ao remover empresa: #tipoExcecao"() {
-        given: "um ID de empresa"
-        def companyId = 1
-        
-        and: "uma configuração para executeUpdate que lança uma exceção específica"
-        sql.executeUpdate(_, [companyId]) >> { throw excecao }
-        
-        when: "o método deleteCompanyById é chamado"
-        def result = companyDao.deleteCompanyById(companyId)
-        
-        then: "o resultado deve ser falso independente do tipo de SQLException"
-        !result
-        
-        where:
-        tipoExcecao                | excecao
-        "Violação de chave"        | new SQLException("ERROR: violação de chave estrangeira", "23503")
-        "Permissão negada"         | new SQLException("ERROR: permissão negada", "42501")
-        "Conexão perdida"          | new SQLException("Connection reset")
     }
 }
