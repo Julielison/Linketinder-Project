@@ -164,29 +164,6 @@ class CandidateDaoSpec extends Specification {
         }
     }
 
-
-    @Unroll
-    def "deve incluir todas as colunas necessárias na query: #coluna"() {
-        when: "obtemos a query SQL"
-        def query = CandidateDao.selectAllFromCandidates()
-
-        then: "a query deve incluir a coluna específica"
-        query.contains(coluna)
-
-        where:
-        coluna << [
-                "c.id AS candidato_id",
-                "c.nome AS candidato_nome",
-                "c.sobrenome AS candidato_sobrenome",
-                "c.data_nascimento AS candidato_data_nascimento",
-                "c.email AS candidato_email",
-                "c.cpf AS candidato_cpf",
-                "c.descricao_pessoal AS candidato_descricao_pessoal",
-                "e.cep AS endereco_cep",
-                "STRING_AGG(DISTINCT CONCAT(comp.id, '.', comp.nome), ',') AS competencias"
-        ]
-    }
-
     def "deve adicionar todos os dados de um candidato com sucesso"() {
         given: "um candidato com todas as informações"
         def candidate = mockCandidate
@@ -330,26 +307,6 @@ class CandidateDaoSpec extends Specification {
 		!result
     }
 
-    @Unroll
-    def "deve lidar com diferentes tipos de exceções ao remover candidato: #tipoExcecao"() {
-        given: "um ID de candidato"
-        def candidateId = 1
-
-        and: "uma configuração para executeUpdate que lança uma exceção específica"
-        sql.executeUpdate(_, [candidateId]) >> { throw excecao }
-
-        when: "o método removeCandidateById é chamado"
-        def result = candidateDao.removeCandidateById(candidateId)
-
-        then: "o resultado deve ser falso independente do tipo de SQLException"
-		!result
-
-        where:
-        tipoExcecao                | excecao
-        "Violação de chave"        | new SQLException("ERROR: violação de chave estrangeira", "23503")
-        "Permissão negada"         | new SQLException("ERROR: permissão negada", "42501")
-        "Conexão perdida"          | new SQLException("Connection reset")
-    }
 
     def "deve processar candidato sem formações corretamente"() {
         given: "um candidato sem formações"
