@@ -40,7 +40,7 @@ class SkillDao implements ISkillDao{
 
 			List<GroovyRowResult> results = sql.rows(sqlQuery, names)
 			results.each { GroovyRowResult row ->
-				skillsWithId.add(row.id as Integer)
+				skillsWithId.add(row['id'] as Integer)
 			}
 		} catch (Exception e) {
 			e.printStackTrace()
