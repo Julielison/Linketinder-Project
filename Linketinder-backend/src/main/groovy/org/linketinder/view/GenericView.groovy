@@ -1,7 +1,7 @@
 package org.linketinder.view
 
 import org.linketinder.enums.MenuOption
-import org.linketinder.util.convertUtil
+import org.linketinder.util.ConvertUtil
 
 import java.time.LocalDate
 
@@ -35,9 +35,10 @@ class GenericView {
 			String input = getUserInput()
 			try {
 				id = input.toInteger()
-				if (id > 0) {
-					break
+				if (id <= 0) {
+					throw new Exception()
 				}
+				break
 			} catch (Exception ignored) {
 				println("Insira um número inteiro maior que zero!")
 			}
@@ -68,7 +69,7 @@ class GenericView {
 			try {
 				String dateStr = getUserInput()
 				if (dateStr ==~ /\d{2}\/\d{2}\/\d{4}/) {
-					date = convertUtil.convertToLocalDate(dateStr, "dd/MM/yyyy")
+					date = ConvertUtil.convertToLocalDate(dateStr, "dd/MM/yyyy")
 					break
 				} else {
 					println "Por favor, insira uma data válida no formato dd/mm/aaaa."

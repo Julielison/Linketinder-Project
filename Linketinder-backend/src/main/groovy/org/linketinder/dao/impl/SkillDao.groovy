@@ -1,46 +1,28 @@
-package org.linketinder.dao
+package org.linketinder.dao.impl
 
-
+import groovy.sql.GroovyResultSet
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
+import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.model.Skill
 
 import java.sql.SQLException
 
-class SkillDao {
+class SkillDao implements ISkillDao{
 	Sql sql
 
 	SkillDao(Sql sql){
 		this.sql = sql
 	}
 
-	List<Skill> getSkills(){
-		List<Skill> skills = new ArrayList<>()
+	List<Map<String, Object>> getSkillsRawData(){
+		List<Map<String, Object>> skills = []
 		try {
-			sql.eachRow("SELECT * FROM competencia"){row->
-				skills.add(new Skill(
-						row.id as Integer,
-						row.nome as String
-				))
+			sql.eachRow("SELECT * FROM competencia"){ GroovyResultSet row ->
+				skills.add(row.toRowResult())
 			}
-		} catch (SQLException e){
+		} catch (SQLException e) {
 			e.printStackTrace()
-		} catch (Exception e){
-			e.printStackTrace()
-		}
-		return skills
-	}
-
-	static List<Skill> extractSkillsData(String skillsData) {
-		List<Skill> skills = new ArrayList<>()
-
-		skillsData.split(',').each { String skillData ->
-			String[] idSkillName = skillData.split('\\.')
-			if (idSkillName.length > 0) {
-				Integer id = idSkillName[0].toInteger()
-				String name = idSkillName[1]
-				skills.add(new Skill(id, name))
-			}
 		}
 		return skills
 	}
@@ -58,7 +40,7 @@ class SkillDao {
 
 			List<GroovyRowResult> results = sql.rows(sqlQuery, names)
 			results.each { GroovyRowResult row ->
-				skillsWithId.add(row.id as Integer)
+				skillsWithId.add(row['id'] as Integer)
 			}
 		} catch (Exception e) {
 			e.printStackTrace()

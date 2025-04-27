@@ -4,7 +4,7 @@ package org.linketinder.util
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class convertUtil {
+class ConvertUtil {
 	static LocalDate convertToLocalDate(String dateStr, String format){
 		DateTimeFormatter formatDate = DateTimeFormatter.ofPattern(format)
 		return LocalDate.parse(dateStr, formatDate)

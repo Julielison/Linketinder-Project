@@ -1,6 +1,6 @@
 package org.linketinder.model
 
-import org.linketinder.util.convertUtil
+import org.linketinder.util.ConvertUtil
 
 import java.time.LocalDate
 
@@ -26,7 +26,7 @@ class Formation {
 
     @Override
     String toString() {
-        String period = "${convertUtil.convertToBrFormat(dateStart)} - ${convertUtil.convertToBrFormat(dateEnd)}"
+        String period = "${ConvertUtil.convertToBrFormat(dateStart)} - ${ConvertUtil.convertToBrFormat(dateEnd)}"
         return "${nameCourse} - ${institution} (${period})"
     }
 }

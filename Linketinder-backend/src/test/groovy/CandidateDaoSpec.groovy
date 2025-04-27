@@ -1,222 +1,383 @@
-import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
-import org.linketinder.dao.AddressDao
-import org.linketinder.dao.CandidateDao
-import org.linketinder.dao.FormationDao
-import org.linketinder.dao.SkillDao
+import org.linketinder.dao.impl.*
 import org.linketinder.model.*
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.sql.SQLException
 import java.time.LocalDate
 
 class CandidateDaoSpec extends Specification {
 
-	Sql sql
-	AddressDao addressDao
-	SkillDao skillDao
-	CandidateDao candidateDao
-	FormationDao formationDao
+    Sql sql
+    AddressDao addressDao
+    SkillDao skillDao
+    CandidateDao candidateDao
+    FormationDao formationDao
+    FormationCandidateDao formationCandidateDao
+    CandidateSkillDao candidateSkillDao
+    
+    Candidate mockCandidate
+    Address mockAddress
+    Country mockCountry
+    List<Skill> mockSkills
+    List<Formation> mockFormations
 
-	def setup() {
-		sql = Mock(Sql)
-		addressDao = Mock(AddressDao)
-		skillDao = Mock(SkillDao)
-		formationDao = Mock(FormationDao)
-		candidateDao = new CandidateDao(sql, addressDao, skillDao, formationDao)
-	}
+    def setup() {
+        sql = Mock(Sql)
+        addressDao = Mock(AddressDao)
+        skillDao = Mock(SkillDao)
+        formationDao = Mock(FormationDao)
+        formationCandidateDao = Mock(FormationCandidateDao)
+        candidateSkillDao = Mock(CandidateSkillDao)
+        
+        candidateDao = new CandidateDao(sql, addressDao, formationDao, skillDao, 
+                                      formationCandidateDao, candidateSkillDao)
+        
+        mockCountry = new Country("Brasil", 1)
+        mockAddress = new Address(1, "30123456", mockCountry)
+        mockSkills = [
+            new Skill(1, "Java"),
+            new Skill(2, "Python")
+        ]
+        mockFormations = [
+            new Formation(1, "Engenharia", "UFMG", 
+                LocalDate.of(2020, 1, 1), 
+                LocalDate.of(2024, 12, 31))
+        ]
+        mockCandidate = new Candidate(
+            1, "João", "joao@example.com", "12345678901",
+            LocalDate.of(1990, 5, 15), mockAddress, "Desenvolvedor Full Stack",
+            "senha123", mockSkills, mockFormations, "Silva"
+        )
+    }
 
-	def "deve retornar candidatos corretamente"() {
-		given: "um resultado de consulta SQL simulando um candidato"
-		def row = Mock(GroovyResultSet) {
-			getAt('candidato_id') >> 1
-			getAt('candidato_nome') >> "João"
-			getAt('candidato_email') >> "joao@example.com"
-			getAt('candidato_cpf') >> "12345678901"
-			getAt('candidato_data_nascimento') >> "1990-05-15"
-			getAt('candidato_descricao_pessoal') >> "Desenvolvedor Full Stack"
-			getAt('candidato_senha_de_login') >> "senha123"
-			getAt('candidato_sobrenome') >> "Silva"
-			getAt('endereco_id') >> 1
-			getAt('endereco_cep') >> "30123456"
-			getAt('pais_nome') >> "Brasil"
-			getAt('pais_id') >> 1
-			getAt('competencias') >> "1.Java,2.Python"
-			getAt('formacoes') >> "1:Engenharia:UFMG:2020-01-01:2024-12-31"
-		}
+    def "deve retornar dados brutos de candidatos corretamente"() {
+        given: "preparando dados para retornar da consulta"
+        def expectedResults = [
+            [
+                candidato_id: 1,
+                candidato_nome: "João",
+                candidato_sobrenome: "Silva",
+                candidato_email: "joao@example.com",
+                candidato_cpf: "12345678901",
+                candidato_descricao_pessoal: "Desenvolvedor Full Stack",
+                candidato_senha_de_login: "senha123",
+                endereco_id: 1,
+                endereco_cep: "30123456",
+                pais_nome: "Brasil",
+                pais_id: 1,
+                competencias: "1.Java,2.Python",
+                formacoes: "1:Engenharia:UFMG:2020-01-01:2024-12-31"
+            ]
+        ]
+        
+        candidateDao.metaClass.getCandidatesRawData = { ->
+            return expectedResults
+        }
 
-		sql.eachRow(_, _) >> { String query, Closure c -> c.call(row) }
-		skillDao.extractSkillsData("1.Java,2.Python") >> [
-				new Skill(1, "Java"),
-				new Skill(2, "Python")
-		]
-		formationDao.extractFormationsData("1:Engenharia:UFMG:2020-01-01:2024-12-31") >> [
-				new Formation(1, "Engenharia", "UFMG",
-						LocalDate.of(2020, 1, 1),
-						LocalDate.of(2024, 12, 31))
-		]
+        when: "o método getCandidatesRawData é chamado"
+        def result = candidateDao.getCandidatesRawData()
 
-		when: "busca os candidatos"
-		def candidatos = candidateDao.getCandidates()
+        then: "verifica se os dados foram retornados corretamente"
+        result.size() == 1
+        with(result[0]) {
+            it.candidato_id == 1
+            it.candidato_nome == "João"
+            it.candidato_sobrenome == "Silva"
+            it.candidato_email == "joao@example.com"
+            it.candidato_cpf == "12345678901"
+            it.candidato_descricao_pessoal == "Desenvolvedor Full Stack"
+            it.candidato_senha_de_login == "senha123"
+            it.endereco_id == 1
+            it.endereco_cep == "30123456"
+            it.pais_nome == "Brasil"
+            it.pais_id == 1
+            it.competencias == "1.Java,2.Python"
+            it.formacoes == "1:Engenharia:UFMG:2020-01-01:2024-12-31"
+        }
+    }
+    
+    def "deve retornar múltiplos candidatos quando disponíveis"() {
+        given: "Criando um spy do CandidateDao com dados de teste"
+        def candidatesData = [
+            [
+                candidato_id: 1, candidato_nome: "João", candidato_sobrenome: "Silva",
+                candidato_email: "joao@example.com", candidato_cpf: "12345678901"
+            ],
+            [
+                candidato_id: 2, candidato_nome: "Maria", candidato_sobrenome: "Oliveira",
+                candidato_email: "maria@example.com", candidato_cpf: "98765432101"
+            ]
+        ]
+        
+        candidateDao.metaClass.getCandidatesRawData = { -> 
+            return candidatesData
+        }
+        
+        when: "obtemos os dados brutos dos candidatos"
+        def result = candidateDao.getCandidatesRawData()
+        
+        then: "a lista deve conter dois candidatos"
+        result.size() == 2
+        result[0].candidato_nome == "João"
+        result[1].candidato_nome == "Maria"
+        result[1].candidato_cpf == "98765432101"
+    }
+    
+    def "deve lidar com valores nulos nos resultados da consulta"() {
+        given: "dados com valores nulos"
+        def candidatesWithNulls = [
+            [
+                candidato_id: 4,
+                candidato_nome: "Eduardo",
+                candidato_sobrenome: null,
+                candidato_email: "eduardo@example.com",
+                candidato_cpf: "44455566677",
+                candidato_descricao_pessoal: null,
+                candidato_senha_de_login: "senha444",
+                endereco_id: 4,
+                endereco_cep: "50123456",
+                pais_nome: "Brasil",
+                pais_id: 1,
+                competencias: null,
+                formacoes: null
+            ]
+        ]
+        
+        candidateDao.metaClass.getCandidatesRawData = { -> 
+            return candidatesWithNulls
+        }
+        
+        when: "obtemos os dados brutos"
+        def result = candidateDao.getCandidatesRawData()
+        
+        then: "os valores nulos são preservados no resultado"
+        result.size() == 1
+        with(result[0]) {
+            it.candidato_id == 4
+            it.candidato_nome == "Eduardo"
+            it.candidato_sobrenome == null
+            it.candidato_descricao_pessoal == null
+            it.competencias == null
+            it.formacoes == null
+        }
+    }
 
-		then: "verifica se os dados foram retornados corretamente"
-		candidatos.size() == 1
-		with(candidatos[0]) {
-			id == 1
-			name == "João"
-			email == "joao@example.com"
-			cpf == "12345678901"
-			dateBirth == LocalDate.of(1990, 5, 15)
-			description == "Desenvolvedor Full Stack"
-			passwordLogin == "senha123"
-			lastName == "Silva"
-			address.id == 1
-			address.zipCode == "30123456"
-			address.country.name == "Brasil"
-			address.country.id == 1
-			skills.size() == 2
-			formations.size() == 1
-		}
-	}
+    def "deve adicionar todos os dados de um candidato com sucesso"() {
+        given: "um candidato com todas as informações"
+        def candidate = mockCandidate
 
-	def "deve lidar com exceção SQLException ao obter candidatos"() {
-		given: "uma configuração para lançar SQLException"
+        when: "o método addAllDataFromCandidate é chamado"
+        candidateDao.addAllDataFromCandidate(candidate)
 
-		when: "o método getCandidatos é chamado"
-		def result = candidateDao.getCandidates()
+        then: "a transação SQL é iniciada"
+        1 * sql.withTransaction(_) >> { Closure closure -> closure.call() }
 
-		then: "a consulta SQL lança uma exceção"
-		1 * sql.eachRow(CandidateDao.selectAllFromCandidates(), _) >> { throw new SQLException("Erro de SQL") }
+        and: "todas as operações são executadas na ordem esperada"
+        1 * addressDao.insertCountryReturningId(mockCountry.name) >> 1
+        1 * addressDao.insertAddressReturningId(mockAddress.zipCode, 1) >> 1
 
-		and: "o resultado é uma lista vazia"
-		result.empty
-	}
+        and: "o candidato é inserido com o endereço correto"
+        1 * sql.executeInsert(_, _) >> [[1]]
 
-	def "deve inserir um candidato e retornar o ID"() {
-		given: "um candidato válido e um ID de endereço"
-		def country = new Country("Brasil", null)
-		def address = new Address(null, "30123456", country)
-		def candidate = new Candidate(
-				null, "João", "joao@example.com", "12345678901",
-				LocalDate.of(1990, 5, 15), address, "Desenvolvedor Full Stack",
-				"senha123", [], [], "Silva"
-		)
-		def addressId = 1
+        and: "as formações são inseridas"
+        1 * formationDao.insertFormations(candidate) >> candidate
+        1 * formationCandidateDao.insertIdsAndDatesFromFormation(candidate)
 
-		when: "o método insertCandidate é chamado"
-		def result = candidateDao.insertCandidate(candidate, addressId)
+        and: "as competências são inseridas"
+        1 * skillDao.insertSkillsReturningId(mockSkills) >> [1, 2]
+        1 * candidateSkillDao.associateSkillsToCandidate(1, [1, 2])
+    }
 
-		then: "a query SQL é executada e retorna um ID"
-		1 * sql.executeInsert(_, _) >> [
-				[1] // Simulando o retorno do ID
-		]
+    def "deve tratar exceção ao adicionar dados completos de candidato"() {
+        given: "um candidato válido"
+        def candidate = mockCandidate
 
-		and: "o resultado é o ID esperado"
-		result == 1
-	}
+        and: "uma transação que lança exceção"
+        sql.withTransaction(_) >> { throw new SQLException("Erro na transação") }
 
-	def "deve inserir formações corretamente"() {
-		given: "um candidato com formações"
-		def formation1 = new Formation(1, "Engenharia de Software", "UFMG", LocalDate.of(2020, 1, 1), LocalDate.of(2024, 12, 31))
-		def formation2 = new Formation(2, "MBA em Gestão", "FGV", LocalDate.of(2025, 1, 1), LocalDate.of(2026, 12, 31))
-		def formations = [formation1, formation2]
-		def candidate = new Candidate(1, "João", "joao@example.com", "12345678901",
-				LocalDate.of(1990, 5, 15), null, "Desenvolvedor",
-				"senha123", [], formations, "Silva")
+        when: "o método addAllDataFromCandidate é chamado"
+        def exception = null
+        try {
+            candidateDao.addAllDataFromCandidate(candidate)
+        } catch (RuntimeException e) {
+            exception = e
+        }
 
-		when: "o método insertIdsAndDatesFromFormation é chamado"
-		candidateDao.insertIdsAndDatesFromFormation(candidate)
+        then: "uma RuntimeException deve ser lançada"
+        exception != null
+        exception.message.contains("Erro ao adicionar dados do candidato")
+    }
 
-		then: "a query SQL é executada com os parâmetros corretos"
-		1 * sql.execute(_, _) >> { String query, List params ->
-			assert query.contains("INSERT INTO formacao_candidato")
-			assert params.size() == 8 // 4 parâmetros por formação * 2 formações
-			assert params[0] == 1 // id da formação 1
-			assert params[1] == 1 // id do candidato
-			assert params[2] == LocalDate.of(2020, 1, 1) // data de início da formação 1
-			assert params[3] == LocalDate.of(2024, 12, 31) // data de fim da formação 1
-			assert params[4] == 2 // id da formação 2
-			assert params[5] == 1 // id do candidato
-			assert params[6] == LocalDate.of(2025, 1, 1) // data de início da formação 2
-			assert params[7] == LocalDate.of(2026, 12, 31) // data de fim da formação 2
-		}
-	}
+    def "deve inserir candidato básico corretamente"() {
+        given: "um candidato sem competências ou formações e um ID de endereço"
+        def candidate = new Candidate(
+                null, "Maria", "maria@example.com", "98765432109",
+                LocalDate.of(1995, 10, 20), mockAddress, "Analista de Dados",
+                "senha456", [], [], "Oliveira"
+        )
+        def addressId = 2
 
-	def "deve associar competências a um candidato"() {
-		given: "um ID de candidato e uma lista de IDs de competências"
-		def candidateId = 1
-		def skillIds = [1, 2, 3]
+        and: "uma configuração para o método executeInsert"
+        sql.executeInsert(_, _) >> { String query, List params ->
+            assert params[0] == "Maria"
+            assert params[1] == "Oliveira"
+            assert params[2] == "1995-10-20"
+            assert params[3] == "maria@example.com"
+            assert params[4] == "98765432109"
+            assert params[5] == "Analista de Dados"
+            assert params[6] == "senha456"
+            assert params[7] == 2
+            return [[3]]
+        }
 
-		when: "o método associateSkillsToCandidate é chamado"
-		candidateDao.associateSkillsToCandidate(candidateId, skillIds)
+        when: "tentamos acessar o método privado insertCandidate via reflexão"
+        def method = CandidateDao.class.getDeclaredMethod("insertCandidate", Candidate.class, Integer.class)
+        method.setAccessible(true)
+        def result = method.invoke(candidateDao, candidate, addressId)
 
-		then: "a query SQL é executada com os parâmetros corretos"
-		1 * sql.execute(_, _) >> { String query, List params ->
-			assert query.contains("INSERT INTO candidato_competencia")
-			assert query.contains("ON CONFLICT DO NOTHING")
-			assert params.size() == 6 // 2 parâmetros por competência * 3 competências
-			assert params[0] == 1 // id do candidato
-			assert params[1] == 1 // id da competência 1
-			assert params[2] == 1 // id do candidato
-			assert params[3] == 2 // id da competência 2
-			assert params[4] == 1 // id do candidato
-			assert params[5] == 3 // id da competência 3
-		}
-	}
+        then: "o ID retornado deve ser o esperado"
+        result == 3
+    }
 
-	def "não deve inserir competências quando a lista estiver vazia"() {
-		given: "um candidato sem competências"
-		def candidate = new Candidate(1, "João", "joao@example.com", "12345678901",
-				LocalDate.of(1990, 5, 15), null, "Desenvolvedor",
-				"senha123", [], [], "Silva")
+    def "deve formatar data de nascimento corretamente para SQL"() {
+        given: "um candidato com data específica"
+        def dataEspecifica = LocalDate.of(2000, 12, 31)
+        def candidate = new Candidate(
+                null, "Lucas", "lucas@example.com", "11122233344",
+                dataEspecifica, mockAddress, "Desenvolvedor Frontend",
+                "senha789", [], [], "Ribeiro"
+        )
+        def addressId = 5
 
-		when: "o método insertCandidateSkills é chamado"
-		candidateDao.insertCandidateSkills(candidate)
+        when: "executamos a inserção do candidato"
+        sql.executeInsert(_, _) >> { String query, List params ->
+            assert params[2] == "2000-12-31"
+            return [[10]]
+        }
 
-		then: "nenhuma operação de inserção é realizada"
-		0 * skillDao.insertSkillsReturningId(_)
-		0 * candidateDao.associateSkillsToCandidate(_, _)
-	}
+        def method = CandidateDao.class.getDeclaredMethod("insertCandidate", Candidate.class, Integer.class)
+        method.setAccessible(true)
+        def result = method.invoke(candidateDao, candidate, addressId)
 
-	def "deve remover um candidato pelo ID com sucesso"() {
-		given: "um ID de candidato válido"
-		def candidateId = 1
+        then: "o método deve usar o formato correto da data e retornar o ID esperado"
+        result == 10
+    }
 
-		when: "o método removeCandidateById é chamado"
-		def result = candidateDao.removeCandidateById(candidateId)
+    def "deve remover candidato por ID com sucesso"() {
+        given: "um ID de candidato válido"
+        def candidateId = 1
 
-		then: "a query SQL é executada e retorna sucesso"
-		1 * sql.executeUpdate("DELETE FROM candidato WHERE id = ?", [candidateId]) >> 1
+        and: "uma configuração para executeUpdate que simula uma remoção bem-sucedida"
+        sql.executeUpdate(_, [candidateId]) >> 1
 
-		and: "o resultado é verdadeiro"
+        when: "o método removeCandidateById é chamado"
+        def result = candidateDao.removeCandidateById(candidateId)
+
+        then: "o resultado deve ser verdadeiro"
 		result
-	}
+    }
 
-	def "deve retornar falso ao tentar remover um candidato que não existe"() {
-		given: "um ID de candidato que não existe"
-		def candidateId = 999
+    def "deve retornar falso quando nenhum candidato for removido"() {
+        given: "um ID de candidato inexistente"
+        def candidateId = 999
 
-		when: "o método removeCandidateById é chamado"
-		def result = candidateDao.removeCandidateById(candidateId)
+        and: "uma configuração para executeUpdate que simula nenhuma linha afetada"
+        sql.executeUpdate(_, [candidateId]) >> 0
 
-		then: "a query SQL é executada e não afeta nenhuma linha"
-		1 * sql.executeUpdate("DELETE FROM candidato WHERE id = ?", [candidateId]) >> 0
+        when: "o método removeCandidateById é chamado"
+        def result = candidateDao.removeCandidateById(candidateId)
 
-		and: "o resultado é falso"
+        then: "o resultado deve ser falso"
 		!result
-	}
+    }
 
-	def "deve lidar com exceção ao tentar remover um candidato"() {
-		given: "um ID de candidato"
-		def candidateId = 1
+    def "deve tratar exceção ao remover candidato"() {
+        given: "um ID de candidato"
+        def candidateId = 1
 
-		when: "o método removeCandidateById é chamado e ocorre uma exceção"
-		def result = candidateDao.removeCandidateById(candidateId)
+        and: "uma configuração para executeUpdate que lança exceção"
+        sql.executeUpdate(_, [candidateId]) >> { throw new SQLException("Erro ao remover candidato") }
 
-		then: "a query SQL lança uma exceção"
-		1 * sql.executeUpdate("DELETE FROM candidato WHERE id = ?", [candidateId]) >> { throw new SQLException("Erro ao remover candidato") }
+        when: "o método removeCandidateById é chamado"
+        def result = candidateDao.removeCandidateById(candidateId)
 
-		and: "o resultado é falso"
+        then: "o resultado deve ser falso"
 		!result
-	}
+    }
+
+
+    def "deve processar candidato sem formações corretamente"() {
+        given: "um candidato sem formações"
+        def candidateWithoutFormations = new Candidate(
+                1, "Carlos", "carlos@example.com", "45678912301",
+                LocalDate.of(1988, 8, 18), mockAddress, "Arquiteto de Software",
+                "senha789", mockSkills, [], "Ferreira"
+        )
+
+        when: "o método addAllDataFromCandidate é chamado"
+        sql.withTransaction(_) >> { Closure closure -> closure.call() }
+        addressDao.insertCountryReturningId(_) >> 1
+        addressDao.insertAddressReturningId(_, _) >> 2
+        sql.executeInsert(_, _) >> [[3]]
+        skillDao.insertSkillsReturningId(_) >> [4, 5]
+
+        candidateDao.addAllDataFromCandidate(candidateWithoutFormations)
+
+        then: "não deve chamar os métodos relacionados a formações"
+        0 * formationDao.insertFormations(_)
+        0 * formationCandidateDao.insertIdsAndDatesFromFormation(_)
+
+        and: "deve chamar os métodos relacionados a competências"
+        1 * candidateSkillDao.associateSkillsToCandidate(_, _)
+    }
+
+    def "deve processar candidato sem competências corretamente"() {
+        given: "um candidato sem competências"
+        def candidateWithoutSkills = new Candidate(
+                1, "Ana", "ana@example.com", "78945612301",
+                LocalDate.of(1992, 3, 25), mockAddress, "Gerente de Projetos",
+                "senha321", [], mockFormations, "Lima"
+        )
+
+        when: "o método addAllDataFromCandidate é chamado"
+        sql.withTransaction(_) >> { Closure closure -> closure.call() }
+        addressDao.insertCountryReturningId(_) >> 1
+        addressDao.insertAddressReturningId(_, _) >> 2
+        sql.executeInsert(_, _) >> [[3]]
+        formationDao.insertFormations(_) >> candidateWithoutSkills
+
+        candidateDao.addAllDataFromCandidate(candidateWithoutSkills)
+
+        then: "não deve chamar os métodos relacionados a competências"
+        0 * skillDao.insertSkillsReturningId(_)
+        0 * candidateSkillDao.associateSkillsToCandidate(_, _)
+
+        and: "deve chamar os métodos relacionados a formações"
+        1 * formationCandidateDao.insertIdsAndDatesFromFormation(_)
+    }
+
+    def "deve processar candidato sem formações nem competências"() {
+        given: "um candidato sem formações nem competências"
+        def candidateWithoutSkillsFormations = new Candidate(
+                1, "Roberto", "roberto@example.com", "11133355599",
+                LocalDate.of(1980, 7, 10), mockAddress, "Diretor de Tecnologia",
+                "senha999", [], [], "Martins"
+        )
+
+        when: "o método addAllDataFromCandidate é chamado"
+        sql.withTransaction(_) >> { Closure closure -> closure.call() }
+        addressDao.insertCountryReturningId(_) >> 1
+        addressDao.insertAddressReturningId(_, _) >> 2
+        sql.executeInsert(_, _) >> [[3]]
+
+        candidateDao.addAllDataFromCandidate(candidateWithoutSkillsFormations)
+
+        then: "não deve chamar nenhum método relacionado a formações e competências"
+        0 * formationDao.insertFormations(_)
+        0 * formationCandidateDao.insertIdsAndDatesFromFormation(_)
+        0 * skillDao.insertSkillsReturningId(_)
+        0 * candidateSkillDao.associateSkillsToCandidate(_, _)
+    }
 }

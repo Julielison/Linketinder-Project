@@ -1,4 +1,4 @@
-package org.linketinder.dao
+package org.linketinder.dao.impl
 
 
 import groovy.sql.Sql

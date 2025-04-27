@@ -1,16 +1,17 @@
-package org.linketinder.dao
+package org.linketinder.dao.impl
 
-import groovy.sql.GroovyRowResult
+
 import groovy.sql.Sql
 import org.linketinder.dao.interfaces.IAddressDao
+import org.linketinder.dao.interfaces.ICountryDao
 
 import java.sql.SQLException
 
 class AddressDao implements IAddressDao{
 	Sql sql
-	CountryDao countryDao
+	ICountryDao countryDao
 
-	AddressDao(Sql sql, CountryDao countryDao){
+	AddressDao(Sql sql, ICountryDao countryDao){
 		this.sql = sql
 		this.countryDao = countryDao
 	}
