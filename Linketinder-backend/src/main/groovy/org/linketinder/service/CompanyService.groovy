@@ -1,20 +1,21 @@
 package org.linketinder.service
 
 import org.linketinder.dao.impl.CompanyDao
+import org.linketinder.dao.interfaces.ICRUD
 import org.linketinder.model.Address
 import org.linketinder.model.Company
 import org.linketinder.model.Country
 import org.linketinder.model.Job
 
 class CompanyService {
-	CompanyDao companyDao
+	ICRUD<Company> companyDao
 
-	CompanyService(CompanyDao companyDao) {
+	CompanyService(ICRUD<Company> companyDao) {
 		this.companyDao = companyDao
 	}
 
 	List<Company> listAllCompanies() {
-		List<Map<String, Object>> rawCompanies = companyDao.getCompaniesRawData()
+		List<Map<String, Object>> rawCompanies = companyDao.getAll()
 		return setupCompaniesToController(rawCompanies)
 	}
 
@@ -22,7 +23,7 @@ class CompanyService {
 		Company newCompany = setupCompanyToDao(data)
 		String feedback = "Empresa cadastrada com sucesso!"
 		try {
-			companyDao.addAllCompanyData(newCompany)
+			companyDao.save(newCompany)
 		} catch (Exception e){
 			feedback = e.getMessage()
 		}
@@ -61,6 +62,6 @@ class CompanyService {
 	}
 
 	String removeCompany(Integer id){
-		return companyDao.deleteCompanyById(id) ? "Empresa removida com sucesso!" : "Empresa não existe!"
+		return companyDao.deleteById(id) ? "Empresa removida com sucesso!" : "Empresa não existe!"
 	}
 }

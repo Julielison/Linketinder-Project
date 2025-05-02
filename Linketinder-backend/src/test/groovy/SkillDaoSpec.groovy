@@ -33,12 +33,12 @@ class SkillDaoSpec extends Specification {
 		]
 
 		and: "mock do método getSkillsRawData usando metaclass"
-		skillDao.metaClass.getSkillsRawData = { ->
+		skillDao.metaClass.getAll = { ->
 			return expectedResults
 		}
 
 		when: "o método getSkillsRawData é chamado"
-		def result = skillDao.getSkillsRawData()
+		def result = skillDao.getAll()
 
 		then: "verifica se os dados foram retornados corretamente"
 		result.size() == 3
@@ -58,10 +58,10 @@ class SkillDaoSpec extends Specification {
     
     def "deve tratar exceção ao consultar competências"() {
         given: "uma exceção será lançada durante a consulta"
-        sql.eachRow(_, _) >> { throw new SQLException("Database error") }
+        sql.eachRow(_ as GString, _ as Closure) >> { throw new SQLException("Database error") }
         
         when: "chamada ao método getSkillsRawData"
-        def result = skillDao.getSkillsRawData()
+        def result = skillDao.getAll()
         
         then: "deve tratar a exceção e retornar uma lista vazia"
         result.size() == 0

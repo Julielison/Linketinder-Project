@@ -2,25 +2,25 @@ package org.linketinder.dao.impl
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
-import org.linketinder.dao.interfaces.IJobDao
-import org.linketinder.dao.interfaces.IJobSkillDao
+import org.linketinder.dao.interfaces.IAssociateEntity
+import org.linketinder.dao.interfaces.ICRUD
 import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.model.Job
 
 import java.sql.SQLException
 
-class JobDao implements IJobDao {
+class JobDao implements ICRUD<Job> {
 	Sql sql
 	ISkillDao skillDao
-	IJobSkillDao jobSkillDao
+	IAssociateEntity jobSkillDao
 
-	JobDao(Sql sql, ISkillDao skillDao, IJobSkillDao jobSkillDao){
+	JobDao(Sql sql, ISkillDao skillDao, IAssociateEntity jobSkillDao){
 		this.sql = sql
 		this.skillDao = skillDao
 		this.jobSkillDao = jobSkillDao
 	}
 
-	List<Map<String, Object>> getJobsRawData() {
+	List<Map<String, Object>> getAll() {
 		List<Map<String, Object>> jobs = []
 		String query = selectAllJobs()
 		try {
@@ -52,7 +52,7 @@ class JobDao implements IJobDao {
 				v.id, v.nome, v.descricao, v.local, v.id_empresa"""
 	}
 
-	void addJobData(Job job){
+	Job save(Job job){
 		try {
 			sql.withTransaction {
 				Integer jobId = insertJob(job)
@@ -63,12 +63,13 @@ class JobDao implements IJobDao {
 			e.printStackTrace()
 			throw e
 		}
+		return job
 	}
 
 	void insertJobSkills(Job job){
 		if (job.skills.isEmpty()) return
 		List<Integer> skillsIds = skillDao.insertSkillsReturningId(job.skills)
-		jobSkillDao.associateSkillsToJob(job.id, skillsIds)
+		jobSkillDao.associateEntityWithSkill(job.id, skillsIds)
 	}
 
 	Integer insertJob(Job job){
@@ -88,12 +89,17 @@ class JobDao implements IJobDao {
 		}
 	}
 
-	boolean removeJobById(Integer id){
+	boolean deleteById(Integer id){
 		try {
 			return sql.executeUpdate("DELETE FROM vaga WHERE id = ?", [id]) > 0
 		} catch (SQLException e) {
 			e.printStackTrace()
 		}
+		return false
+	}
+
+	boolean update(Job job){
+		// TODO
 		return false
 	}
 }

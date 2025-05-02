@@ -1,11 +1,11 @@
 	package org.linketinder.dao.impl
 
 	import groovy.sql.Sql
-	import org.linketinder.dao.interfaces.IFormationCandidateDao
+
 	import org.linketinder.model.Candidate
 	import org.linketinder.model.Formation
 
-	class FormationCandidateDao implements IFormationCandidateDao {
+	class FormationCandidateDao {
 		Sql sql
 
 		FormationCandidateDao(Sql sql) {

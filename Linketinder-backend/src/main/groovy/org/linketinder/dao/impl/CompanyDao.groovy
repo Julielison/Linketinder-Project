@@ -2,23 +2,22 @@ package org.linketinder.dao.impl
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
-import org.linketinder.dao.interfaces.IAddressDao
-import org.linketinder.dao.interfaces.ICompanyDao
-import org.linketinder.dao.interfaces.IJobDao
+
+import org.linketinder.dao.interfaces.ICRUD
 import org.linketinder.model.Company
 
 import java.sql.SQLException
 
-class CompanyDao implements ICompanyDao {
+class CompanyDao implements ICRUD<Company> {
 	Sql sql
-	IAddressDao addressDao
+	AddressDao addressDao
 
-	CompanyDao(Sql sql, IAddressDao addressDao) {
+	CompanyDao(Sql sql, AddressDao addressDao) {
 		this.sql = sql
 		this.addressDao = addressDao
 	}
 
-	List<Map<String, Object>> getCompaniesRawData() {
+	List<Map<String, Object>> getAll() {
 		List<Map<String, Object>> companies = []
 		String query = selectAllFromCompanies()
 		try {
@@ -69,7 +68,7 @@ class CompanyDao implements ICompanyDao {
 			e.senha_de_login, endereco.cep, p.nome, endereco.id, p.id"""
 	}
 
-	void addAllCompanyData(Company company) {
+	Company save(Company company) {
 		try {
 			sql.withTransaction {
 				Integer countryId = addressDao.insertCountryReturningId(company.address.country.name)
@@ -81,6 +80,7 @@ class CompanyDao implements ICompanyDao {
 				e.printStackTrace()
 				throw new RuntimeException("Erro ao adicionar dados da empresa: ${e.message}")
 			}
+		return company
 	}
 
 	Integer insertCompany(Company company, Integer addressId) {
@@ -98,12 +98,17 @@ class CompanyDao implements ICompanyDao {
 		return result[0][0] as Integer
 	}
 
-	boolean deleteCompanyById(Integer id){
+	boolean deleteById(Integer id){
 		try {
 			return sql.executeUpdate("DELETE FROM empresa WHERE id = ?", [id]) > 0
 		} catch (SQLException e) {
 			e.printStackTrace()
 		}
+		return false
+	}
+
+	boolean update(Company company){
+		//TODO
 		return false
 	}
 }

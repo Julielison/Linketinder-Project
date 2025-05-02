@@ -1,30 +1,31 @@
 package org.linketinder.service
 
 import org.linketinder.dao.impl.JobDao
+import org.linketinder.dao.interfaces.ICRUD
 import org.linketinder.model.Job
 import org.linketinder.model.Skill
 
 class JobService {
-	JobDao jobDao
+	ICRUD<Job> jobDao
 
-	JobService(JobDao jobDao) {
+	JobService(ICRUD<Job> jobDao) {
 		this.jobDao = jobDao
 	}
 
 	List<Job> listAllJobs(){
-		List<Map<String, Object>> rawJobs = jobDao.getJobsRawData()
+		List<Map<String, Object>> rawJobs = jobDao.getAll()
 		return setupJobsToController(rawJobs)
 	}
 
 	String removeJobById(Integer id){
-		return jobDao.removeJobById(id) ? "Vaga removida com sucesso!" : "Vaga não existe!"
+		return jobDao.deleteById(id) ? "Vaga removida com sucesso!" : "Vaga não existe!"
 	}
 
 	String registerJob(Integer idCompany, Map<String, ?> data){
 		Job job = setupJobToDao(idCompany, data)
 		String feedback = "Cadastro feito com sucesso!"
 		try {
-			jobDao.addJobData(job)
+			jobDao.save(job)
 		} catch (Exception e){
 			feedback = e.getMessage()
 		}

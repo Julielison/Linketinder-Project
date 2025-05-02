@@ -1,6 +1,7 @@
 package org.linketinder.service
 
 import org.linketinder.dao.impl.CandidateDao
+import org.linketinder.dao.interfaces.ICRUD
 import org.linketinder.model.Address
 import org.linketinder.model.Candidate
 import org.linketinder.model.Country
@@ -12,14 +13,14 @@ import org.linketinder.util.ConvertUtil
 import java.time.LocalDate
 
 class CandidateService {
-	CandidateDao candidateDao
+	ICRUD<Candidate> candidateDao
 
-	CandidateService(CandidateDao candidateDao) {
+	CandidateService(ICRUD<Candidate> candidateDao) {
 		this.candidateDao = candidateDao
 	}
 
 	List<Candidate> listAllCandidates() {
-		List<Map<String, Object>> rawCandidates = candidateDao.getCandidatesRawData()
+		List<Map<String, Object>> rawCandidates = candidateDao.getAll()
 		return setupCandidatesToController(rawCandidates)
 	}
 
@@ -27,7 +28,7 @@ class CandidateService {
 		Candidate newCandidate = setupCandidateToDao(data)
 		String feedback = "Candidato cadastrado com sucesso!"
 		try {
-			candidateDao.addAllDataFromCandidate(newCandidate)
+			candidateDao.save(newCandidate)
 		} catch (Exception e){
 			feedback = e.getMessage()
 		}
@@ -81,6 +82,6 @@ class CandidateService {
 	}
 
 	String removeCandidate(Integer id) {
-		return candidateDao.removeCandidateById(id) ? "Candidato removido com sucesso!" : "Candidato não existe!"
+		return candidateDao.deleteById(id) ? "Candidato removido com sucesso!" : "Candidato não existe!"
 	}
 }

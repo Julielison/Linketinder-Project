@@ -2,7 +2,6 @@ import groovy.sql.Sql
 import org.linketinder.dao.impl.*
 import org.linketinder.model.*
 import spock.lang.Specification
-import spock.lang.Unroll
 
 import java.sql.SQLException
 import java.time.LocalDate
@@ -72,12 +71,12 @@ class CandidateDaoSpec extends Specification {
             ]
         ]
         
-        candidateDao.metaClass.getCandidatesRawData = { ->
+        candidateDao.metaClass.getAll = { ->
             return expectedResults
         }
 
         when: "o método getCandidatesRawData é chamado"
-        def result = candidateDao.getCandidatesRawData()
+        def result = candidateDao.getAll()
 
         then: "verifica se os dados foram retornados corretamente"
         result.size() == 1
@@ -111,12 +110,12 @@ class CandidateDaoSpec extends Specification {
             ]
         ]
         
-        candidateDao.metaClass.getCandidatesRawData = { -> 
+        candidateDao.metaClass.getAll = { ->
             return candidatesData
         }
         
         when: "obtemos os dados brutos dos candidatos"
-        def result = candidateDao.getCandidatesRawData()
+        def result = candidateDao.getAll()
         
         then: "a lista deve conter dois candidatos"
         result.size() == 2
@@ -145,12 +144,12 @@ class CandidateDaoSpec extends Specification {
             ]
         ]
         
-        candidateDao.metaClass.getCandidatesRawData = { -> 
+        candidateDao.metaClass.getAll = { ->
             return candidatesWithNulls
         }
         
         when: "obtemos os dados brutos"
-        def result = candidateDao.getCandidatesRawData()
+        def result = candidateDao.getAll()
         
         then: "os valores nulos são preservados no resultado"
         result.size() == 1
@@ -169,7 +168,7 @@ class CandidateDaoSpec extends Specification {
         def candidate = mockCandidate
 
         when: "o método addAllDataFromCandidate é chamado"
-        candidateDao.addAllDataFromCandidate(candidate)
+        candidateDao.save(candidate)
 
         then: "a transação SQL é iniciada"
         1 * sql.withTransaction(_) >> { Closure closure -> closure.call() }
@@ -187,7 +186,7 @@ class CandidateDaoSpec extends Specification {
 
         and: "as competências são inseridas"
         1 * skillDao.insertSkillsReturningId(mockSkills) >> [1, 2]
-        1 * candidateSkillDao.associateSkillsToCandidate(1, [1, 2])
+        1 * candidateSkillDao.associateEntityWithSkill(1, [1, 2])
     }
 
     def "deve tratar exceção ao adicionar dados completos de candidato"() {
@@ -200,7 +199,7 @@ class CandidateDaoSpec extends Specification {
         when: "o método addAllDataFromCandidate é chamado"
         def exception = null
         try {
-            candidateDao.addAllDataFromCandidate(candidate)
+            candidateDao.save(candidate)
         } catch (RuntimeException e) {
             exception = e
         }
@@ -273,7 +272,7 @@ class CandidateDaoSpec extends Specification {
         sql.executeUpdate(_, [candidateId]) >> 1
 
         when: "o método removeCandidateById é chamado"
-        def result = candidateDao.removeCandidateById(candidateId)
+        def result = candidateDao.deleteById(candidateId)
 
         then: "o resultado deve ser verdadeiro"
 		result
@@ -287,7 +286,7 @@ class CandidateDaoSpec extends Specification {
         sql.executeUpdate(_, [candidateId]) >> 0
 
         when: "o método removeCandidateById é chamado"
-        def result = candidateDao.removeCandidateById(candidateId)
+        def result = candidateDao.deleteById(candidateId)
 
         then: "o resultado deve ser falso"
 		!result
@@ -301,7 +300,7 @@ class CandidateDaoSpec extends Specification {
         sql.executeUpdate(_, [candidateId]) >> { throw new SQLException("Erro ao remover candidato") }
 
         when: "o método removeCandidateById é chamado"
-        def result = candidateDao.removeCandidateById(candidateId)
+        def result = candidateDao.deleteById(candidateId)
 
         then: "o resultado deve ser falso"
 		!result
@@ -323,14 +322,14 @@ class CandidateDaoSpec extends Specification {
         sql.executeInsert(_, _) >> [[3]]
         skillDao.insertSkillsReturningId(_) >> [4, 5]
 
-        candidateDao.addAllDataFromCandidate(candidateWithoutFormations)
+        candidateDao.save(candidateWithoutFormations)
 
         then: "não deve chamar os métodos relacionados a formações"
         0 * formationDao.insertFormations(_)
         0 * formationCandidateDao.insertIdsAndDatesFromFormation(_)
 
         and: "deve chamar os métodos relacionados a competências"
-        1 * candidateSkillDao.associateSkillsToCandidate(_, _)
+        1 * candidateSkillDao.associateEntityWithSkill(_, _)
     }
 
     def "deve processar candidato sem competências corretamente"() {
@@ -348,11 +347,11 @@ class CandidateDaoSpec extends Specification {
         sql.executeInsert(_, _) >> [[3]]
         formationDao.insertFormations(_) >> candidateWithoutSkills
 
-        candidateDao.addAllDataFromCandidate(candidateWithoutSkills)
+        candidateDao.save(candidateWithoutSkills)
 
         then: "não deve chamar os métodos relacionados a competências"
         0 * skillDao.insertSkillsReturningId(_)
-        0 * candidateSkillDao.associateSkillsToCandidate(_, _)
+        0 * candidateSkillDao.associateEntityWithSkill(_, _)
 
         and: "deve chamar os métodos relacionados a formações"
         1 * formationCandidateDao.insertIdsAndDatesFromFormation(_)
@@ -372,12 +371,12 @@ class CandidateDaoSpec extends Specification {
         addressDao.insertAddressReturningId(_, _) >> 2
         sql.executeInsert(_, _) >> [[3]]
 
-        candidateDao.addAllDataFromCandidate(candidateWithoutSkillsFormations)
+        candidateDao.save(candidateWithoutSkillsFormations)
 
         then: "não deve chamar nenhum método relacionado a formações e competências"
         0 * formationDao.insertFormations(_)
         0 * formationCandidateDao.insertIdsAndDatesFromFormation(_)
         0 * skillDao.insertSkillsReturningId(_)
-        0 * candidateSkillDao.associateSkillsToCandidate(_, _)
+        0 * candidateSkillDao.associateEntityWithSkill(_, _)
     }
 }
