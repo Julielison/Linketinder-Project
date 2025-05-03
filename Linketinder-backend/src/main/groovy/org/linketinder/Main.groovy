@@ -1,6 +1,7 @@
 package org.linketinder
 
 import org.linketinder.config.DependencyFactory
+import org.linketinder.config.TomcatServer
 import org.linketinder.controller.CandidateController
 import org.linketinder.controller.CompanyController
 import org.linketinder.controller.JobController
@@ -23,6 +24,14 @@ class Main {
 				jobController,
 				skillController
 		)
+		TomcatServer server = new TomcatServer(
+				factory.getCandidateController(),
+				factory.getCompanyController(),
+				factory.getJobController(),
+				factory.getSkillController()
+		)
+
+		server.run()
 		system.run()
 	}
 }

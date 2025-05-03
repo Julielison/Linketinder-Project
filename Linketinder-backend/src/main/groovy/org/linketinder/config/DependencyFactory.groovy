@@ -58,11 +58,9 @@ class DependencyFactory {
 
 	private void initializeDependencies() {
 		sql = DatabaseConnection.getInstance()
-
 		initializeDAOs()
 		initializeServices()
 		initializeControllers()
-
 		view = new ViewFacade()
 	}
 
