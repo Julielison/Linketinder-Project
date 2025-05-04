@@ -20,15 +20,15 @@ class CandidateController extends BaseController {
 		String pathInfo = req.getPathInfo()
 
 		if (pathInfo == null || pathInfo == "/") {
-			List<Candidate> candidatos = candidateService.listAllCandidates()
+			List<Candidate> candidates = candidateService.listAllCandidates()
 
-			if (candidatos == null || candidatos.isEmpty()) {
+			if (candidates == null || candidates.isEmpty()) {
 				resp.setStatus(HttpServletResponse.SC_NO_CONTENT)
 				resp.getWriter().write(objectMapper.writeValueAsString(
 						Map.of("message", "Nenhum candidato encontrado")
 				))
 			}
-			resp.getWriter().write(objectMapper.writeValueAsString(candidatos))
+			resp.getWriter().write(objectMapper.writeValueAsString(candidates))
 		}
 	}
 
@@ -44,14 +44,14 @@ class CandidateController extends BaseController {
 			while ((line = reader.readLine()) != null) {
 				buffer.append(line)
 			}
-			Map<String, String> dadosCandidato = objectMapper.readValue(buffer.toString(), Map.class)
-			String resultado = candidateService.registerCandidate(dadosCandidato)
+			Map<String, String> candidateData = objectMapper.readValue(buffer.toString(), Map.class)
+			String result = candidateService.registerCandidate(candidateData)
 
 			resp.setStatus(HttpServletResponse.SC_CREATED)
-			resp.getWriter().write("{\"mensagem\": \"" + resultado + "\"}")
+			resp.getWriter().write("{\"message\": \"" + result + "\"}")
 		} catch (Exception e) {
 			resp.setStatus(HttpServletResponse.SC_CONFLICT)
-			resp.getWriter().write("{\"erro\": \"Erro ao processar dados: " + e.getMessage() + "\"}")
+			resp.getWriter().write("{\"error\": \"Erro ao processar dados: " + e.getMessage() + "\"}")
 		}
 	}
 
@@ -64,21 +64,21 @@ class CandidateController extends BaseController {
 
 		if (pathInfo == null || pathInfo == "/") {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST)
-			resp.getWriter().write("{\"erro\": \"ID do candidato é obrigatório\"}")
+			resp.getWriter().write("{\"error\": \"ID do candidato é obrigatório\"}")
 			return
 		}
 
 		try {
-			int candidatoId = Integer.parseInt(pathInfo.substring(1))
-			String resultado = candidateService.removeCandidate(candidatoId)
+			int candidateId = Integer.parseInt(pathInfo.substring(1))
+			String result = candidateService.removeCandidate(candidateId)
 
-			resp.getWriter().write("{\"mensagem\": \"" + resultado + "\"}")
+			resp.getWriter().write("{\"message\": \"" + result + "\"}")
 		} catch (NumberFormatException ignored) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST)
-			resp.getWriter().write("{\"erro\": \"ID inválido\"}")
+			resp.getWriter().write("{\"error\": \"ID inválido\"}")
 		} catch (Exception e) {
 			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
-			resp.getWriter().write("{\"erro\": \"Erro ao excluir candidato: " + e.getMessage() + "\"}")
+			resp.getWriter().write("{\"error\": \"Erro ao excluir candidato: " + e.getMessage() + "\"}")
 		}
 	}
 }
