@@ -16,8 +16,8 @@ class CandidateController extends BaseController {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		this.validateAcceptHeader(req, resp)
-		this.setJsonResponseHeaders(resp)
+		validateAcceptHeader(req, resp)
+		setJsonResponseHeaders(resp)
 		String pathInfo = req.getPathInfo()
 
 		if (pathInfo == null || pathInfo == "/") {
@@ -35,8 +35,8 @@ class CandidateController extends BaseController {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		this.validateAcceptHeader(req, resp)
-		this.setJsonResponseHeaders(resp)
+		validateAcceptHeader(req, resp)
+		setJsonResponseHeaders(resp)
 		req.setCharacterEncoding("UTF-8")
 		try {
 			StringBuilder buffer = new StringBuilder()

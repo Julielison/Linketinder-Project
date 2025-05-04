@@ -28,4 +28,27 @@ abstract class BaseController extends HttpServlet {
 		resp.setContentType("application/json;charset=UTF-8")
 		resp.setCharacterEncoding("UTF-8")
 	}
+
+	protected static String readRequestBody(HttpServletRequest request) throws IOException {
+		request.setCharacterEncoding("UTF-8")
+		StringBuilder buffer = new StringBuilder()
+		BufferedReader reader = request.getReader()
+		String line
+		while ((line = reader.readLine()) != null) {
+			buffer.append(line)
+		}
+		return buffer.toString()
+	}
+
+	protected void sendResponse(HttpServletResponse response, int status, Object data = null) throws IOException {
+		response.setStatus(status)
+		if(data){
+			response.getWriter().write(objectMapper.writeValueAsString(data))
+		}
+	}
+
+	protected void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
+		response.setStatus(status)
+		response.getWriter().write(objectMapper.writeValueAsString(Map.of("error", message)))
+	}
 }

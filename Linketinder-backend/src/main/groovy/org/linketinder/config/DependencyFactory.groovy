@@ -87,7 +87,7 @@ class DependencyFactory {
 
 	private void initializeControllers() {
 		candidateController = new CandidateController(candidateService)
-		companyController = new CompanyController(companyService)
+		companyController = new CompanyController(companyService, jobService)
 		jobController = new JobController(jobService)
 		skillController = new SkillController(skillService)
 	}

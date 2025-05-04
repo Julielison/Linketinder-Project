@@ -17,19 +17,17 @@ class JobService {
 		return setupJobsToController(rawJobs)
 	}
 
-	String removeJobById(Integer id){
-		return jobDao.deleteById(id) ? "Vaga removida com sucesso!" : "Vaga não existe!"
+	boolean removeJobById(Integer id){
+		return jobDao.deleteById(id)
 	}
 
-	String registerJob(Integer idCompany, Map<String, ?> data){
+	Job registerJob(Integer idCompany, Map<String, ?> data){
 		Job job = setupJobToDao(idCompany, data)
-		String feedback = "Cadastro feito com sucesso!"
 		try {
-			jobDao.save(job)
-		} catch (Exception e){
-			feedback = e.getMessage()
+			return jobDao.save(job)
+		} catch (Exception e) {
+			throw e
 		}
-		return feedback
 	}
 
 	private static setupJobToDao(Integer idCompany, Map<String, ?> data){

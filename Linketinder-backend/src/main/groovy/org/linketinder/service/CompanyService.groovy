@@ -19,15 +19,17 @@ class CompanyService {
 		return setupCompaniesToController(rawCompanies)
 	}
 
-	String registerCompany(Map<String, String> data) {
+	Company registerCompany(Map<String, String> data) {
 		Company newCompany = setupCompanyToDao(data)
-		String feedback = "Empresa cadastrada com sucesso!"
 		try {
-			companyDao.save(newCompany)
+			return companyDao.save(newCompany)
 		} catch (Exception e){
-			feedback = e.getMessage()
+			throw e
 		}
-		return feedback
+	}
+
+	boolean removeCompany(Integer id){
+		return companyDao.deleteById(id)
 	}
 
 	private static List<Company> setupCompaniesToController(List<Map<String, Object>> rawCompanies){
@@ -59,9 +61,5 @@ class CompanyService {
 				null, data.name, data.email, data.cnpj,
 				address, data.description, data.password, jobs
 		)
-	}
-
-	boolean removeCompany(Integer id){
-		return companyDao.deleteById(id)
 	}
 }

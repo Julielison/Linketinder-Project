@@ -4,76 +4,123 @@ import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.linketinder.model.Company
+import org.linketinder.model.Job
 import org.linketinder.service.CompanyService
+import org.linketinder.service.JobService
+
+import java.util.regex.Matcher
 
 class CompanyController extends BaseController {
-	private CompanyService companyService
+	private final CompanyService companyService
+	private final JobService jobService
 
-	CompanyController(CompanyService companyService) {
+	CompanyController(CompanyService companyService, JobService jobService) {
 		super()
 		this.companyService = companyService
+		this.jobService = jobService
 	}
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		this.setJsonResponseHeaders(resp)
-		String pathInfo = req.getPathInfo()
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		validateAcceptHeader(request, response)
+		setJsonResponseHeaders(response)
+		String pathInfo = request.getPathInfo()
 
 		if (pathInfo == null || pathInfo == "/") {
-			List<Company> companies = companyService.listAllCompanies()
-
-			if (companies == null || companies.isEmpty()) {
-				resp.setStatus(HttpServletResponse.SC_NO_CONTENT)
-				resp.getWriter().write(objectMapper.writeValueAsString(
-						Map.of("message", "Nenhuma empresa encontrada")
-				))
-			}
-			resp.getWriter().write(objectMapper.writeValueAsString(companies))
+			this.getAllCompanies(response)
+		} else {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Endpoint não encontrado")
 		}
 	}
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		this.validateAcceptHeader(req, resp)
-		this.setJsonResponseHeaders(resp)
-		req.setCharacterEncoding("UTF-8")
-		try {
-			StringBuilder buffer = new StringBuilder()
-			BufferedReader reader = req.getReader()
-			String line
-			while ((line = reader.readLine()) != null) {
-				buffer.append(line)
-			}
-			Map<String, String> companyData = objectMapper.readValue(buffer.toString(), Map.class)
-			String result = companyService.registerCompany(companyData)
+	private void getAllCompanies(HttpServletResponse response) throws IOException {
+		List<Company> companies = companyService.listAllCompanies()
 
-			resp.setStatus(HttpServletResponse.SC_CREATED)
-			resp.getWriter().write("{\"message\": \"" + result + "\"}")
-		} catch (Exception e) {
-			resp.setStatus(HttpServletResponse.SC_CONFLICT)
-			resp.getWriter().write("{\"error\": \"Erro ao processar dados: " + e.getMessage() + "\"}")
-		}
-	}
-
-	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String pathInfo = req.getPathInfo()
-
-		if (pathInfo == null || pathInfo == "/") {
-			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST)
-			resp.getWriter().write("{\"error\": \"ID da empresa é obrigatório\"}")
+		if (companies == null || companies.isEmpty()) {
+			sendResponse(response, HttpServletResponse.SC_NO_CONTENT,
+					Map.of("message", "No companies found"))
 			return
 		}
+		sendResponse(response, HttpServletResponse.SC_OK, companies)
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8")
+		validateAcceptHeader(request, response)
+		setJsonResponseHeaders(response)
+
+		String pathInfo = request.getPathInfo()
+		String requestBody = readRequestBody(request)
+
+		if (!pathInfo || pathInfo == "/") {
+			createCompany(requestBody, response)
+			return
+		}
+
+		Matcher matcher = (pathInfo =~ /^\/(\d+)\/jobs\/?$/) // /{id}/jobs
+		if (matcher.matches()) {
+			try {
+				int companyId = Integer.parseInt(matcher.group(1))
+				createJobForCompany(companyId, requestBody, response)
+			} catch (NumberFormatException ignored) {
+				sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "ID da empresa inválido")
+			}
+		} else {
+			sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Endpoint inválido")
+		}
+	}
+
+
+	private void createCompany(String requestBody, HttpServletResponse response) throws IOException {
 		try {
-			int companyId = Integer.parseInt(pathInfo.substring(1))
-			int status = companyService.removeCompany(companyId) ? HttpServletResponse.SC_NO_CONTENT : HttpServletResponse.SC_GONE
-			resp.setStatus(status)
-		} catch (NumberFormatException ignored) {
-			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST)
-			resp.getWriter().write("{\"error\": \"ID inválido\"}")
+			Map<String, Object> companyData = objectMapper.readValue(requestBody, Map.class)
+			Company result = companyService.registerCompany(companyData)
+
+			sendResponse(response, HttpServletResponse.SC_CREATED, result)
 		} catch (Exception e) {
-			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
-			resp.getWriter().write("{\"error\": \"Erro ao excluir empresa: " + e.getMessage() + "\"}")
+			sendErrorResponse(response, HttpServletResponse.SC_CONFLICT, "Error processing data: " + e.getMessage())
+		}
+	}
+
+	private void createJobForCompany(int companyId, String requestBody, HttpServletResponse response) throws IOException {
+		try {
+			Map<String, Object> jobData = objectMapper.readValue(requestBody, Map.class)
+			Job createdJob = jobService.registerJob(companyId, jobData)
+
+			sendResponse(response, HttpServletResponse.SC_CREATED, createdJob)
+		} catch (Exception e) {
+			sendErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error creating job: " + e.getMessage())
+		}
+	}
+
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		validateAcceptHeader(request, response)
+		setJsonResponseHeaders(response)
+		String pathInfo = request.getPathInfo()
+
+		if (pathInfo == null || pathInfo == "/") {
+			sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Company ID is required")
+			return
+		}
+		Matcher matcher = (pathInfo =~ /^\/(\d+)$/) // /{id}
+
+		try {
+			if (matcher.matches()) {
+				int companyId = matcher[0][1] as int
+				deleteCompany(companyId, response)
+			} else {
+				sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid endpoint")
+			}
+		} catch (NumberFormatException ignored) {
+			sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid company ID")
+		}
+	}
+
+	private void deleteCompany(int companyId, HttpServletResponse response) throws IOException {
+		try {
+			int status = companyService.removeCompany(companyId) ? HttpServletResponse.SC_NO_CONTENT : HttpServletResponse.SC_GONE
+			sendResponse(response, status)
+		} catch (Exception e) {
+			sendErrorResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error deleting company: " + e.getMessage())
 		}
 	}
 }

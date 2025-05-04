@@ -38,6 +38,9 @@ class TomcatServer implements Runnable {
 		Tomcat.addServlet(ctx, "CompanyController", companyController)
 		ctx.addServletMappingDecoded("/companies/*", "CompanyController")
 
+		Tomcat.addServlet(ctx, "JobController", jobController)
+		ctx.addServletMappingDecoded("/jobs/*", "JobController")
+
 		tomcat.start()
 		println "Servidor Tomcat iniciado em http://localhost:8080"
 
