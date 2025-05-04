@@ -1,17 +1,18 @@
 package org.linketinder.service
 
 import org.linketinder.dao.impl.SkillDao
+import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.model.Skill
 
 class SkillService {
-	SkillDao skillDao
+	ISkillDao skillDao
 
-	SkillService(SkillDao skillDao) {
+	SkillService(ISkillDao skillDao) {
 		this.skillDao = skillDao
 	}
 
 	List<Skill> listAllSkills(){
-		List<Map<String, Object>> rawSkills = skillDao.getSkillsRawData()
+		List<Map<String, Object>> rawSkills = skillDao.getAll()
 		return setupSkillsToController(rawSkills)
 	}
 

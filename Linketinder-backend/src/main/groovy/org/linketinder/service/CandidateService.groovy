@@ -1,37 +1,31 @@
 package org.linketinder.service
 
-import org.linketinder.dao.impl.CandidateDao
-import org.linketinder.model.Address
-import org.linketinder.model.Candidate
-import org.linketinder.model.Country
-import org.linketinder.model.Formation
-import org.linketinder.model.Person
-import org.linketinder.model.Skill
+
+import org.linketinder.dao.interfaces.ICRUD
+import org.linketinder.model.*
 import org.linketinder.util.ConvertUtil
 
 import java.time.LocalDate
 
 class CandidateService {
-	CandidateDao candidateDao
+	ICRUD<Candidate> candidateDao
 
-	CandidateService(CandidateDao candidateDao) {
+	CandidateService(ICRUD<Candidate> candidateDao) {
 		this.candidateDao = candidateDao
 	}
 
 	List<Candidate> listAllCandidates() {
-		List<Map<String, Object>> rawCandidates = candidateDao.getCandidatesRawData()
+		List<Map<String, Object>> rawCandidates = candidateDao.getAll()
 		return setupCandidatesToController(rawCandidates)
 	}
 
-	String registerCandidate(Map<String, String> data) {
-		Candidate newCandidate = setupCandidateToDao(data)
-		String feedback = "Candidato cadastrado com sucesso!"
+	Candidate registerCandidate(Map<String, String> data) {
 		try {
-			candidateDao.addAllDataFromCandidate(newCandidate)
-		} catch (Exception e){
-			feedback = e.getMessage()
+			Candidate newCandidate = setupCandidateToDao(data)
+			return candidateDao.save(newCandidate)
+		} catch (Exception e) {
+			throw new RuntimeException("Erro ao registrar o candidato.", e)
 		}
-		return feedback
 	}
 
 	static private Candidate setupCandidateToDao(Map<String, String> data){
@@ -43,7 +37,7 @@ class CandidateService {
 				data.firstName,
 				data.email,
 				data.cpf,
-				data.dateBirth as LocalDate,
+				LocalDate.parse(data.dateBirth),
 				address,
 				data.description,
 				data.password,
@@ -58,7 +52,7 @@ class CandidateService {
 		return rawCandidates.collect { Map<String, Object> row ->
 			List<Skill> skills = SkillService.extractSkills(row['competencias'].toString())
 			List<Formation> formations = FormationService.extractFormationsData(row['formacoes'].toString())
-			LocalDate dateOfBirth = ConvertUtil.convertToLocalDate(row['candidato_data_nascimento'].toString(), 'yyyy-MM-dd')
+			LocalDate dateOfBirth = LocalDate.parse(row['candidato_data_nascimento'].toString())
 			Address address = new Address(
 					row['endereco_id'] as Integer,
 					row['endereco_cep'] as String,
@@ -80,7 +74,7 @@ class CandidateService {
 		}
 	}
 
-	String removeCandidate(Integer id) {
-		return candidateDao.removeCandidateById(id) ? "Candidato removido com sucesso!" : "Candidato não existe!"
+	boolean removeCandidate(Integer id) {
+		return candidateDao.deleteById(id)
 	}
 }

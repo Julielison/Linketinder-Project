@@ -1,16 +1,16 @@
 package org.linketinder.dao.impl
 
 import groovy.sql.Sql
-import org.linketinder.dao.interfaces.IJobSkillDao
+import org.linketinder.dao.interfaces.IAssociateEntity
 
-class JobSkillDao implements IJobSkillDao {
+class JobSkillDao implements IAssociateEntity {
 	Sql sql
 
 	JobSkillDao(Sql sql) {
 		this.sql = sql
 	}
 
-	void associateSkillsToJob(Integer jobId, List<Integer> skillsIds) {
+	void associateEntityWithSkill(Integer jobId, List<Integer> skillsIds) {
 		try {
 			String valuesSql = skillsIds.collect { "(?, ?)" }.join(", ")
 			GString sqlQuery = """

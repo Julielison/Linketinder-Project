@@ -70,12 +70,12 @@ class CompanyDaoSpec extends Specification {
             ]
         ]
         
-        companyDao.metaClass.getCompaniesRawData = { ->
+        companyDao.metaClass.getAll = { ->
             return expectedResults
         }
 
         when: "o método getCompaniesRawData é chamado"
-        def result = companyDao.getCompaniesRawData()
+        def result = companyDao.getAll()
 
         then: "verifica se os dados foram retornados corretamente"
         result.size() == 1
@@ -111,12 +111,12 @@ class CompanyDaoSpec extends Specification {
             ]
         ]
         
-        companyDao.metaClass.getCompaniesRawData = { -> 
+        companyDao.metaClass.getAll = { ->
             return companiesData
         }
         
         when: "obtemos os dados brutos das empresas"
-        def result = companyDao.getCompaniesRawData()
+        def result = companyDao.getAll()
         
         then: "a lista deve conter duas empresas"
         result.size() == 2
@@ -143,12 +143,12 @@ class CompanyDaoSpec extends Specification {
             ]
         ]
         
-        companyDao.metaClass.getCompaniesRawData = { -> 
+        companyDao.metaClass.getAll = { ->
             return companiesWithNulls
         }
         
         when: "obtemos os dados brutos"
-        def result = companyDao.getCompaniesRawData()
+        def result = companyDao.getAll()
         
         then: "os valores nulos são preservados no resultado"
         result.size() == 1
@@ -186,7 +186,7 @@ class CompanyDaoSpec extends Specification {
         def company = mockCompany
         
         when: "o método addAllCompanyData é chamado"
-        companyDao.addAllCompanyData(company)
+        companyDao.save(company)
         
         then: "a transação SQL é iniciada"
         1 * sql.withTransaction(_) >> { Closure closure -> closure.call() }
@@ -209,7 +209,7 @@ class CompanyDaoSpec extends Specification {
         when: "o método addAllCompanyData é chamado"
         def exception = null
         try {
-            companyDao.addAllCompanyData(company)
+            companyDao.save(company)
         } catch (RuntimeException e) {
             exception = e
         }
@@ -253,7 +253,7 @@ class CompanyDaoSpec extends Specification {
         sql.executeUpdate(_, [companyId]) >> 1
         
         when: "o método deleteCompanyById é chamado"
-        def result = companyDao.deleteCompanyById(companyId)
+        def result = companyDao.deleteById(companyId)
         
         then: "o resultado deve ser verdadeiro"
         result
@@ -267,7 +267,7 @@ class CompanyDaoSpec extends Specification {
         sql.executeUpdate(_, [companyId]) >> 0
         
         when: "o método deleteCompanyById é chamado"
-        def result = companyDao.deleteCompanyById(companyId)
+        def result = companyDao.deleteById(companyId)
         
         then: "o resultado deve ser falso"
         !result
@@ -281,7 +281,7 @@ class CompanyDaoSpec extends Specification {
         sql.executeUpdate(_, [companyId]) >> { throw new SQLException("Erro ao remover empresa") }
         
         when: "o método deleteCompanyById é chamado"
-        def result = companyDao.deleteCompanyById(companyId)
+        def result = companyDao.deleteById(companyId)
         
         then: "o resultado deve ser falso"
         !result

@@ -2,7 +2,7 @@ import groovy.sql.Sql
 import org.linketinder.dao.impl.JobDao
 import org.linketinder.dao.impl.JobSkillDao
 import org.linketinder.dao.impl.SkillDao
-import org.linketinder.dao.interfaces.IJobSkillDao
+
 import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.model.Job
 import org.linketinder.model.Skill
@@ -15,7 +15,7 @@ class JobDaoSpec extends Specification {
     
     Sql sql
     ISkillDao skillDao
-    IJobSkillDao jobSkillDao
+    JobSkillDao jobSkillDao
     JobDao jobDao
     
     Job mockJob
@@ -57,12 +57,12 @@ class JobDaoSpec extends Specification {
 				]
 		]
 
-		jobDao.metaClass.getJobsRawData = { ->
+		jobDao.metaClass.getAll = { ->
 			return expectedResults
 		}
 
 		when: "o método getJobsRawData é chamado"
-		def result = jobDao.getJobsRawData()
+		def result = jobDao.getAll()
 
 		then: "verifica se os dados foram retornados corretamente"
 		result.size() == 1
@@ -78,10 +78,10 @@ class JobDaoSpec extends Specification {
 
     def "deve tratar exceção ao consultar vagas"() {
         given: "uma exceção será lançada durante a consulta"
-        sql.eachRow(_, _) >> { throw new SQLException("Database error") }
+        sql.eachRow(_ as GString, _ as Closure) >> { throw new SQLException("Database error") }
         
         when: "chamada ao método getJobsRawData"
-        def result = jobDao.getJobsRawData()
+        def result = jobDao.getAll()
         
         then: "deve tratar a exceção e retornar uma lista vazia"
         result.size() == 0
@@ -92,7 +92,7 @@ class JobDaoSpec extends Specification {
         def jobId = 1
         
         when: "chamada ao método addJobData"
-        jobDao.addJobData(mockJob)
+        jobDao.save(mockJob)
         
         then: "deve iniciar uma transação"
         1 * sql.withTransaction(_) >> { it[0].call() }
@@ -109,16 +109,16 @@ class JobDaoSpec extends Specification {
         
         and: "deve inserir as competências da vaga"
         1 * skillDao.insertSkillsReturningId(mockJob.skills) >> [1, 2, 3]
-        1 * jobSkillDao.associateSkillsToJob(jobId, [1, 2, 3])
+        1 * jobSkillDao.associateEntityWithSkill(jobId, [1, 2, 3])
     }
     
     def "deve tratar exceção ao adicionar vaga com empresa inexistente"() {
         given: "uma falha na inserção da vaga"
-        sql.withTransaction(_) >> { closure -> closure() }
-        sql.executeInsert(_, _) >> { throw new SQLException("Foreign key violation") }
+        sql.withTransaction(_ as Closure) >> { closure -> closure() }
+        sql.executeInsert(_ as GString, _) >> { throw new SQLException("Foreign key violation") }
         
         when: "chamada ao método addJobData"
-        jobDao.addJobData(mockJob)
+        jobDao.save(mockJob)
         
         then: "deve propagar a exceção"
         thrown(Exception)
@@ -133,40 +133,40 @@ class JobDaoSpec extends Specification {
         
         then: "não deve chamar os métodos para inserir competências"
         0 * skillDao.insertSkillsReturningId(_)
-        0 * jobSkillDao.associateSkillsToJob(_, _)
+        0 * jobSkillDao.associateEntityWithSkill(_, _)
     }
     
     def "deve remover vaga por ID com sucesso"() {
         when: "chamada ao método removeJobById"
-        def result = jobDao.removeJobById(1)
+        def result = jobDao.deleteById(1)
         
         then: "deve executar a query de delete corretamente"
         1 * sql.executeUpdate("DELETE FROM vaga WHERE id = ?", [1]) >> 1
         
         and: "deve retornar true indicando sucesso"
-        result == true
+		result
     }
     
     def "deve retornar falso quando nenhuma vaga for removida"() {
         when: "chamada ao método removeJobById com ID inexistente"
-        def result = jobDao.removeJobById(999)
+        def result = jobDao.deleteById(999)
         
         then: "deve executar a query de delete"
         1 * sql.executeUpdate(_, _) >> 0
         
         and: "deve retornar false indicando que nada foi removido"
-        result == false
+		!result
     }
     
     def "deve tratar exceção ao remover vaga"() {
         when: "chamada ao método removeJobById com erro"
-        def result = jobDao.removeJobById(1)
+        def result = jobDao.deleteById(1)
         
         then: "deve tratar a exceção"
         1 * sql.executeUpdate(_, _) >> { throw new SQLException("Database error") }
         
         and: "deve retornar false"
-        result == false
+		!result
     }
     
     @Unroll

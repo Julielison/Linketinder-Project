@@ -28,8 +28,8 @@ class FormationService {
 					null,
 					formationMap.get('institution') as String,
 					formationMap.get('name') as String,
-					formationMap.get('dateStart') as LocalDate,
-					formationMap.get('dateEnd') as LocalDate
+					LocalDate.parse(formationMap.get('dateStart')),
+					LocalDate.parse(formationMap.get('dateEnd'))
 			))
 		}
 		return formations

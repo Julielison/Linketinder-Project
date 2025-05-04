@@ -1,6 +1,7 @@
 plugins {
     id 'groovy'
     id 'application'
+    id 'war'  // Plugin para criar um arquivo WAR
 }
 
 group = 'org.linketinder'
@@ -12,6 +13,8 @@ ext {
     spockVersion = '2.3-groovy-4.0'
     postgresVersion = '42.6.0'
     byteBuddyVersion = '1.12.22'
+    servletVersion = '6.0.0'  // Jakarta Servlet versão
+    jspVersion = '3.1.1'      // Versão corrigida do JSP API
 }
 
 repositories {
@@ -22,6 +25,13 @@ dependencies {
     implementation "org.apache.groovy:groovy-all:${groovyVersion}"
     implementation "org.postgresql:postgresql:${postgresVersion}"
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0'
+    implementation("org.apache.tomcat.embed:tomcat-embed-core:10.1.39")
+
+    // API Servlet e JSP com versões compatíveis
+    implementation "jakarta.servlet:jakarta.servlet-api:${servletVersion}"
+    implementation "jakarta.servlet.jsp:jakarta.servlet.jsp-api:${jspVersion}"
 
     testImplementation platform("org.junit:junit-bom:${junitVersion}")
     testImplementation 'org.junit.platform:junit-platform-runner:1.9.2'

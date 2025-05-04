@@ -2,11 +2,10 @@ package org.linketinder.dao.impl
 
 
 import groovy.sql.Sql
-import org.linketinder.dao.interfaces.ICountryDao
 
 import java.sql.SQLException
 
-class CountryDao implements ICountryDao {
+class CountryDao {
 	Sql sql
 
 	CountryDao(Sql sql) {

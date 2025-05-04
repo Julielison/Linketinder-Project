@@ -2,27 +2,27 @@ package org.linketinder.dao.impl
 
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
-import org.linketinder.dao.interfaces.IAddressDao
-import org.linketinder.dao.interfaces.ICandidateDao
-import org.linketinder.dao.interfaces.ICandidateSkillDao
-import org.linketinder.dao.interfaces.IFormationCandidateDao
-import org.linketinder.dao.interfaces.IFormationDao
+
+import org.linketinder.dao.interfaces.IAssociateEntity
+import org.linketinder.dao.interfaces.ICRUD
+
+
 import org.linketinder.dao.interfaces.ISkillDao
 import org.linketinder.model.Candidate
 import org.linketinder.util.ConvertUtil
 
 import java.sql.SQLException
 
-class CandidateDao implements ICandidateDao {
+class CandidateDao implements ICRUD<Candidate> {
     Sql sql
-    IAddressDao addressDao
-    IFormationDao formationDao
+    AddressDao addressDao
+    FormationDao formationDao
     ISkillDao skillDao
-    IFormationCandidateDao formationCandidateDao
-    ICandidateSkillDao candidateSkillDao
+    FormationCandidateDao formationCandidateDao
+    IAssociateEntity candidateSkillDao
 
-    CandidateDao(Sql sql, IAddressDao addressDao, IFormationDao formationDao, ISkillDao skillDao,
-                 IFormationCandidateDao formationCandidateDao, ICandidateSkillDao candidateSkillDao) {
+    CandidateDao(Sql sql, AddressDao addressDao, FormationDao formationDao, ISkillDao skillDao,
+                 FormationCandidateDao formationCandidateDao, IAssociateEntity candidateSkillDao) {
         this.sql = sql
         this.addressDao = addressDao
         this.formationDao = formationDao
@@ -31,7 +31,7 @@ class CandidateDao implements ICandidateDao {
         this.candidateSkillDao = candidateSkillDao
     }
 
-    List<Map<String, Object>> getCandidatesRawData() {
+    List<Map<String, Object>> getAll() {
         List<Map<String, Object>> candidates = []
         String query = selectAllFromCandidates()
         try {
@@ -88,13 +88,15 @@ class CandidateDao implements ICandidateDao {
             c.descricao_pessoal, c.senha_de_login, e.id, e.cep, p.id, p.nome"""
     }
 
-    void addAllDataFromCandidate(Candidate candidate) {
+    Candidate save(Candidate candidate) {
         try {
             sql.withTransaction {
                 Integer countryId = addressDao.insertCountryReturningId(candidate.address.country.name)
                 Integer addressId = addressDao.insertAddressReturningId(candidate.address.zipCode, countryId)
                 Integer candidateId = this.insertCandidate(candidate, addressId)
                 candidate.setId(candidateId)
+                candidate.address.country.id = countryId
+                candidate.address.id = addressId
 
                 if (!candidate.formations.isEmpty()) {
                     Candidate candidateWithFormationsId = formationDao.insertFormations(candidate)
@@ -102,13 +104,14 @@ class CandidateDao implements ICandidateDao {
                 }
                 if (!candidate.skills.isEmpty()) {
                     List<Integer> skillsWithId = skillDao.insertSkillsReturningId(candidate.skills)
-                    candidateSkillDao.associateSkillsToCandidate(candidate.id, skillsWithId)
+                    candidateSkillDao.associateEntityWithSkill(candidate.id, skillsWithId)
                 }
             }
             } catch (Exception e) {
                 e.printStackTrace()
                 throw new RuntimeException("Erro ao adicionar dados do candidato: ${e.message}")
             }
+        return candidate
     }
 
     private Integer insertCandidate(Candidate candidate, Integer idAddress) {
@@ -129,12 +132,17 @@ class CandidateDao implements ICandidateDao {
         return result[0][0] as Integer
     }
 
-    boolean removeCandidateById(Integer id) {
+    boolean deleteById(Integer id) {
         try {
             return sql.executeUpdate("DELETE FROM candidato WHERE id = ?", [id]) > 0
         } catch (SQLException e) {
             e.printStackTrace()
         }
         return false
+    }
+
+    boolean update(Candidate candidate){
+        // TODO
+        return null
     }
 }

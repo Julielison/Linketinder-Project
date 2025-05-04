@@ -15,7 +15,7 @@ class SkillDao implements ISkillDao{
 		this.sql = sql
 	}
 
-	List<Map<String, Object>> getSkillsRawData(){
+	List<Map<String, Object>> getAll(){
 		List<Map<String, Object>> skills = []
 		try {
 			sql.eachRow("SELECT * FROM competencia"){ GroovyResultSet row ->
