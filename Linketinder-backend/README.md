@@ -1,4 +1,6 @@
 # Linketinder
+## Dev
+- Julielison Lima
 
 ## Descrição
 Este projeto é um sistema simples desenvolvido em Groovy para gerenciar candidatos, empresas e vagas. Ele permite listar candidatos, empresas e vagas cadastradas, além de possibilitar interações como "curtidas" entre candidatos e empresas, por meio de um menu interativo no terminal.
@@ -8,22 +10,41 @@ Este projeto é um sistema simples desenvolvido em Groovy para gerenciar candida
 - **Paradigma:** Orientação a Objetos
 - **Banco de Dados:** PostgreSQL
 
+#Vou atualizar a seção "Estrutura do Projeto" do README do backend com base na nova estrutura de pastas e arquivos que você forneceu. Aqui está o conteúdo atualizado:
+
 ## Estrutura do Projeto
-O projeto é dividido em três camadas principais:
+O projeto está dividido da seguinte forma:
 
 ### 1. **Controller**
-- `MainController.groovy`: Controla a interação do usuário com o sistema e gerencia o fluxo do programa.
+- Contém os controladores que recebem requisições HTTP e gerenciam o fluxo do programa
 
 ### 2. **Model**
-- `Pessoa.groovy`: Classe abstrata que representa uma pessoa.
-- `Candidato.groovy`: Representa um candidato com informações como nome, email, CPF, idade, estado, CEP, descrição e competências.
-- `Empresa.groovy`: Representa uma empresa com informações como nome, email, CNPJ, país, estado, CEP, descrição e competências.
-- `Dados.groovy`: Armazena dados fictícios de candidatos e empresas.
-- `PessoaInterface.groovy`: Interface para garantir a implementação dos métodos `getNome()` e `getEmail()`.
+- Contém as classes que representam as entidades do sistema
 
-### 3. **View**
-- `MenuView.groovy`: Gerencia a interface do usuário, exibindo o menu e as listas de candidatos e empresas.
+### 3. **DAO (Data Access Object)**
+- **interfaces**: Define os contratos para acesso a dados
+- **impl**: Implementações das interfaces de acesso a dados
+- **connection**: Gerencia a conexão com o banco de dados PostgreSQL
 
+### 4. **Service**
+- Contém a lógica de negócio do sistema
+
+### 5. **View**
+- Gerencia a interface do usuário via terminal
+
+### 6. **Config**
+- Contém classes de configuração do sistema
+
+### 7. **Util**
+- Contém classes utilitárias
+
+### 8. **Enums**
+- `MenuOption.groovy`: Enumeração para as opções do menu do sistema
+
+### 9. **Main**
+- `Main.groovy`: Ponto de entrada da aplicação
+- `System.groovy`: Gerencia o fluxo principal do sistema
+****
 ## Modelagem do Banco de Dados
 
 ### Modelo Entidade-Relacionamento (MER)
@@ -62,28 +83,92 @@ O banco de dados foi implementado com base no modelo físico abaixo:
    git clone https://github.com/Julielison/Linketinder-Project.git
    cd Linketinder-Project/backend/src
    ```
-2. Execute o sistema com o seguinte comando:
-   ```sh
-   groovy Main.groovy
+2. Criar o banco:
+    - Abra o pgAdmin e crie um database com o código do modelo físico.
+   
+3. Crie um arquivo .env na pasta resources com seus dados de conexão com o banco, por exemplo:
+    ```txt
+    DB_URL=jdbc:postgresql://localhost:5432/linketinder
+    DB_USER=postgres
+    DB_PASSWORD=teste
+    DB_DRIVER=org.postgresql.Driver
+    ```
+
+4. Execute o sistema com a task run do plugin do gradle no intellij
+
+## Endpoints disponíneis
+### Root: localhost:8080
+### Candidatos
+1. **GET** `/candidates`: Listagem de candidatos cadastrados.
+2. **DELETE**`/candidates/{id}`: remove um candidato
+3. **POST** `/candidates`: adiciona um candidato com base no conteúdo do body
+   - Exemplo:
+   ```json
+   {
+    "firstName": "João",
+    "lastName": "Silva",
+    "email": "112111qqaq1w1çé2.1silva@email.com",
+    "cpf": "10310521210",
+    "dateBirth": "1990-05-10",
+    "zipCode": "12345678",
+    "description": "Desenvolvedor de software com experiência em Java e Spring.",
+    "skills": [
+    "Java",
+    "Spring Boot",
+    "REST APIs",
+    "SQL"
+    ],
+    "password": "senha123",
+    "country": "Brasil",
+    "formations": [
+    {
+    "name": "Engenharia de Software",
+    "institution": "Universidade de São Paulo",
+    "dateStart": "2010-02-15",
+    "dateEnd": "2014-12-15"
+    },
+    {
+    "name": "Machine Learning",
+    "institution": "Coursera",
+    "dateStart": "2020-01-01",
+    "dateEnd": "2020-06-01"
+    }
+    ]
+    }
    ```
+### Empresas
+1. **GET**`/companies`: lista os dados de todas as empresas
+2. **DELETE**`/companies/{id}`: remove uma empresa com base no id
+3. **POST**`/companies`: adcione uma empresa com base no conteúdo do body
+   - Exemplo:
+   ```json
+   {
+    "name": "Tech Solutions Brasil",
+    "email": "contsaqt2o2@techsolutionsbrasil.com.br",
+    "cnpj": "12325631909234",
+    "country": "Brasil",
+    "zipCode": "01234567",
+    "description": "Empresa especializada em soluções de tecnologia para o mercado de trabalho",
+    "password": "senhaSegura123"
+    }
+   ```
+4. **POST** `/companies/{id}/jobs`: adiciona uma vaga com base no conteúdo do body
+   - Exemplo
+   ```json
+    {
+        "name": "Desenvolvedor Backend",
+        "description": "Responsável por desenvolver e manter APIs e serviços backend.",
+        "local": "São Paulo, SP",
+        "skills": [
+            "Java",
+            "Spring Boot",
+            "SQL",
+            "Git",
+            "Docker"
+        ]
+    }
+    ```
 
-## Funcionalidades
-- Listagem de candidatos cadastrados.
-- Listagem de empresas cadastradas.
-- Interação via terminal com menu interativo.
-
-## Exemplo de Uso
-```sh
-=== Menu ===
-1. Listar Candidatos
-2. Listar Empresas
-3. Sair
-Escolha uma opção: 1
-
---- Lista de Candidatos ---
-Candidato: Carlos Silva | Email: carlos@gmail.com | CPF: 12345678900 | Idade: 30 | Estado: SP | CEP: 01000-000 | Descrição: Desenvolvedor Full Stack | Competências: Java, Spring, Angular
-...
-```
-
-## Devs
-- Julielison Lima
+### Vagas
+1. **GET**`/jobs`: lista os dados de todas as vagas
+2. **DELETE**`/jobs/{id}`: remove uma vaga com base no id
