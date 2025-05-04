@@ -16,7 +16,8 @@ class CandidateController extends BaseController {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		setJsonResponseHeaders(resp)
+		this.validateAcceptHeader(req, resp)
+		this.setJsonResponseHeaders(resp)
 		String pathInfo = req.getPathInfo()
 
 		if (pathInfo == null || pathInfo == "/") {
@@ -34,9 +35,9 @@ class CandidateController extends BaseController {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		validateAcceptHeader(req, resp)
-		setJsonResponseHeaders(resp)
-
+		this.validateAcceptHeader(req, resp)
+		this.setJsonResponseHeaders(resp)
+		req.setCharacterEncoding("UTF-8")
 		try {
 			StringBuilder buffer = new StringBuilder()
 			BufferedReader reader = req.getReader()
@@ -45,7 +46,7 @@ class CandidateController extends BaseController {
 				buffer.append(line)
 			}
 			Map<String, String> candidateData = objectMapper.readValue(buffer.toString(), Map.class)
-			String result = candidateService.registerCandidate(candidateData)
+			Candidate result = candidateService.registerCandidate(candidateData)
 
 			resp.setStatus(HttpServletResponse.SC_CREATED)
 			resp.getWriter().write("{\"message\": \"" + result + "\"}")
@@ -57,9 +58,6 @@ class CandidateController extends BaseController {
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		validateAcceptHeader(req, resp)
-		setJsonResponseHeaders(resp)
-
 		String pathInfo = req.getPathInfo()
 
 		if (pathInfo == null || pathInfo == "/") {
@@ -67,12 +65,10 @@ class CandidateController extends BaseController {
 			resp.getWriter().write("{\"error\": \"ID do candidato é obrigatório\"}")
 			return
 		}
-
 		try {
 			int candidateId = Integer.parseInt(pathInfo.substring(1))
-			String result = candidateService.removeCandidate(candidateId)
-
-			resp.getWriter().write("{\"message\": \"" + result + "\"}")
+			int status = candidateService.removeCandidate(candidateId) ? HttpServletResponse.SC_NO_CONTENT : HttpServletResponse.SC_GONE
+			resp.setStatus(status)
 		} catch (NumberFormatException ignored) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST)
 			resp.getWriter().write("{\"error\": \"ID inválido\"}")

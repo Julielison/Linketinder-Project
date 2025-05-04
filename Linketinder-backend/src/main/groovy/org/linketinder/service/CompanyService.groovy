@@ -61,7 +61,7 @@ class CompanyService {
 		)
 	}
 
-	String removeCompany(Integer id){
-		return companyDao.deleteById(id) ? "Empresa removida com sucesso!" : "Empresa não existe!"
+	boolean removeCompany(Integer id){
+		return companyDao.deleteById(id)
 	}
 }

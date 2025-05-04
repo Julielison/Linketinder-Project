@@ -25,7 +25,7 @@ abstract class BaseController extends HttpServlet {
 	}
 
 	protected static void setJsonResponseHeaders(HttpServletResponse resp) {
-		resp.setContentType("application/json")
+		resp.setContentType("application/json;charset=UTF-8")
 		resp.setCharacterEncoding("UTF-8")
 	}
 }
